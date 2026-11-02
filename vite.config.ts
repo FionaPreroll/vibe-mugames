@@ -43,6 +43,8 @@ export default defineConfig(({ mode }) => {
     define: { __BUILD__: JSON.stringify(build) },
     // Relative asset URLs, so the build runs under any path, such as GitHub Pages' /vibe-mugames/.
     base: './',
+    // Source maps only for measuring coverage in the browser tests (COVERAGE, see tests/e2e/coverage.ts).
+    build: { sourcemap: Boolean(process.env.COVERAGE) },
     // Phones only open the camera on HTTPS pages, so `pnpm dev:phone` serves with a self-signed
     // certificate that each phone accepts once.
     plugins: [versionFile(build), ...(mode === 'phone' ? [basicSsl()] : [])],
@@ -50,8 +52,10 @@ export default defineConfig(({ mode }) => {
       include: ['src/**/*.test.ts'],
       coverage: {
         provider: 'v8',
+        // Every source file, so files without tests count as uncovered instead of missing.
         include: ['src/**/*.ts'],
         exclude: ['**/*.test.ts'],
+        // lcov for Codecov, a table for the terminal.
         reporter: ['text', 'lcov'],
       },
     },

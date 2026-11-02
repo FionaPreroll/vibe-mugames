@@ -21,6 +21,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "pnpm build && playwright test",
+    "test:e2e:coverage": "COVERAGE=1 pnpm test:e2e",
     "check": "pnpm typecheck && pnpm lint && pnpm test",
     "android:sync": "pnpm build && cap sync android"
   },
@@ -39,6 +40,7 @@
     "@vitest/coverage-v8": "5.0.5",
     "fast-check": "^4.10.2",
     "happy-dom": "^21.0.4",
+    "monocart-coverage-reports": "^3.2.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"

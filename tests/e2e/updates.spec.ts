@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './coverage'
 
 /** The website tells of a newer build deployed beside it, and loads it on a tap. */
 

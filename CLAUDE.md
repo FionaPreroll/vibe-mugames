@@ -11,7 +11,7 @@ The README describes the Spielekiste, its layout and its conventions. These rule
 
 - A change that players see adds that change to `CHANGELOG.md`, under `## [Unreleased]`, in the section it belongs to (`### Added`, `### Changed`, `### Fixed` or `### Removed`), in the same branch. Write it for players, in English. Changes only developers notice need no entry.
 - A new version is made only when asked: see "Changelog and versions" in the README.
-- A change that players or developers notice updates the README in the same branch. The README starts with its badges (CI, Android) and keeps them.
+- A change that players or developers notice updates the README in the same branch. The README starts with its badges (CI, Coverage, Android) and keeps them.
 
 ## Games
 

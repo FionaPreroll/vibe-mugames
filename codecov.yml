@@ -1,0 +1,15 @@
+# Coverage is reported on every pull request but never fails it. Two reports come together,
+# each with its flag: `unit` (Vitest, ci.yml) and `e2e` (the Playwright browser tests in
+# Chromium, ci.yml). A flag that a commit lacks keeps the numbers of the last commit that had it.
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+flag_management:
+  default_rules:
+    carryforward: true
