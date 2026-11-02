@@ -385,6 +385,12 @@ textarea {
   border: 1px solid #a9c1e6;
 }
 
+.cards .stock .back {
+  width: 3.4rem;
+  height: 4.8rem;
+  border-radius: 0.45rem;
+}
+
 .cards .opponents {
   list-style: none;
   padding: 0;
@@ -442,12 +448,6 @@ textarea {
   gap: 0.35rem;
   padding: 0.5rem;
   background: none;
-}
-
-.cards .stock .back {
-  width: 3.4rem;
-  height: 4.8rem;
-  border-radius: 0.45rem;
 }
 
 .cards .stock .label {
