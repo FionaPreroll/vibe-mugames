@@ -433,12 +433,79 @@ textarea {
   height: auto;
 }
 
+/* The library's camera view: the picture, tapped to focus, with a ring where it was tapped. */
+.codes .viewfinder {
+  position: relative;
+  cursor: crosshair;
+}
+
 .codes .camera {
+  display: block;
   width: 100%;
-  max-height: 40vh;
+  height: 40vh;
   border-radius: 0.5rem;
   background: #000;
   object-fit: cover;
+}
+
+.focus-ring {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.focus-ring.pulse {
+  animation: focus 0.9s ease-out;
+}
+
+@keyframes focus {
+  0% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.camera-controls {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.camera-controls:empty {
+  display: none;
+}
+
+.camera-controls .slider {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  align-items: center;
+  margin: 0;
+}
+
+.camera-controls .slider input {
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+.scan-help {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.camera-buttons {
+  margin: 0.5rem 0;
 }
 
 .text-codes {

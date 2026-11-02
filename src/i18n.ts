@@ -100,7 +100,19 @@ const en = {
   tryAgain: 'Try again',
   timedOut: 'The other phone did not answer in time.',
   notACode: 'That is not a Spielekiste code.',
-  cameraOff: 'The camera did not start: use the text codes instead.',
+  cameraOff: 'The camera did not start: take a photo of the code, or use the text codes.',
+  scanHelp:
+    'Blurry? Tap the picture to focus. Hold the phone a little further away and zoom in, or turn the brightness down if the code glares.',
+  scanHelpBasic:
+    'Blurry? Tap the picture to focus, hold the phone a little further away, or take a photo instead.',
+  zoom: 'Zoom',
+  brightness: 'Brightness',
+  switchCamera: 'Switch camera',
+  takePhoto: 'Take a photo instead',
+  liveCamera: 'Back to the live camera',
+  readingPhoto: 'Reading the photo…',
+  photoNoCode:
+    'No code found in the photo. Try again from a little further away, with the code in the middle of the picture.',
   connecting: 'Connecting…',
   joined: '{name} joined.',
   rejoined: '{name} is back.',
@@ -255,7 +267,19 @@ const de: Texts = {
   tryAgain: 'Nochmal versuchen',
   timedOut: 'Das andere Handy hat nicht rechtzeitig geantwortet.',
   notACode: 'Das ist kein Code der Spielekiste.',
-  cameraOff: 'Die Kamera ist nicht angegangen: Nimm stattdessen die Textcodes.',
+  cameraOff: 'Die Kamera ist nicht angegangen: Mach ein Foto vom Code, oder nimm die Textcodes.',
+  scanHelp:
+    'Unscharf? Tippe ins Bild, um scharfzustellen. Halte das Handy etwas weiter weg und zoome heran, oder dreh die Helligkeit herunter, wenn der Code blendet.',
+  scanHelpBasic:
+    'Unscharf? Tippe ins Bild, um scharfzustellen, halte das Handy etwas weiter weg, oder mach stattdessen ein Foto.',
+  zoom: 'Zoom',
+  brightness: 'Helligkeit',
+  switchCamera: 'Kamera wechseln',
+  takePhoto: 'Stattdessen ein Foto machen',
+  liveCamera: 'Zurück zur Live-Kamera',
+  readingPhoto: 'Lese das Foto…',
+  photoNoCode:
+    'Im Foto wurde kein Code gefunden. Versuch es etwas weiter weg, mit dem Code in der Bildmitte.',
   connecting: 'Verbinde…',
   joined: '{name} spielt mit.',
   rejoined: '{name} ist zurück.',

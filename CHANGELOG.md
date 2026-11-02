@@ -21,6 +21,8 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - Updates in the Android app, if you agree at its first start or switch them on under _Updates_ on the start screen: at every start, the app looks for a newer build and offers to install it, and _Look for a new version now_ looks at once. The dialog says how large the download is, and warns on mobile data or another metered connection. The download can be paused and goes on where it stopped, also after the app was closed. Android asks before installing; the first time, it wants you to allow the app to install apps, and installing goes on by itself when you come back. If Android's installer does not open, or the update was not installed, the dialog says so and offers to try again.
 - The website tells you on the start screen when a newer version is out, and loads it with a tap.
 
+- Help for cameras that will not focus on the other phone's screen, as in Spark Hunt: tap the picture to focus on that spot; zoom and brightness sliders where the camera has them; **Switch camera** for phones with more than one; and **Take a photo instead**, with the phone's own camera app. The camera last used, its zoom and brightness are remembered.
+
 ### Changed
 
 - Every build of the Android app is now signed with the same key, so a new one installs over the one before and keeps the app's settings. An app installed before this change has to be uninstalled once.

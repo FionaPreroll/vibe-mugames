@@ -120,3 +120,50 @@ test('copying a code says whether it worked', async ({ browser }) => {
   await other.getByRole('button', { name: 'Copy' }).click()
   await expect(bo.locator('.toast')).toHaveText(/^(Copied\.|Copying did not work.*)$/)
 })
+
+test('the camera focuses where the picture is tapped', async ({ browser }) => {
+  const bo = await phone(browser, 'Bo')
+  await bo.getByRole('button', { name: 'Join a table' }).click()
+  const viewfinder = bo.locator('.viewfinder')
+  await expect(viewfinder).toBeVisible()
+  await expect
+    .poll(() => bo.locator('video').evaluate((v: HTMLVideoElement) => v.videoWidth))
+    .toBeGreaterThan(0)
+  await expect(bo.locator('.scan-help')).toContainText('Tap the picture to focus')
+  await viewfinder.click({ position: { x: 40, y: 40 } })
+  await expect(bo.locator('.focus-ring')).toHaveClass(/pulse/)
+})
+
+test('phones pair with photos of the codes, for cameras that will not focus', async ({
+  browser,
+}) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await ada.getByRole('button', { name: 'Add player' }).click()
+  const modal = ada.locator('.modal')
+  await expect(modal.locator('.qr-box svg')).toBeVisible({ timeout: 10_000 })
+  const offerPhoto = await modal.locator('.qr-box').screenshot()
+
+  await bo.getByRole('button', { name: 'Join a table' }).click()
+  const join = bo.locator('.join')
+  await expect(join.getByRole('button', { name: 'Take a photo instead' })).toBeVisible()
+  // A photo with nothing on it: the player is told, and can go on.
+  await join.locator('input.photo').setInputFiles({
+    name: 'blank.png',
+    mimeType: 'image/png',
+    buffer: await bo.screenshot({ clip: { x: 0, y: 0, width: 50, height: 50 } }),
+  })
+  await expect(join.locator('.status')).toHaveText(/No code found/)
+  await join
+    .locator('input.photo')
+    .setInputFiles({ name: 'offer.png', mimeType: 'image/png', buffer: offerPhoto })
+  await expect(join.locator('.qr-box svg')).toBeVisible()
+
+  await modal.locator('input.photo').setInputFiles({
+    name: 'answer.png',
+    mimeType: 'image/png',
+    buffer: await join.locator('.qr-box').screenshot(),
+  })
+  await expect(ada.locator('.toast')).toHaveText('Bo joined.')
+})

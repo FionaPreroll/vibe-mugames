@@ -10,7 +10,7 @@ Board games for phones side by side, in the browser and as an Android app. The p
 Play in the browser at **[fionapreroll.github.io/vibe-mugames](https://fionapreroll.github.io/vibe-mugames/)**, or in the Android app (below). One phone opens a table; everyone else sits down at it:
 
 1. **Open a table** on the first phone, then **Add player**: it shows a QR code.
-2. On the new player's phone, **Join a table** and scan that code. The phone then shows a code of its own, which the first phone scans. Without a camera, both codes can be copied and pasted as text. Sending a code over may take its time: the joining phone waits up to 10 minutes for the host to take its code. If a connection fails, both phones say so and offer **Try again**.
+2. On the new player's phone, **Join a table** and scan that code. The phone then shows a code of its own, which the first phone scans. Without a camera, both codes can be copied and pasted as text. If the camera will not focus on the screen, tap the picture to focus, zoom out and hold the phone further away, switch cameras, or take a photo of the code instead. Sending a code over may take its time: the joining phone waits up to 10 minutes for the host to take its code. If a connection fails, both phones say so and offer **Try again**.
 3. The host chooses a game. Up to eight phones sit at a table: two play the board games, up to six Miau-Miau, and the others watch and take turns. After a game, the winner stays and the others who played go to the back of the queue; when nobody waits, the next player in turn starts.
 
 The games:
@@ -56,7 +56,7 @@ src/
   ui/         the screens: home.ts, table.ts, boards.ts, cards.ts, codes.ts (QR codes and text codes),
               updates.ts and webUpdates.ts (the update dialogs and notes)
   i18n.ts     every text players see, in English and German
-  storage.ts  name, language, the update switch and the player's token, in local storage
+  storage.ts  name, language, the update switch, the camera last used and the player's token, in local storage
   native.ts   the Android app's back button
   updates.ts  the app's updates from its release; webUpdates.ts: the website's
 android/      the Android app's project (Capacitor), with AppUpdaterPlugin and UpdateRules

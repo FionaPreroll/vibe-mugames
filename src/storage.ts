@@ -1,11 +1,13 @@
 import { cleanName } from '@fionapreroll/p2p'
+import { type CameraChoice, parseCameraChoice } from '@fionapreroll/p2p/qr'
 import { isToken, randomToken } from '@fionapreroll/p2p/room'
 import type { Language } from './i18n'
 
 /**
  * What this phone remembers, in the browser's local storage: the player's name, the language,
- * whether the app looks for updates, and the token with which a player gets their place back.
- * Everything read is checked.
+ * whether the app looks for updates, the camera last used for scanning with its zoom and
+ * brightness, and the token with which a player gets their place back. Everything read is
+ * checked.
  */
 
 const PREFIX = 'spielekiste.'
@@ -63,6 +65,15 @@ export function updateSettings(change: Partial<Settings>): Settings {
   const next = parseSettings({ ...settings(), ...change })
   write('settings', next)
   return next
+}
+
+/** The camera that last scanned, and its zoom and brightness, checked by the library. */
+export function rememberedCamera(): CameraChoice {
+  return parseCameraChoice(read('camera'))
+}
+
+export function rememberCamera(choice: CameraChoice): void {
+  write('camera', parseCameraChoice(choice))
 }
 
 /** This browser's own token, made once. */
