@@ -172,3 +172,58 @@ test('three phones play Miau-Miau, each seeing only its own cards', async ({ bro
     await expect(cy.locator('.opponent', { hasText: 'Bo' }).locator('.count')).toHaveText('6')
   }
 })
+
+test('two phones play Sea Battle to the end, each seeing only its own fleet', async ({
+  browser,
+}) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await ada.getByRole('button', { name: 'Sea Battle' }).click()
+  const square = (page: Page, grid: string, cell: number) =>
+    page.locator(`.sea.${grid} [data-cell="${cell}"]`)
+  const ships = async (page: Page, grid: string) =>
+    (await page
+      .locator(`.sea.${grid} .ship`)
+      .evaluateAll((all) => all.map((b) => Number((b as HTMLElement).dataset.cell)))) as number[]
+
+  // Both place at once: Bo shuffles first, then both are ready.
+  for (const page of [ada, bo]) {
+    await expect(page.locator('.status.turn')).toHaveText('Place your fleet')
+    await expect(page.locator('.sea.placing .ship')).toHaveCount(17)
+  }
+  await bo.getByRole('button', { name: 'Shuffle' }).click()
+  const boFleet = await ships(bo, 'placing')
+  await bo.getByRole('button', { name: 'Ready' }).click()
+  await expect(bo.locator('.status.turn')).toHaveText('Waiting for Ada to place their fleet.')
+  const adaFleet = await ships(ada, 'placing')
+  await ada.getByRole('button', { name: 'Ready' }).click()
+  await expect(ada.locator('.status.turn')).toHaveText('Your turn')
+  await expect(bo.locator('.status.turn')).toHaveText('Ada’s turn')
+  expect(await ships(bo, 'own')).toEqual(boFleet)
+  // Neither phone shows the other's ships.
+  await expect(ada.locator('.sea.target .ship')).toHaveCount(0)
+  await expect(bo.locator('.sea.target .ship')).toHaveCount(0)
+
+  // Ada misses, then Bo misses, then Ada sinks Bo's whole fleet, a hit at a time.
+  const water = (fleet: number[]) => [...Array(100).keys()].find((c) => !fleet.includes(c)) ?? 0
+  await square(ada, 'target', water(boFleet)).click()
+  await expect(bo.locator('.status.turn')).toHaveText('Your turn')
+  await expect(bo.locator('.hint').first()).toHaveText('Ada hit water.')
+  await expect(square(bo, 'own', water(boFleet))).toHaveClass(/miss/)
+  await square(bo, 'target', water(adaFleet)).click()
+  await expect(ada.locator('.status.turn')).toHaveText('Your turn')
+  for (const cell of boFleet) {
+    if (await ada.locator('.status.turn').getByText('You win!').isVisible()) break
+    await expect(square(ada, 'target', cell)).toBeEnabled()
+    await square(ada, 'target', cell).click()
+    await expect(square(bo, 'own', cell)).toHaveClass(/hit/)
+  }
+  await expect(ada.locator('.status.turn')).toHaveText('You win!')
+  await expect(bo.locator('.status.turn')).toHaveText('Ada wins.')
+  await expect(ada.locator('.sea.target .sunk')).toHaveCount(17)
+  // Once it is over, Bo sees where Ada's ships were.
+  await expect(bo.locator('.sea.target .ship')).toHaveCount(17)
+  expect(await ships(bo, 'target')).toEqual(adaFleet)
+})

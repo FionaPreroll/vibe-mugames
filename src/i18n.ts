@@ -307,7 +307,7 @@ const de: Texts = {
   handOverNotice:
     'Schiffe versenken auf einem Gerät: Gib das Gerät weiter, wenn es danach fragt, und schau nur hin, wenn du dran bist.',
   hiddenFleetNotice:
-    'Jede Flotte bleibt verborgen, bis ihr Spieler auf „Meine Flotte zeigen“ tippt: Schaut dann weg.',
+    'Jede Flotte bleibt verborgen, bis ihr Spieler auf „Meine Flotte zeigen“ tippt: Die anderen schauen dann weg.',
   clubs: 'Kreuz',
   spades: 'Pik',
   hearts: 'Herz',

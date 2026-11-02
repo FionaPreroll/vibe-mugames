@@ -163,3 +163,40 @@ test('a split screen is for two to four: with five, players take turns on one sc
   await expect(page.locator('.opponent')).toHaveCount(4)
   await expect(page.locator('.pane')).toHaveCount(0)
 })
+
+test('two take turns at Sea Battle, handing the device over between them', async ({ browser }) => {
+  const page = await phone(browser, 'Ada')
+  await startLocal(page, ['Ada', 'Bo'], false)
+  await page.getByRole('button', { name: 'Sea Battle' }).click()
+  const status = page.locator('.status.turn')
+  for (const [name, next] of [
+    ['Ada', 'Bo'],
+    ['Bo', 'Ada'],
+  ]) {
+    await expect(status).toHaveText(`Pass the device to ${name}. Only ${name} looks now.`)
+    await expect(page.locator('.sea')).toHaveCount(0)
+    await page.getByRole('button', { name: `I am ${name}: show my sea` }).click()
+    await expect(status).toHaveText(`${name}, place your fleet`)
+    // Pick a ship and turn it, then ready.
+    await page.locator('.sea.placing .ship').first().click()
+    await expect(page.locator('.sea.placing .picked').first()).toBeVisible()
+    await page.getByRole('button', { name: 'Turn the ship' }).click()
+    await expect(page.locator('.sea.placing .ship')).toHaveCount(17)
+    await page.getByRole('button', { name: 'Ready' }).click()
+    await page.getByRole('button', { name: `Done: hand over to ${next}` }).click()
+  }
+  await page.getByRole('button', { name: 'I am Ada: show my sea' }).click()
+  await expect(status).toHaveText('Ada, your turn')
+  await expect(page.locator('.sea.own .ship')).toHaveCount(17)
+  await expect(page.locator('.sea.target .ship')).toHaveCount(0)
+  // Shooting until a miss, then the device goes to Bo.
+  for (let cell = 0; cell < 100; cell++) {
+    if (await page.getByRole('button', { name: 'Done: hand over to Bo' }).isVisible()) break
+    await page.locator(`.sea.target [data-cell="${cell}"]`).click()
+  }
+  await page.getByRole('button', { name: 'Done: hand over to Bo' }).click()
+  await expect(page.locator('.sea')).toHaveCount(0)
+  await page.getByRole('button', { name: 'I am Bo: show my sea' }).click()
+  await expect(status).toHaveText('Bo, your turn')
+  await expect(page.locator('.hint').first()).toHaveText('Ada hit water.')
+})
