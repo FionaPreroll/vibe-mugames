@@ -1,6 +1,7 @@
 import { linkPair } from '@fionapreroll/p2p/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { encode } from '../core/miaumiau'
+import * as sea from '../core/seeschlacht'
 import { parseEvent, parseState } from './protocol'
 import { GuestSeat, HostSeat } from './session'
 
@@ -111,6 +112,34 @@ describe('a table over the network', () => {
     await later(200)
     expect(bo.state()?.cards?.counts[0]).toBe(6)
     expect(bo.state()?.cards?.counts[1]).toBe(5)
+    host.close()
+  })
+
+  it('plays Sea Battle between two phones, each seeing only its own fleet', async () => {
+    const host = new HostSeat('Ada')
+    const bo = await join(host, 'Bo')
+    expect(host.choose('seeschlacht')).toBe(true)
+    await later(200)
+    const rows = sea.FLEET.map((size, i) => ({ cell: i * 20, down: false, size }))
+    const columns = sea.FLEET.map((size, i) => ({ cell: i * 2, down: true, size }))
+    // Both place at once, with the same move number.
+    bo.move('seeschlacht', 0, sea.encode({ kind: 'place', fleet: columns }))
+    host.move('seeschlacht', 0, sea.encode({ kind: 'place', fleet: rows }))
+    await later(200)
+    expect(bo.state()?.sea?.placed).toEqual([true, true])
+    expect(bo.state()?.sea?.fleets).toEqual([null, columns])
+    expect(host.state().sea?.fleets).toEqual([rows, null])
+    // Bo's phone hears nothing of where Ada's ships are.
+    expect(JSON.stringify(bo.state())).not.toContain('"down":false')
+    host.move('seeschlacht', 2, [0])
+    await later(200)
+    expect(bo.state()?.sea?.seas[1]).toEqual({ shots: [0], hits: [0], sunk: [] })
+    expect(bo.state()?.last).toEqual([0])
+    host.move('seeschlacht', 3, [1])
+    await later(200)
+    bo.move('seeschlacht', 4, [0])
+    await later(200)
+    expect(host.state().sea?.seas[0]).toEqual({ shots: [0], hits: [0], sunk: [] })
     host.close()
   })
 
@@ -227,6 +256,61 @@ describe('the protocol', () => {
     host.choose('tictactoe')
     const board = JSON.parse(JSON.stringify(host.state()))
     expect(parseState({ ...board, cards: state.cards })).toBeUndefined()
+    host.close()
+  })
+
+  it('reads moves of Sea Battle only as shots and whole fleets', () => {
+    const shot = { type: 'move', game: 'seeschlacht', moveNo: 4, move: [99] }
+    expect(parseEvent(shot)).toEqual(shot)
+    const fleet = { ...shot, move: [100, 102, 104, 106, 108] }
+    expect(parseEvent(fleet)).toEqual(fleet)
+    for (const move of [[], [100], [-1], [0, 1], [0, 20, 40, 60, 200], [0, 20, 40, 60, 80, 90]]) {
+      expect(parseEvent({ ...shot, move })).toBeUndefined()
+    }
+  })
+
+  it('reads Sea Battle only when its fleets and shots fit', () => {
+    const host = new HostSeat('Ada')
+    host.table.join(1, 'Bo')
+    host.choose('seeschlacht')
+    const rows = sea.FLEET.map((size, i) => ({ cell: i * 20, down: false, size }))
+    host.move('seeschlacht', 0, sea.encode({ kind: 'place', fleet: rows }))
+    host.table.move(1, 'seeschlacht', 1, sea.encode({ kind: 'place', fleet: rows }))
+    host.move('seeschlacht', 2, [0])
+    host.move('seeschlacht', 3, [1])
+    host.move('seeschlacht', 4, [2])
+    host.move('seeschlacht', 5, [3])
+    host.move('seeschlacht', 6, [4])
+    const state = JSON.parse(JSON.stringify(host.state()))
+    expect(state.sea.seas[1].sunk).toHaveLength(1)
+    expect(parseState(state)).toEqual(host.state())
+    const at = (change: object) => ({ ...state, sea: { ...state.sea, ...change } })
+    const side = (change: object) =>
+      at({ seas: [state.sea.seas[0], { ...state.sea.seas[1], ...change }] })
+    const ship = (change: object) => [{ ...rows[0], ...change }, ...rows.slice(1)]
+    expect(parseState(at({ fleets: [rows] }))).toBeUndefined()
+    expect(parseState(at({ fleets: [ship({ cell: 10 }), null] }))).toBeUndefined()
+    expect(parseState(at({ fleets: [ship({ cell: 9 }), null] }))).toBeUndefined()
+    expect(parseState(at({ fleets: [ship({ size: 6 }), null] }))).toBeUndefined()
+    expect(parseState(at({ fleets: [ship({ down: 1 }), null] }))).toBeUndefined()
+    expect(parseState(at({ fleets: [rows.slice(1), null] }))).toBeUndefined()
+    expect(parseState(at({ placed: [true] }))).toBeUndefined()
+    expect(parseState(at({ placed: [true, 'yes'] }))).toBeUndefined()
+    expect(parseState(at({ seas: [state.sea.seas[0]] }))).toBeUndefined()
+    expect(parseState(at({ turn: 2 }))).toBeUndefined()
+    expect(parseState(at({ winner: 2 }))).toBeUndefined()
+    expect(parseState(at({ winner: 1 }))?.sea?.winner).toBe(1)
+    expect(parseState(side({ shots: [0, 0] }))).toBeUndefined()
+    expect(parseState(side({ shots: [100] }))).toBeUndefined()
+    expect(parseState(side({ hits: [5] }))).toBeUndefined()
+    expect(parseState(side({ sunk: [{ cell: 0, down: false, size: 7 }] }))).toBeUndefined()
+    expect(parseState(side({ sunk: 'all' }))).toBeUndefined()
+    expect(parseState({ ...state, sea: null })).toBeUndefined()
+    expect(parseState({ ...state, sea: 'open' })).toBeUndefined()
+    host.lobby()
+    host.choose('tictactoe')
+    const board = JSON.parse(JSON.stringify(host.state()))
+    expect(parseState({ ...board, sea: state.sea })).toBeUndefined()
     host.close()
   })
 

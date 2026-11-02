@@ -1,5 +1,5 @@
 import { GAME_IDS, type GameId, type Move } from '../core/board'
-import { hasHiddenCards, seatRange } from '../core/games'
+import { handsOver, hasHiddenCards, seatRange } from '../core/games'
 import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
 import { t } from '../i18n'
@@ -7,6 +7,7 @@ import type { TableHost } from '../net/session'
 import { boardView, handText, hint, type Picker, seatName, symbol } from './boards'
 import { cardsHint, cardsView } from './cards'
 import { h } from './dom'
+import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
 
 /**
  * What every table shows, at phones side by side and on one device alike: the players with
@@ -77,6 +78,8 @@ export interface GameViewOptions {
    * board stays put for all of them.
    */
   readonly shared?: boolean
+  /** The viewer's own fleet in Sea Battle is hidden until they ask, as others see this screen. */
+  readonly hideFleet?: boolean
 }
 
 /**
@@ -88,6 +91,30 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
   const game = state.game
   if (game === null) return []
   const { viewer, picker, shared = false } = options
+  if (state.sea) {
+    const sea = state.sea
+    const toMove = seaToMove(state, sea, viewer)
+    const status = h(
+      'p',
+      {
+        class: `status turn${toMove ? ' mine' : ''}`,
+        role: 'status',
+      } as Partial<HTMLParagraphElement>,
+      seaStatus(state, sea, viewer, shared),
+    )
+    const lines = [shotText(state, sea, viewer), seaHint(state, sea, viewer)].filter(Boolean)
+    return [
+      status,
+      ...lines.map((line) => h('p', { class: 'hint muted' }, line)),
+      ...seaView(state, sea, {
+        viewer,
+        picker,
+        move: toMove ? (move) => options.move(game, state.moveNo, move) : null,
+        shared,
+        hideFleet: options.hideFleet ?? false,
+      }),
+    ]
+  }
   const name = (seatNo: number) => seatName(state, seatNo)
   const mine = state.seats.indexOf(viewer)
   const turn = state.position?.turn ?? state.cards?.turn ?? 0
@@ -157,9 +184,18 @@ export function nextButtons(host: TableHost): HTMLElement[] {
   ]
 }
 
-/** The notice for a game whose cards everyone sees on one device; null for other games. */
-export function openCardsNotice(game: GameId | null): HTMLElement | null {
-  return game !== null && hasHiddenCards(game)
-    ? h('p', { class: 'notice', role: 'note' } as Partial<HTMLParagraphElement>, t('openCards'))
+/**
+ * The notice for a game that hides something, played on one device: that its cards are open, or
+ * how Sea Battle keeps each fleet hidden there (`split` on a split screen). Null for other games.
+ */
+export function openCardsNotice(game: GameId | null, split = false): HTMLElement | null {
+  if (game === null) return null
+  const text = hasHiddenCards(game)
+    ? t('openCards')
+    : handsOver(game)
+      ? t(split ? 'hiddenFleetNotice' : 'handOverNotice')
+      : ''
+  return text
+    ? h('p', { class: 'notice', role: 'note' } as Partial<HTMLParagraphElement>, text)
     : null
 }

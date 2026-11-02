@@ -62,8 +62,11 @@ export interface BoardGame {
 export const BOARD_GAME_IDS = ['tictactoe', 'fourinarow', 'muehle', 'dame'] as const
 export type BoardGameId = (typeof BOARD_GAME_IDS)[number]
 
-/** Every game, in the order the lobby shows them: the board games, then the card game. */
-export const GAME_IDS = [...BOARD_GAME_IDS, 'miaumiau'] as const
+/**
+ * Every game, in the order the lobby shows them: the board games, the card game, then the games
+ * of hidden fleets.
+ */
+export const GAME_IDS = [...BOARD_GAME_IDS, 'miaumiau', 'seeschlacht'] as const
 export type GameId = (typeof GAME_IDS)[number]
 
 export function isGameId(value: unknown): value is GameId {

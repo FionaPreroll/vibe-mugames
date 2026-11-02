@@ -1,6 +1,7 @@
 import { type GameId, isBoardGame, isLegal, type Move, type Outcome, type Position } from './board'
 import { GAMES, seatRange } from './games'
 import * as miau from './miaumiau'
+import * as sea from './seeschlacht'
 
 /**
  * The table everyone sits at: who is there, which game is on, the board, whose turn it is, and
@@ -11,7 +12,8 @@ import * as miau from './miaumiau'
  * winner stays and the others who played go to the back, after a draw all of them do. When
  * nobody waits, the next player in turn starts the next game.
  *
- * In Miau-Miau, the host alone knows every hand: `state(id)` shows each player only their own.
+ * In Miau-Miau, the host alone knows every hand, and in Sea Battle every fleet: `state(id)` shows
+ * each player only their own.
  */
 
 export interface Player {
@@ -27,10 +29,12 @@ export interface TableState {
   readonly game: GameId | null
   /** The ids of the players at the board, in seat order: seat 0 starts. */
   readonly seats: readonly number[]
-  /** Where a board game stands, with whose turn it is; null in the lobby and in Miau-Miau. */
+  /** Where a board game stands, with whose turn it is; null in the lobby and in other games. */
   readonly position: Position | null
   /** Miau-Miau as the player this state is for sees it; null in every other game. */
   readonly cards: miau.MiauView | null
+  /** Sea Battle as the player this state is for sees it; null in every other game. */
+  readonly sea: sea.SeaView | null
   /** Moves made so far: a move names the number it is meant to be, so none counts twice. */
   readonly moveNo: number
   /** The move made last, for every phone to show; null before the first. */
@@ -40,11 +44,17 @@ export interface TableState {
   readonly scores: Readonly<Record<number, number>>
 }
 
-/** The id of the player whose turn it is, or null in the lobby and once the game is over. */
+/**
+ * The id of the player whose turn it is, or null in the lobby and once the game is over. While
+ * the fleets of Sea Battle are placed, all at once, it is the first player who has not.
+ */
 export function playerToMove(state: TableState): number | null {
   if (state.game === null || state.outcome !== null) return null
-  const turn = state.position?.turn ?? state.cards?.turn
-  return turn === undefined ? null : (state.seats[turn] ?? null)
+  const turn =
+    state.position?.turn ??
+    state.cards?.turn ??
+    (state.sea && (sea.nextToPlace(state.sea) ?? state.sea.turn))
+  return turn === undefined || turn === null ? null : (state.seats[turn] ?? null)
 }
 
 export class Table {
@@ -58,6 +68,7 @@ export class Table {
   private seats: number[] = []
   private position: Position | null = null
   private cards: miau.MiauState | null = null
+  private sea: sea.SeaState | null = null
   private moveNo = 0
   private last: Move | null = null
   private outcome: Outcome | null = null
@@ -95,27 +106,21 @@ export class Table {
    * as the move it is meant to be, and if the rules allow it. Returns whether it was taken.
    */
   move(id: number, game: GameId, moveNo: number, move: Move): boolean {
-    if (this.game !== game || this.outcome !== null || moveNo !== this.moveNo) return false
+    if (this.game !== game || this.outcome !== null) return false
     const seat = this.seats.indexOf(id)
-    if (seat < 0 || seat !== this.turn()) return false
-    if (isBoardGame(game)) {
-      const rules = GAMES[game]
-      const position = this.position
-      if (position === null || !isLegal(rules, position, move)) return false
-      this.position = rules.play(position, move)
-      this.outcome = rules.outcome(this.position)
-    } else {
-      const cards = this.cards
-      const decoded = miau.decode(move)
-      if (cards === null || !decoded || !miau.legal(cards, seat, decoded)) return false
-      this.cards = miau.play(cards, seat, decoded, this.random)
-      const end = miau.outcome(this.cards)
-      this.outcome = end === null || end === 'draw' ? end : { winner: end, line: [] }
-    }
+    if (seat < 0) return false
+    const taken =
+      game === 'seeschlacht'
+        ? this.seaMove(seat, moveNo, move)
+        : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
+    if (!taken) return false
     this.moveNo++
-    this.last = [...move]
-    if (this.outcome !== null && this.outcome !== 'draw') {
-      const winner = this.seats[this.outcome.winner]
+    // A fleet placed stays hidden: only shots show as the last move.
+    if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
+    // The move may have ended the game.
+    const outcome = this.outcome as Outcome | null
+    if (outcome !== null && outcome !== 'draw') {
+      const winner = this.seats[outcome.winner]
       if (winner !== undefined) this.scores.set(winner, (this.scores.get(winner) ?? 0) + 1)
     }
     return true
@@ -147,11 +152,15 @@ export class Table {
     this.seats = []
     this.position = null
     this.cards = null
+    this.sea = null
     this.last = null
     this.outcome = null
   }
 
-  /** The table as player `viewer` may see it: their own hand in Miau-Miau, nobody else's. */
+  /**
+   * The table as player `viewer` may see it: their own hand in Miau-Miau, and their own fleet in
+   * Sea Battle, nobody else's.
+   */
   state(viewer = -1): TableState {
     return {
       players: this.players,
@@ -159,6 +168,7 @@ export class Table {
       seats: this.seats,
       position: this.position,
       cards: this.cards && miau.view(this.cards, this.seats.indexOf(viewer)),
+      sea: this.sea && sea.view(this.sea, this.seats.indexOf(viewer)),
       moveNo: this.moveNo,
       last: this.last,
       outcome: this.outcome,
@@ -168,18 +178,49 @@ export class Table {
 
   /** The seat whose turn it is. */
   private turn(): number {
-    return this.position?.turn ?? this.cards?.turn ?? -1
+    return this.position?.turn ?? this.cards?.turn ?? this.sea?.turn ?? -1
+  }
+
+  /** A move in a game of turns, by the seat whose turn it is: taken if the rules allow it. */
+  private turnMove(game: GameId, seat: number, move: Move): boolean {
+    if (isBoardGame(game)) {
+      const rules = GAMES[game]
+      const position = this.position
+      if (position === null || !isLegal(rules, position, move)) return false
+      this.position = rules.play(position, move)
+      this.outcome = rules.outcome(this.position)
+      return true
+    }
+    const cards = this.cards
+    const decoded = miau.decode(move)
+    if (cards === null || !decoded || !miau.legal(cards, seat, decoded)) return false
+    this.cards = miau.play(cards, seat, decoded, this.random)
+    const end = miau.outcome(this.cards)
+    this.outcome = end === null || end === 'draw' ? end : { winner: end, line: [] }
+    return true
+  }
+
+  /**
+   * A move in Sea Battle. Both players place their fleets at the same time, so a fleet may come
+   * with an older move number than the table's: each seat places once, so none counts twice.
+   */
+  private seaMove(seat: number, moveNo: number, move: Move): boolean {
+    const game = this.sea
+    const decoded = sea.decode(move)
+    if (game === null || !decoded || !sea.legal(game, seat, decoded)) return false
+    if (decoded.kind === 'shoot' && moveNo !== this.moveNo) return false
+    this.sea = sea.play(game, seat, decoded)
+    const winner = sea.outcome(this.sea)
+    this.outcome = winner === null ? null : { winner, line: [] }
+    return true
   }
 
   private begin(): void {
     if (this.game === null) return
-    if (isBoardGame(this.game)) {
-      this.position = GAMES[this.game].start()
-      this.cards = null
-    } else {
-      this.position = null
-      this.cards = miau.deal(this.seats.length, this.random)
-    }
+    const game = this.game
+    this.position = isBoardGame(game) ? GAMES[game].start() : null
+    this.cards = game === 'miaumiau' ? miau.deal(this.seats.length, this.random) : null
+    this.sea = game === 'seeschlacht' ? sea.start() : null
     this.moveNo = 0
     this.last = null
     this.outcome = null

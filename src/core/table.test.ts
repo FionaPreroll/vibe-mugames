@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { decode, encode, moves } from './miaumiau'
+import * as sea from './seeschlacht'
 import { playerToMove, Table } from './table'
 
 /** A table with players 0 (the host), 1 and 2 as given. */
@@ -246,5 +247,68 @@ describe('whose turn it is', () => {
     t.choose('miaumiau')
     const turn = t.state().cards?.turn ?? -1
     expect(playerToMove(t.state())).toBe(t.state().seats[turn])
+  })
+})
+
+describe('Sea Battle at the table', () => {
+  /** Seat 0's fleet in rows 0, 2, 4, 6 and 8; seat 1's standing down in columns 0, 2, 4, 6 and 8. */
+  const ROWS = sea.FLEET.map((size, i) => ({ cell: i * 20, down: false, size }))
+  const COLUMNS = sea.FLEET.map((size, i) => ({ cell: i * 2, down: true, size }))
+  const place = (fleet: sea.Fleet) => sea.encode({ kind: 'place', fleet })
+
+  it('takes both fleets at once, keeps each hidden, and then the shots in turn', () => {
+    const t = table('Ada', 'Bo', 'Cy')
+    expect(t.choose('seeschlacht')).toBe(true)
+    expect(t.state().seats).toEqual([0, 1])
+    expect(playerToMove(t.state())).toBe(0)
+    // Nobody shoots before both fleets are on the sea; a fleet must be whole.
+    expect(t.move(0, 'seeschlacht', 0, [0])).toBe(false)
+    expect(t.move(0, 'seeschlacht', 0, place(ROWS).slice(1))).toBe(false)
+    expect(t.move(2, 'seeschlacht', 0, place(ROWS))).toBe(false)
+    // Both place at once: Bo's fleet still counts though Ada's came first.
+    expect(t.move(0, 'seeschlacht', 0, place(ROWS))).toBe(true)
+    expect(playerToMove(t.state())).toBe(1)
+    expect(t.move(1, 'seeschlacht', 0, place(COLUMNS))).toBe(true)
+    expect(t.move(1, 'seeschlacht', 0, place(COLUMNS))).toBe(false)
+    expect(t.state().moveNo).toBe(2)
+    // Placing shows nothing as the last move: it would give the fleet away.
+    expect(t.state().last).toBeNull()
+    expect(t.state(0).sea?.fleets).toEqual([ROWS, null])
+    expect(t.state(1).sea?.fleets).toEqual([null, COLUMNS])
+    expect(t.state(2).sea?.fleets).toEqual([null, null])
+    expect(t.state().position).toBeNull()
+    expect(t.state().cards).toBeNull()
+
+    expect(playerToMove(t.state())).toBe(0)
+    // A shot meant for an older move does not count; a hit shoots again.
+    expect(t.move(0, 'seeschlacht', 1, [0])).toBe(false)
+    expect(t.move(1, 'seeschlacht', 2, [0])).toBe(false)
+    expect(t.move(0, 'seeschlacht', 2, [0])).toBe(true)
+    expect(t.state().last).toEqual([0])
+    expect(playerToMove(t.state())).toBe(0)
+    expect(t.move(0, 'seeschlacht', 3, [1])).toBe(true)
+    expect(playerToMove(t.state())).toBe(1)
+  })
+
+  it('counts the win of whoever sinks the whole fleet, and shows every fleet then', () => {
+    const t = table('Ada', 'Bo')
+    t.choose('seeschlacht')
+    t.move(0, 'seeschlacht', 0, place(ROWS))
+    t.move(1, 'seeschlacht', 1, place(COLUMNS))
+    for (const cell of ROWS.flatMap((ship) => sea.shipCells(ship) ?? [])) {
+      const s = t.state()
+      if (playerToMove(s) === 0) expect(t.move(0, 'seeschlacht', s.moveNo, [99])).toBe(true)
+      expect(t.move(1, 'seeschlacht', t.state().moveNo, [cell])).toBe(true)
+    }
+    expect(t.state().outcome).toEqual({ winner: 1, line: [] })
+    expect(t.state().scores).toEqual({ 1: 1 })
+    expect(t.state(-1).sea?.fleets).toEqual([ROWS, COLUMNS])
+    expect(playerToMove(t.state())).toBeNull()
+    // The winner starts the next game, with new fleets to place.
+    expect(t.rematch()).toBe(true)
+    expect(t.state().seats).toEqual([1, 0])
+    expect(t.state().sea?.placed).toEqual([false, false])
+    t.lobby()
+    expect(t.state().sea).toBeNull()
   })
 })

@@ -14,6 +14,7 @@ import {
 } from '../core/board'
 import { GAMES, seatRange } from '../core/games'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
+import * as sea from '../core/seeschlacht'
 import type { Player, TableState } from '../core/table'
 
 /**
@@ -22,7 +23,7 @@ import type { Player, TableState } from '../core/table'
  * which arrive once each. Raise PROTOCOL whenever any of it changes, so phones of different
  * versions refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 3
+export const PROTOCOL = 4
 
 /** Players send no continuous input: board games need none. */
 export type Input = null
@@ -52,9 +53,16 @@ export const parseEvent: Parse<Event> = (value) => {
 
 /**
  * A board game's move, a path of one or more cells of its board, no longer than its longest
- * move; or a move of Miau-Miau, in numbers as `encode` makes them.
+ * move; or a move of Miau-Miau or Sea Battle, in numbers as their `encode` makes them.
  */
 function parseMove(value: unknown, game: GameId): Move | undefined {
+  if (game === 'seeschlacht') {
+    const numbers = list(value, sea.FLEET.length, (n) =>
+      isWhole(n, 0, 2 * sea.SEA_CELLS - 1) ? n : undefined,
+    )
+    const move = numbers && sea.decode(numbers)
+    return move ? sea.encode(move) : undefined
+  }
   if (!isBoardGame(game)) {
     const numbers = list(value, 2, (n) => (isWhole(n, 0, DECK + 1) ? n : undefined))
     const move = numbers && decode(numbers)
@@ -91,6 +99,9 @@ export const parseState: Parse<TableState> = (value) => {
         ? null
         : undefined
   if (cards === undefined) return undefined
+  const seaView =
+    game === 'seeschlacht' ? parseSea(value.sea) : value.sea === null ? null : undefined
+  if (seaView === undefined) return undefined
   if (!isWhole(value.moveNo, 0, MAX_MOVES)) return undefined
   const last = value.last === null || !game ? null : parseMove(value.last, game)
   if (last === undefined) return undefined
@@ -101,7 +112,67 @@ export const parseState: Parse<TableState> = (value) => {
   for (const [id, score] of Object.entries(value.scores).slice(0, MAX_PLAYERS * 4)) {
     if (isId(Number(id)) && isWhole(score, 0, 1_000_000)) scores[Number(id)] = score
   }
-  return { players, game, seats, position, cards, moveNo: value.moveNo, last, outcome, scores }
+  return {
+    players,
+    game,
+    seats,
+    position,
+    cards,
+    sea: seaView,
+    moveNo: value.moveNo,
+    last,
+    outcome,
+    scores,
+  }
+}
+
+/**
+ * Sea Battle as the host shows it to this phone: fleets that are whole, and for each sea the
+ * shots that fell on it, the hits among them, and the ships sunk there, all on the sea.
+ */
+function parseSea(value: unknown): sea.SeaView | undefined {
+  if (!isObject(value)) return undefined
+  const fleets = list(value.fleets, sea.SEA_SEATS, (fleet) =>
+    fleet === null ? null : parseFleet(fleet, sea.FLEET.length),
+  )
+  if (
+    !fleets ||
+    fleets.length !== sea.SEA_SEATS ||
+    !fleets.every((f) => f === null || sea.isFleet(f))
+  )
+    return undefined
+  const placed = list(value.placed, sea.SEA_SEATS, (p) => (typeof p === 'boolean' ? p : undefined))
+  if (!placed || placed.length !== sea.SEA_SEATS) return undefined
+  const seas = list(value.seas, sea.SEA_SEATS, parseSide)
+  if (!seas || seas.length !== sea.SEA_SEATS) return undefined
+  const { turn, winner } = value
+  if (!isWhole(turn, 0, sea.SEA_SEATS - 1)) return undefined
+  if (winner !== null && !isWhole(winner, 0, sea.SEA_SEATS - 1)) return undefined
+  return { fleets, placed, seas, turn, winner }
+}
+
+function parseSide(value: unknown): sea.SeaSide | undefined {
+  if (!isObject(value)) return undefined
+  const cell = (n: unknown) => (sea.isCell(n) ? n : undefined)
+  const shots = list(value.shots, sea.SEA_CELLS, cell)
+  if (!shots || new Set(shots).size !== shots.length) return undefined
+  const hits = list(value.hits, sea.SEA_CELLS, cell)
+  if (!hits?.every((hit) => shots.includes(hit))) return undefined
+  const sunk = parseFleet(value.sunk, sea.FLEET.length)
+  if (!sunk) return undefined
+  return { shots, hits, sunk }
+}
+
+/** Ships, each on the sea and of a size a fleet has. */
+function parseFleet(value: unknown, max: number): sea.Ship[] | undefined {
+  return list(value, max, (ship) => {
+    if (!isObject(ship) || typeof ship.down !== 'boolean') return undefined
+    if (!sea.isCell(ship.cell) || !(sea.FLEET as readonly unknown[]).includes(ship.size)) {
+      return undefined
+    }
+    const parsed = { cell: ship.cell, down: ship.down, size: ship.size as number }
+    return sea.shipCells(parsed) ? parsed : undefined
+  })
 }
 
 /** Miau-Miau as the host shows it to this phone: cards of one deck, counts for every seat. */

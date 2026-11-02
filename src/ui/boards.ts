@@ -12,6 +12,7 @@ import { DAME_SIZE, isDark, takingMoves } from '../core/dame'
 import { FOUR_COLUMNS } from '../core/fourInARow'
 import { GAMES } from '../core/games'
 import { flying, MUEHLE_SPOTS } from '../core/muehle'
+import type { Ship } from '../core/seeschlacht'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
 import { h } from './dom'
@@ -27,8 +28,20 @@ export class Picker {
   path: number[] = []
   private moveNo = -1
   private game: GameId | null = null
+  /** Sea Battle: the fleet being placed, null until shuffled, and the index of the ship picked. */
+  fleet: Ship[] | null = null
+  ship = -1
+  /** Sea Battle: the ship picked last did not fit where it was asked to go. */
+  misfit = false
+  /** Sea Battle: whether a fleet hidden on a split screen shows for now. */
+  showFleet = false
   /** Called when the picked cells change, to draw the board again. */
   onChange: () => void = () => {}
+
+  /** Everything picked that the screen shows: drawn again only when this or the table changes. */
+  shown(state: TableState): unknown[] {
+    return [this.current(state), this.fleet, this.ship, this.misfit, this.showFleet]
+  }
 
   /** The cells picked for this move: none once the game or the move number has moved on. */
   current(state: TableState): number[] {

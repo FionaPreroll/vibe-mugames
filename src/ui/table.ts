@@ -29,7 +29,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     if (gone) return
     const state = seat.state()
     if (!state) return
-    const drawn = JSON.stringify([state, picker.current(state)])
+    const drawn = JSON.stringify([state, picker.shown(state)])
     if (drawn === shown) return
     shown = drawn
     players.replaceChildren(

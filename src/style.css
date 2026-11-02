@@ -1075,6 +1075,157 @@ textarea {
   margin-top: 0.5rem;
 }
 
+/* Sea Battle: seas of 10 by 10 squares, the one to shoot at above the player's own fleet. */
+.seas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.sea-part {
+  flex: 1 1 15rem;
+  margin: 0.5rem 0;
+  max-width: 26rem;
+}
+
+.sea-part.own {
+  flex: 0.8 1 12rem;
+  max-width: 20rem;
+}
+
+.sea-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 2rem;
+}
+
+.sea-heading h3 {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.sea {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+  padding: 3px;
+  border-radius: 0.5rem;
+  background: #16405e;
+}
+
+.sea .square-sea {
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: #2a6a94;
+  color: var(--text);
+  font-size: clamp(0.6rem, 3.5vw, 1.1rem);
+  line-height: 1;
+}
+
+.sea .square-sea:disabled {
+  opacity: 1;
+}
+
+.sea.active .square-sea:not(:disabled):hover {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.sea .square-sea.ship {
+  background: #8a97a6;
+}
+
+.sea .square-sea.water,
+.sea .square-sea.miss {
+  background: #183c56;
+  color: #a7c7dc;
+}
+
+.sea .square-sea.hit {
+  background: var(--seat-0);
+  color: #fff;
+}
+
+.sea .square-sea.sunk {
+  background: #6b2427;
+}
+
+.sea .square-sea.last {
+  outline: 2px solid var(--seat-1);
+  outline-offset: -2px;
+}
+
+.sea .square-sea.picked {
+  background: var(--accent);
+}
+
+.sea.target {
+  background: #1b3550;
+}
+
+.sea.placing {
+  max-width: 26rem;
+  margin: 0.5rem auto;
+}
+
+.afloat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.6rem;
+  margin: 0.3rem 0;
+  font-size: 0.8rem;
+}
+
+.fleet-ship {
+  letter-spacing: -0.15em;
+  color: var(--text);
+}
+
+.fleet-ship.sunk {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.fleet-buttons {
+  margin: 0.5rem 0;
+}
+
+.fleet-toggle {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.placing + .buttons .fleet-toggle,
+.buttons + .fleet-toggle {
+  display: block;
+  margin: 0.5rem auto;
+}
+
+.handover {
+  text-align: center;
+}
+
+.pane .sea-part {
+  max-width: calc(100cqh - 8rem);
+  min-width: 8rem;
+}
+
+.pane .sea.placing {
+  width: min(100%, calc(100cqh - 9rem));
+  margin: 0 auto;
+}
+
+.pane .sea .square-sea {
+  font-size: clamp(0.5rem, 2.5cqmin, 1rem);
+}
+
 /* Hidden must win over every display rule above. */
 [hidden] {
   /* biome-ignore lint/complexity/noImportantStyles: see above */
