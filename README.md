@@ -7,7 +7,7 @@ Board games for phones side by side, in the browser and as an Android app. The p
 
 ## Playing
 
-One phone opens a table; everyone else sits down at it:
+Play in the browser at **[fionapreroll.github.io/vibe-mugames](https://fionapreroll.github.io/vibe-mugames/)**, or in the Android app (below). One phone opens a table; everyone else sits down at it:
 
 1. **Open a table** on the first phone, then **Add player**: it shows a QR code.
 2. On the new player's phone, **Join a table** and scan that code. The phone then shows a code of its own, which the first phone scans. Without a camera, both codes can be copied and pasted as text.
