@@ -1,4 +1,4 @@
-import { GAME_IDS, type GameId, type Move } from '../core/board'
+import { GAME_IDS, type GameId, isLiveGame, type Move } from '../core/board'
 import { handsOver, hasHiddenCards, seatRange } from '../core/games'
 import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
@@ -7,6 +7,7 @@ import type { TableHost } from '../net/session'
 import { boardView, handText, hint, type Picker, seatName, symbol } from './boards'
 import { cardsHint, cardsView } from './cards'
 import { h } from './dom'
+import type { LiveSlot } from './live'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
 
 /**
@@ -80,6 +81,8 @@ export interface GameViewOptions {
   readonly shared?: boolean
   /** The viewer's own fleet in Sea Battle is hidden until they ask, as others see this screen. */
   readonly hideFleet?: boolean
+  /** Where the field of a game in real time stays between redraws. */
+  readonly live?: LiveSlot
 }
 
 /**
@@ -121,6 +124,11 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
   const myTurn = state.outcome === null && mine >= 0 && turn === mine
   const taking = state.position?.phase === 'remove'
   const status = h('p', { class: 'status turn', role: 'status' } as Partial<HTMLParagraphElement>)
+  if (isLiveGame(game)) {
+    status.textContent = liveStatus(state, mine, shared, options.live?.local ?? false)
+    const field = options.live?.element(state, viewer, shared)
+    return field ? [status, field] : [status]
+  }
   if (state.outcome === 'draw') status.textContent = t(state.cards ? 'stuck' : 'draw')
   else if (state.outcome)
     status.textContent =
@@ -169,6 +177,27 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
     board,
     hand ? h('p', { class: 'hand muted' }, hand) : null,
   ].filter((node): node is HTMLElement => node !== null)
+}
+
+/**
+ * What a game in real time says above its field: how it ended, who plays, or how to play.
+ * What changes many times a second, such as the countdown or a goal, the field shows itself.
+ */
+function liveStatus(state: TableState, mine: number, shared: boolean, local: boolean): string {
+  const name = (seatNo: number) => seatName(state, seatNo)
+  if (state.outcome === 'draw') return t('draw')
+  if (state.outcome) {
+    return state.outcome.winner === mine && !shared
+      ? t('youWin')
+      : t('theyWin', { name: name(state.outcome.winner) })
+  }
+  if (mine < 0 && !shared) {
+    return state.seats.length === 2
+      ? t('watching', { a: name(0), b: name(1) })
+      : t('watchingAll', { names: state.seats.map((_, i) => name(i)).join(', ') })
+  }
+  if (state.game === 'lichtrenner') return t(local ? 'lichtHintLocal' : 'lichtHint')
+  return t(local ? 'hockeyHintLocal' : 'hockeyHint')
 }
 
 /** Rematch and another game, for whoever keeps the table, once a game is over. */

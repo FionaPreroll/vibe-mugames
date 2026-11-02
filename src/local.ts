@@ -39,6 +39,16 @@ export class LocalTable implements TableHost {
     return this.table.state(viewer)
   }
 
+  /** What player `id` wants now in a game in real time: see `Table.input`. */
+  input(id: number, values: readonly number[]): void {
+    this.table.input(id, values)
+  }
+
+  /** Runs a game in real time on by `seconds`; nothing happens in other games. */
+  tick(seconds: number): void {
+    if (this.table.tick(seconds)) this.onChange()
+  }
+
   /** A move by player `id`, taken only on their turn and if the rules allow it. */
   move(id: number, game: GameId, moveNo: number, move: Move): boolean {
     const taken = this.table.move(id, game, moveNo, move)

@@ -521,6 +521,7 @@ textarea {
 .modal {
   position: fixed;
   inset: 0;
+  z-index: 2;
   background: rgb(0 0 0 / 0.6);
   display: flex;
   align-items: center;
@@ -541,6 +542,7 @@ textarea {
 
 .toast {
   position: fixed;
+  z-index: 2;
   left: 50%;
   bottom: 2rem;
   transform: translateX(-50%);
@@ -1223,6 +1225,121 @@ textarea {
 
 .pane .sea .square-sea {
   font-size: clamp(0.5rem, 2.5cqmin, 1rem);
+}
+
+/*
+ * Games in real time: a field drawn many times a second, and the players' buttons below it.
+ */
+.live {
+  margin: 0.5rem 0;
+}
+
+.live-field {
+  display: block;
+  width: 100%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.race-field {
+  aspect-ratio: 1;
+  max-height: 70dvh;
+}
+
+.race-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.turns {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.turns .turn-button {
+  flex: 1;
+  min-height: 3.5rem;
+  font-size: 1.8rem;
+  touch-action: manipulation;
+}
+
+.turns-name {
+  flex: 2;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.rink-field {
+  height: min(60dvh, 40rem);
+}
+
+/* Around one laptop, the field of a game in real time takes the window's width. */
+#app:has(.local .live) {
+  max-width: 64rem;
+}
+
+.rink-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.rink-score {
+  margin: 0.25rem 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rink-help {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.pane .rink-field {
+  height: calc(100cqh - 6.5rem);
+}
+
+/*
+ * On a phone at the board, the player's half of the rink fills the screen from its top edge,
+ * where the other phone's half meets it.
+ */
+.live.rink.arena {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  background: var(--bg);
+}
+
+.live.rink.arena .rink-field {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+}
+
+.live.rink.arena .rink-bar {
+  padding: 0.25rem 0.75rem;
+}
+
+.pane .race-field {
+  height: calc(100cqh - 9rem);
+  max-height: none;
+  aspect-ratio: auto;
+}
+
+.pane .turns .turn-button {
+  min-height: 2.5rem;
+  font-size: 1.4rem;
 }
 
 /* Hidden must win over every display rule above. */

@@ -1,5 +1,6 @@
 import { linkPair } from '@fionapreroll/p2p/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { COUNTDOWN } from '../core/lichtrenner'
 import { encode } from '../core/miaumiau'
 import * as sea from '../core/seeschlacht'
 import { parseEvent, parseState } from './protocol'
@@ -151,6 +152,52 @@ describe('a table over the network', () => {
     host.close()
     await later(1000)
     expect(lost).toHaveBeenCalledWith(true)
+  })
+})
+
+describe('games in real time over the network', () => {
+  it('steers a player’s rider from their phone, and sends the race 30 times a second', async () => {
+    const host = new HostSeat('Ada')
+    const bo = await join(host, 'Bo')
+    let states = 0
+    bo.onChange = () => states++
+    await later(1000)
+    // A board game, or the lobby, goes out ten times a second.
+    expect(states).toBeGreaterThanOrEqual(9)
+    expect(states).toBeLessThanOrEqual(11)
+
+    host.choose('lichtrenner')
+    await later(100)
+    const round = bo.state()?.round ?? 0
+    const start = bo.state()?.race?.riders[1]?.path[0] ?? 0
+    // Bo heads down, Ada up.
+    bo.input([round, 2])
+    host.input([round, 0])
+    states = 0
+    await later(1000)
+    expect(states).toBeGreaterThanOrEqual(28)
+    await later(COUNTDOWN * 1000 + 300)
+    const race = bo.state()?.race
+    expect(race?.steps).toBeGreaterThan(0)
+    expect(race?.riders[1]?.heading).toBe(2)
+    expect(race?.riders[0]?.heading).toBe(0)
+    expect(race?.riders[1]?.path).toEqual([start, start + (race?.steps ?? 0) * 40])
+    host.close()
+  })
+
+  it('moves a player’s mallet from their phone, on the host’s rink', async () => {
+    const host = new HostSeat('Ada')
+    const bo = await join(host, 'Bo')
+    host.choose('airhockey')
+    await later(100)
+    bo.input([bo.state()?.round ?? 0, 0.25, 0.5])
+    await later(1000)
+    // Bo's half, seen from his end: his left is the rink's right.
+    const mallet = host.state().rink?.mallets[1]
+    expect(mallet?.x).toBeCloseTo(0.75)
+    expect(mallet?.y).toBeCloseTo(2.5)
+    expect(bo.state()?.rink?.mallets[1]?.x).toBeCloseTo(0.75)
+    host.close()
   })
 })
 

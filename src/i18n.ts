@@ -83,6 +83,27 @@ const en = {
     'Sea Battle on one device: hand the device over when it asks, and look only while it is your turn.',
   hiddenFleetNotice:
     'Each fleet stays hidden until its player taps “Show my fleet”: look away while someone does.',
+  lichtrenner: 'Light Racers',
+  airhockey: 'Air Hockey',
+  lichtHint:
+    'Turn before you hit a wall: swipe on the field, or tap ⟲ and ⟳. The last one riding wins.',
+  lichtHintLocal:
+    'Turn before you hit a wall, with your keys or your ⟲ and ⟳. The last one riding wins.',
+  lichtOut: 'You crashed. The others ride on.',
+  lichtGetReady: 'Your racer is the one in the ring.',
+  turnLeft: 'Turn left',
+  turnRight: 'Turn right',
+  turnLeftOf: '{name}: turn left',
+  turnRightOf: '{name}: turn right',
+  keysOf: '{name}: {keys}',
+  arrowKeys: 'arrow keys',
+  hockeyHint:
+    'Lay both phones on the table, top edge to top edge: each screen is one half of the rink, with your goal at the bottom. Move your mallet with a finger.',
+  hockeyHintLocal: 'Move your mallet with a finger on your half, or with your keys.',
+  hockeyFirstTo: 'First to {n} goals wins.',
+  hockeyGoal: 'Goal for {name}!',
+  hockeyScore: '{a} {goalsA} : {goalsB} {b}',
+  stopGame: 'Stop the game',
   clubs: 'clubs',
   spades: 'spades',
   hearts: 'hearts',
@@ -308,6 +329,28 @@ const de: Texts = {
     'Schiffe versenken auf einem Gerät: Gib das Gerät weiter, wenn es danach fragt, und schau nur hin, wenn du dran bist.',
   hiddenFleetNotice:
     'Jede Flotte bleibt verborgen, bis ihr Spieler auf „Meine Flotte zeigen“ tippt: Die anderen schauen dann weg.',
+  lichtrenner: 'Lichtrenner',
+  airhockey: 'Airhockey',
+  lichtHint:
+    'Biege ab, bevor du gegen eine Wand fährst: wische über das Feld, oder tippe auf ⟲ und ⟳. Wer als Letzter fährt, gewinnt.',
+  lichtHintLocal:
+    'Biege ab, bevor du gegen eine Wand fährst: mit deinen Tasten oder deinen ⟲ und ⟳. Wer als Letzter fährt, gewinnt.',
+  lichtOut: 'Du bist raus. Die anderen fahren weiter.',
+  lichtGetReady: 'Dein Renner ist der im Ring.',
+  turnLeft: 'Links abbiegen',
+  turnRight: 'Rechts abbiegen',
+  turnLeftOf: '{name}: links abbiegen',
+  turnRightOf: '{name}: rechts abbiegen',
+  keysOf: '{name}: {keys}',
+  arrowKeys: 'Pfeiltasten',
+  hockeyHint:
+    'Legt beide Handys auf den Tisch, oberer Rand an oberem Rand: Jeder Bildschirm ist eine Hälfte des Felds, mit deinem Tor unten. Bewege deinen Schläger mit dem Finger.',
+  hockeyHintLocal:
+    'Bewege deinen Schläger mit dem Finger auf deiner Hälfte, oder mit deinen Tasten.',
+  hockeyFirstTo: 'Wer zuerst {n} Tore schießt, gewinnt.',
+  hockeyGoal: 'Tor für {name}!',
+  hockeyScore: '{a} {goalsA} : {goalsB} {b}',
+  stopGame: 'Spiel abbrechen',
   clubs: 'Kreuz',
   spades: 'Pik',
   hearts: 'Herz',

@@ -1,4 +1,4 @@
-import type { GameId, Move } from '../core/board'
+import { type GameId, isLiveGame, type Move } from '../core/board'
 import { handsOver } from '../core/games'
 import { playerToMove, type TableState } from '../core/table'
 import { t } from '../i18n'
@@ -7,6 +7,7 @@ import { settings, updateSettings } from '../storage'
 import { Picker } from './boards'
 import { h, show } from './dom'
 import { gameChoices, gameView, nextButtons, openCardsNotice, playerItems, seatMark } from './game'
+import { LiveSlot } from './live'
 
 /**
  * Playing on one device: everyone takes turns on one screen, or the screen is split into a
@@ -171,6 +172,21 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
   /** Whether the game shown last was over: the next one starts with the device handed over. */
   let ended = false
   let gone = false
+  /** What the screen shows now: a game in real time changes 60 times a second, its field too. */
+  let shown = ''
+  const send = (id: number, values: number[]) => local.input(id, values)
+  // Games in real time: one field for everyone, or one in each part of a split screen.
+  const sharedField = new LiveSlot({ steers: local.ids, send, local: true })
+  const fields = new Map(
+    local.ids.map((id) => [id, new LiveSlot({ steers: [id], send, local: true })]),
+  )
+  const slots = [sharedField, ...fields.values()]
+  let ticked = performance.now()
+  const clock = setInterval(() => {
+    const now = performance.now()
+    local.tick(Math.min(0.1, (now - ticked) / 1000))
+    ticked = now
+  }, 1000 / 60)
 
   /** Moves as player `id`, for their view: taken only on their turn. */
   const move = (id: number) => (game: GameId, moveNo: number, cells: Move) => {
@@ -180,6 +196,15 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
   const render = () => {
     if (gone) return
     const overview = local.state(-1)
+    for (const slot of slots) slot.update(overview)
+    const drawn = JSON.stringify([
+      { ...overview, race: null, rink: null },
+      [...turned],
+      [...pickers.values()].map((picker) => picker.shown(overview)),
+    ])
+    // Miau-Miau's hands differ by player: only games in real time skip a redraw.
+    if (drawn === shown && overview.game !== null && isLiveGame(overview.game)) return
+    shown = drawn
     players.replaceChildren(...playerItems(overview, () => []))
     const playing = overview.game !== null
     screen.classList.toggle('playing', playing && split)
@@ -219,7 +244,13 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
         ...[
           h('h2', {}, t(game)),
           openCardsNotice(game),
-          ...gameView(local.state(viewer), { viewer, picker, move: move(viewer), shared: true }),
+          ...gameView(local.state(viewer), {
+            viewer,
+            picker,
+            move: move(viewer),
+            shared: true,
+            live: sharedField,
+          }),
           actions,
         ].filter((node): node is HTMLElement => node !== null),
       )
@@ -259,6 +290,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
           picker: pickers.get(id) ?? new Picker(),
           move: move(id),
           hideFleet: true,
+          live: fields.get(id),
         }),
       )
     })
@@ -325,8 +357,13 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
     ]
   }
 
-  const leave = () => {
+  const end = () => {
     gone = true
+    clearInterval(clock)
+    for (const slot of slots) slot.stop()
+  }
+  const leave = () => {
+    end()
     onLeave()
   }
   local.onChange = render
@@ -349,8 +386,6 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
     below,
   )
   // Android's back button does nothing here: it would end the game by mistake.
-  show(screen, null, () => {
-    gone = true
-  })
+  show(screen, null, end)
   render()
 }

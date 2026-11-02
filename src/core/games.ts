@@ -1,6 +1,7 @@
 import { type BoardGame, type BoardGameId, type GameId, isBoardGame } from './board'
 import { dame } from './dame'
 import { fourInARow } from './fourInARow'
+import { MAX_RIDERS, MIN_RIDERS } from './lichtrenner'
 import { MAX_SEATS, MIN_SEATS } from './miaumiau'
 import { muehle } from './muehle'
 import { SEA_SEATS } from './seeschlacht'
@@ -18,6 +19,8 @@ export const GAMES: Record<BoardGameId, BoardGame> = {
 export function seatRange(game: GameId): { readonly min: number; readonly max: number } {
   if (isBoardGame(game)) return { min: GAMES[game].seats, max: GAMES[game].seats }
   if (game === 'seeschlacht') return { min: SEA_SEATS, max: SEA_SEATS }
+  if (game === 'lichtrenner') return { min: MIN_RIDERS, max: MAX_RIDERS }
+  if (game === 'airhockey') return { min: 2, max: 2 }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
 

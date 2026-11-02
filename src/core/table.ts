@@ -1,5 +1,15 @@
-import { type GameId, isBoardGame, isLegal, type Move, type Outcome, type Position } from './board'
+import * as hockey from './airhockey'
+import {
+  type GameId,
+  isBoardGame,
+  isLegal,
+  isLiveGame,
+  type Move,
+  type Outcome,
+  type Position,
+} from './board'
 import { GAMES, seatRange } from './games'
+import * as licht from './lichtrenner'
 import * as miau from './miaumiau'
 import * as sea from './seeschlacht'
 
@@ -14,6 +24,10 @@ import * as sea from './seeschlacht'
  *
  * In Miau-Miau, the host alone knows every hand, and in Sea Battle every fleet: `state(id)` shows
  * each player only their own.
+ *
+ * Games in real time (Lichtrenner, air hockey) have no moves in turn: each player at the board
+ * says what they want many times a second (`input`), such as where to head, and the host runs
+ * the game on by the time that has passed (`tick`).
  */
 
 export interface Player {
@@ -35,6 +49,15 @@ export interface TableState {
   readonly cards: miau.MiauView | null
   /** Sea Battle as the player this state is for sees it; null in every other game. */
   readonly sea: sea.SeaView | null
+  /** Lichtrenner as it stands; null in every other game. */
+  readonly race: licht.LichtView | null
+  /** Air hockey as it stands; null in every other game. */
+  readonly rink: hockey.HockeyView | null
+  /**
+   * Games started at this table so far. A player's input names the game it is meant for, so
+   * what they wanted in the last one does not steer the next.
+   */
+  readonly round: number
   /** Moves made so far: a move names the number it is meant to be, so none counts twice. */
   readonly moveNo: number
   /** The move made last, for every phone to show; null before the first. */
@@ -69,6 +92,11 @@ export class Table {
   private position: Position | null = null
   private cards: miau.MiauState | null = null
   private sea: sea.SeaState | null = null
+  private race: licht.LichtState | null = null
+  private rink: hockey.HockeyState | null = null
+  /** What each seat wants now in a game in real time, by seat: see `input`. */
+  private wants: (readonly number[] | null)[] = []
+  private round = 0
   private moveNo = 0
   private last: Move | null = null
   private outcome: Outcome | null = null
@@ -107,6 +135,7 @@ export class Table {
    */
   move(id: number, game: GameId, moveNo: number, move: Move): boolean {
     if (this.game !== game || this.outcome !== null) return false
+    if (isLiveGame(game)) return false
     const seat = this.seats.indexOf(id)
     if (seat < 0) return false
     const taken =
@@ -117,12 +146,52 @@ export class Table {
     this.moveNo++
     // A fleet placed stays hidden: only shots show as the last move.
     if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
-    // The move may have ended the game.
-    const outcome = this.outcome as Outcome | null
-    if (outcome !== null && outcome !== 'draw') {
-      const winner = this.seats[outcome.winner]
-      if (winner !== undefined) this.scores.set(winner, (this.scores.get(winner) ?? 0) + 1)
-    }
+    this.score()
+    return true
+  }
+
+  /**
+   * What a player at the board of a game in real time wants now: the round it is meant for,
+   * then the game's numbers. In Lichtrenner, a heading (`licht.Want`); in air hockey, where
+   * the mallet should go, as the player sees their half (`hockey.Target`). It holds until the
+   * next input. Returns whether it was taken.
+   */
+  input(id: number, values: readonly number[]): boolean {
+    if (this.game === null || !isLiveGame(this.game) || this.outcome !== null) return false
+    const seat = this.seats.indexOf(id)
+    const [round, ...wanted] = values
+    if (seat < 0 || round !== this.round) return false
+    const [a, b] = wanted
+    const fits =
+      this.game === 'lichtrenner'
+        ? wanted.length === 1 && a !== undefined && licht.isWant(a)
+        : wanted.length === 2 && a !== undefined && b !== undefined && hockey.isTarget(a, b)
+    if (!fits) return false
+    this.wants[seat] = wanted
+    return true
+  }
+
+  /**
+   * Runs a game in real time on by `seconds`, with what each player wants now. Returns whether
+   * one is on, as its state then changes with every tick.
+   */
+  tick(seconds: number): boolean {
+    if (this.outcome !== null) return false
+    if (this.race) {
+      const wants = this.seats.map((_, seat) => this.wants[seat]?.[0] ?? null)
+      this.race = licht.advance(this.race, wants, seconds)
+      const end = licht.outcome(this.race)
+      this.outcome = end === null || end === 'draw' ? end : { winner: end, line: [] }
+    } else if (this.rink) {
+      const targets = this.seats.map((_, seat) => {
+        const [x, y] = this.wants[seat] ?? []
+        return x === undefined || y === undefined ? null : { x, y }
+      })
+      this.rink = hockey.advance(this.rink, targets, seconds)
+      const winner = hockey.outcome(this.rink)
+      this.outcome = winner === null ? null : { winner, line: [] }
+    } else return false
+    this.score()
     return true
   }
 
@@ -153,6 +222,8 @@ export class Table {
     this.position = null
     this.cards = null
     this.sea = null
+    this.race = null
+    this.rink = null
     this.last = null
     this.outcome = null
   }
@@ -169,6 +240,9 @@ export class Table {
       position: this.position,
       cards: this.cards && miau.view(this.cards, this.seats.indexOf(viewer)),
       sea: this.sea && sea.view(this.sea, this.seats.indexOf(viewer)),
+      race: this.race && licht.view(this.race),
+      rink: this.rink && hockey.view(this.rink),
+      round: this.round,
       moveNo: this.moveNo,
       last: this.last,
       outcome: this.outcome,
@@ -215,12 +289,23 @@ export class Table {
     return true
   }
 
+  /** A game that has just ended counts for its winner. */
+  private score(): void {
+    if (this.outcome === null || this.outcome === 'draw') return
+    const winner = this.seats[this.outcome.winner]
+    if (winner !== undefined) this.scores.set(winner, (this.scores.get(winner) ?? 0) + 1)
+  }
+
   private begin(): void {
     if (this.game === null) return
     const game = this.game
     this.position = isBoardGame(game) ? GAMES[game].start() : null
     this.cards = game === 'miaumiau' ? miau.deal(this.seats.length, this.random) : null
     this.sea = game === 'seeschlacht' ? sea.start() : null
+    this.race = game === 'lichtrenner' ? licht.start(this.seats.length) : null
+    this.rink = game === 'airhockey' ? hockey.start() : null
+    this.wants = []
+    this.round++
     this.moveNo = 0
     this.last = null
     this.outcome = null

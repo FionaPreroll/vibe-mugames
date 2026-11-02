@@ -1,4 +1,5 @@
-import { cleanName, inRange, isId, isObject, list, type Parse } from '@fionapreroll/p2p'
+import { cleanName, inRange, isId, isNumber, isObject, list, type Parse } from '@fionapreroll/p2p'
+import * as hockey from '../core/airhockey'
 import {
   type Board,
   type BoardGame,
@@ -6,6 +7,7 @@ import {
   type GameId,
   isBoardGame,
   isGameId,
+  isLiveGame,
   KIND,
   type Move,
   type Outcome,
@@ -13,6 +15,7 @@ import {
   type Position,
 } from '../core/board'
 import { GAMES, seatRange } from '../core/games'
+import * as licht from '../core/lichtrenner'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
 import * as sea from '../core/seeschlacht'
 import type { Player, TableState } from '../core/table'
@@ -20,13 +23,18 @@ import type { Player, TableState } from '../core/table'
 /**
  * What phones of the Spielekiste say to each other, on top of `@fionapreroll/p2p`'s room: the
  * host sends the table as the state, many times a second; players send their moves as events,
- * which arrive once each. Raise PROTOCOL whenever any of it changes, so phones of different
- * versions refuse to play together instead of misreading each other.
+ * which arrive once each, and in games in real time what they want now as their input, many
+ * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
+ * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 4
+export const PROTOCOL = 5
 
-/** Players send no continuous input: board games need none. */
-export type Input = null
+/**
+ * What a player at the board of a game in real time wants now, sent many times a second, of
+ * which only the newest counts: the round it is meant for, then the game's numbers (see
+ * `Table.input`). Null in every other game.
+ */
+export type Input = readonly number[] | null
 
 /** A move, meant as move number `moveNo` of the game on the table. */
 export type Event = {
@@ -41,7 +49,14 @@ const MAX_MOVES = 100_000
 /** More pieces than any game has in hand. */
 const MAX_HAND = 12
 
-export const parseInput: Parse<Input> = (value) => (value === null ? null : undefined)
+/** The most numbers an input has: the round, and a mallet's two. */
+const MAX_INPUT = 3
+
+export const parseInput: Parse<Input> = (value) => {
+  if (value === null) return null
+  const numbers = list(value, MAX_INPUT, (n) => (isNumber(n) ? n : undefined))
+  return numbers && numbers.length > 0 ? numbers : undefined
+}
 
 export const parseEvent: Parse<Event> = (value) => {
   if (!isObject(value) || value.type !== 'move' || !isGameId(value.game)) return undefined
@@ -56,6 +71,8 @@ export const parseEvent: Parse<Event> = (value) => {
  * move; or a move of Miau-Miau or Sea Battle, in numbers as their `encode` makes them.
  */
 function parseMove(value: unknown, game: GameId): Move | undefined {
+  // Games in real time have no moves, only input.
+  if (isLiveGame(game)) return undefined
   if (game === 'seeschlacht') {
     const numbers = list(value, sea.FLEET.length, (n) =>
       isWhole(n, 0, 2 * sea.SEA_CELLS - 1) ? n : undefined,
@@ -102,6 +119,16 @@ export const parseState: Parse<TableState> = (value) => {
   const seaView =
     game === 'seeschlacht' ? parseSea(value.sea) : value.sea === null ? null : undefined
   if (seaView === undefined) return undefined
+  const race =
+    game === 'lichtrenner'
+      ? parseRace(value.race, seats.length)
+      : value.race === null
+        ? null
+        : undefined
+  if (race === undefined) return undefined
+  const rink = game === 'airhockey' ? parseRink(value.rink) : value.rink === null ? null : undefined
+  if (rink === undefined) return undefined
+  if (!isWhole(value.round, 0, MAX_ROUNDS)) return undefined
   if (!isWhole(value.moveNo, 0, MAX_MOVES)) return undefined
   const last = value.last === null || !game ? null : parseMove(value.last, game)
   if (last === undefined) return undefined
@@ -119,6 +146,9 @@ export const parseState: Parse<TableState> = (value) => {
     position,
     cards,
     sea: seaView,
+    race,
+    rink,
+    round: value.round,
     moveNo: value.moveNo,
     last,
     outcome,
@@ -173,6 +203,54 @@ function parseFleet(value: unknown, max: number): sea.Ship[] | undefined {
     const parsed = { cell: ship.cell, down: ship.down, size: ship.size as number }
     return sea.shipCells(parsed) ? parsed : undefined
   })
+}
+
+const MAX_ROUNDS = 1_000_000
+
+/** Lichtrenner: a rider for every seat, each with a path of straight walls on the grid. */
+function parseRace(value: unknown, seats: number): licht.LichtView | undefined {
+  if (!isObject(value)) return undefined
+  const riders = list(value.riders, seats, parseRider)
+  if (!riders || riders.length !== seats) return undefined
+  if (!inRange(value.countdown, 0, licht.COUNTDOWN)) return undefined
+  if (!isWhole(value.steps, 0, licht.CELLS)) return undefined
+  return { riders, countdown: value.countdown, steps: value.steps }
+}
+
+function parseRider(value: unknown): licht.Rider | undefined {
+  if (!isObject(value) || typeof value.alive !== 'boolean') return undefined
+  if (!isWhole(value.heading, 0, 3)) return undefined
+  const path = list(value.path, licht.CELLS, (cell) =>
+    isWhole(cell, 0, licht.CELLS - 1) ? cell : undefined,
+  )
+  if (!path || !licht.isPath(path)) return undefined
+  return { path, heading: value.heading, alive: value.alive }
+}
+
+/** Air hockey: the puck and both mallets on or near the rink, the goals and the pause. */
+function parseRink(value: unknown): hockey.HockeyView | undefined {
+  if (!isObject(value)) return undefined
+  const puck = parseDisc(value.puck)
+  const mallets = list(value.mallets, 2, parseDisc)
+  const goals = list(value.goals, 2, (n) => (isWhole(n, 0, hockey.GOALS_TO_WIN) ? n : undefined))
+  if (!puck || mallets?.length !== 2 || goals?.length !== 2) return undefined
+  const [m0, m1] = mallets
+  const [g0, g1] = goals
+  if (!m0 || !m1 || g0 === undefined || g1 === undefined) return undefined
+  if (!inRange(value.pause, 0, hockey.COUNTDOWN)) return undefined
+  const scored =
+    value.scored === null ? null : isWhole(value.scored, 0, 1) ? value.scored : undefined
+  if (scored === undefined) return undefined
+  return { puck, mallets: [m0, m1], goals: [g0, g1], pause: value.pause, scored }
+}
+
+function parseDisc(value: unknown): hockey.Disc | undefined {
+  if (!isObject(value)) return undefined
+  const { x, y, vx, vy } = value
+  const speed = 2 * hockey.MALLET_SPEED
+  if (!inRange(x, -1, hockey.WIDTH + 1) || !inRange(y, -1, hockey.LENGTH + 1)) return undefined
+  if (!inRange(vx, -speed, speed) || !inRange(vy, -speed, speed)) return undefined
+  return { x, y, vx, vy }
 }
 
 /** Miau-Miau as the host shows it to this phone: cards of one deck, counts for every seat. */

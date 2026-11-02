@@ -5,8 +5,12 @@ import { Table, type TableState } from '../core/table'
 import { random } from '../random'
 import { type Event, type Input, PROTOCOL, parseEvent, parseInput, parseState } from './protocol'
 
-/** Board games need no more: the table goes out ten times a second. */
-const TICK_MS = 100
+/**
+ * The host runs games in real time 30 times a second, and sends the table as often while one
+ * is on. Board games need no more than every third tick: ten times a second.
+ */
+export const TICK_MS = 1000 / 30
+const BOARD_TICKS = 3
 
 /**
  * One phone's seat at the table, as the screens use it, for the host and for players alike:
@@ -20,7 +24,12 @@ export interface Seat {
   state(): TableState | null
   /** Makes a move as move number `moveNo` of `game`; the host takes it if it is legal. */
   move(game: GameId, moveNo: number, move: Move): void
-  /** Called whenever the table may have changed. */
+  /**
+   * What this phone's player wants now in a game in real time (see `Table.input`): it holds
+   * until the next, and goes to the host many times a second.
+   */
+  input(values: readonly number[]): void
+  /** Called whenever the table may have changed: in a game in real time, every tick. */
   onChange: () => void
   /** Called once if the connection to the host is gone: `ended` if the host closed the table. */
   onLost: (ended: boolean) => void
@@ -48,6 +57,7 @@ export class HostSeat implements Seat, TableHost {
   onLost: (ended: boolean) => void = () => {}
   /** A player came in, or came back. */
   onJoin: (name: string, rejoined: boolean) => void = () => {}
+  private ticks = 0
 
   constructor(readonly name: string) {
     this.room = new HostRoom<Input, TableState, Event>({
@@ -70,7 +80,14 @@ export class HostSeat implements Seat, TableHost {
     this.room.onEvent = (player, event) => {
       if (this.table.move(player.id, event.game, event.moveNo, event.move)) this.onChange()
     }
-    this.room.onTick = () => this.table.state()
+    this.room.onInput = (player, input) => {
+      if (input !== null) this.table.input(player.id, input)
+    }
+    this.room.onTick = (seconds) => {
+      const live = this.table.tick(seconds)
+      if (live) this.onChange()
+      return live || ++this.ticks % BOARD_TICKS === 0 ? this.table.state() : undefined
+    }
     // Each player gets the table as they may see it: their own cards, nobody else's.
     this.room.stateFor = (player) => this.table.state(player.id)
   }
@@ -81,6 +98,10 @@ export class HostSeat implements Seat, TableHost {
 
   move(game: GameId, moveNo: number, move: Move): void {
     if (this.table.move(HOST_ID, game, moveNo, move)) this.onChange()
+  }
+
+  input(values: readonly number[]): void {
+    this.table.input(HOST_ID, values)
   }
 
   choose(game: GameId): boolean {
@@ -156,6 +177,10 @@ export class GuestSeat implements Seat {
 
   move(game: GameId, moveNo: number, move: Move): void {
     this.room.send({ type: 'move', game, moveNo, move })
+  }
+
+  input(values: readonly number[]): void {
+    this.room.setInput(values)
   }
 
   close(): void {

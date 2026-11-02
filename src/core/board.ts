@@ -62,11 +62,15 @@ export interface BoardGame {
 export const BOARD_GAME_IDS = ['tictactoe', 'fourinarow', 'muehle', 'dame'] as const
 export type BoardGameId = (typeof BOARD_GAME_IDS)[number]
 
+/** The games played in real time, with input many times a second instead of moves in turn. */
+export const LIVE_GAME_IDS = ['lichtrenner', 'airhockey'] as const
+export type LiveGameId = (typeof LIVE_GAME_IDS)[number]
+
 /**
- * Every game, in the order the lobby shows them: the board games, the card game, then the games
- * of hidden fleets.
+ * Every game, in the order the lobby shows them: the board games, the card game, the game of
+ * hidden fleets, then the games in real time.
  */
-export const GAME_IDS = [...BOARD_GAME_IDS, 'miaumiau', 'seeschlacht'] as const
+export const GAME_IDS = [...BOARD_GAME_IDS, 'miaumiau', 'seeschlacht', ...LIVE_GAME_IDS] as const
 export type GameId = (typeof GAME_IDS)[number]
 
 export function isGameId(value: unknown): value is GameId {
@@ -75,6 +79,10 @@ export function isGameId(value: unknown): value is GameId {
 
 export function isBoardGame(id: GameId): id is BoardGameId {
   return (BOARD_GAME_IDS as readonly string[]).includes(id)
+}
+
+export function isLiveGame(id: GameId): id is LiveGameId {
+  return (LIVE_GAME_IDS as readonly string[]).includes(id)
 }
 
 /** Whether the seat to move may make this move now (whose turn it is, the table checks). */

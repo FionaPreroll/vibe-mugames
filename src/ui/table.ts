@@ -1,3 +1,4 @@
+import { isLiveGame } from '../core/board'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
 import { HostSeat, type Seat } from '../net/session'
@@ -5,6 +6,7 @@ import { Picker } from './boards'
 import { codePanel } from './codes'
 import { failureText, h, show, toast } from './dom'
 import { gameChoices, gameView, nextButtons, playerItems } from './game'
+import { LiveSlot } from './live'
 
 /**
  * The table, on every phone: who sits at it, the lobby or the game on it, and what comes next.
@@ -15,12 +17,22 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
   const main = h('div', { class: 'main' })
   const actions = h('div', { class: 'buttons' })
   const picker = new Picker()
+  const live = new LiveSlot({
+    steers: [seat.id],
+    send: (_, values) => seat.input(values),
+    local: false,
+    stop: seat instanceof HostSeat ? () => seat.lobby() : undefined,
+  })
   let gone = false
-  /** What the screen shows now: players' phones hear the same table ten times a second. */
+  /**
+   * What the screen shows now: players' phones hear the same table ten times a second, and
+   * 30 times in a game in real time, whose field draws itself.
+   */
   let shown = ''
 
   const leave = () => {
     gone = true
+    live.stop()
     seat.close()
     onLeave()
   }
@@ -29,7 +41,8 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     if (gone) return
     const state = seat.state()
     if (!state) return
-    const drawn = JSON.stringify([state, picker.shown(state)])
+    const drawn = JSON.stringify([{ ...state, race: null, rink: null }, picker.shown(state)])
+    live.update(state)
     if (drawn === shown) return
     shown = drawn
     players.replaceChildren(
@@ -61,6 +74,15 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     } else if (state.outcome !== null) {
       const host = state.players.find((p) => p.id === 0)?.name ?? '?'
       actions.replaceChildren(h('p', { class: 'muted' }, t('waitForHost', { host })))
+    } else if (
+      seat instanceof HostSeat &&
+      isLiveGame(state.game) &&
+      // A host at the rink stops the game on their half, which covers the screen.
+      !(state.game === 'airhockey' && state.seats.includes(seat.id))
+    ) {
+      actions.replaceChildren(
+        h('button', { type: 'button', textContent: t('stopGame'), onclick: () => seat.lobby() }),
+      )
     } else actions.replaceChildren()
     return [
       h('h2', {}, t(state.game)),
@@ -68,6 +90,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
         viewer: seat.id,
         picker,
         move: (game, moveNo, move) => seat.move(game, moveNo, move),
+        live,
       }),
       actions,
     ]
@@ -78,6 +101,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
   seat.onLost = (ended) => {
     if (gone) return
     gone = true
+    live.stop()
     toast(t(ended ? 'hostClosed' : 'hostLeft'))
     onLeave()
   }
