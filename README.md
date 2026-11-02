@@ -81,6 +81,7 @@ src/
   native.ts   the Android app's back button
   updates.ts  the app's updates from its release; webUpdates.ts: the website's
 android/      the Android app's project (Capacitor), with AppUpdaterPlugin and UpdateRules
+tools/        icons.ts: draws the icon, for the app and the website
 tests/e2e/    Playwright: phones in separate browser profiles pair through the text codes and play;
               the website offers a newer build; pairing.spec.ts: slow, wrong and failed codes, and copying;
               local.spec.ts: playing on one device, taking turns (Sea Battle handed over) and on a split screen;
@@ -125,6 +126,8 @@ Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of
 
 **The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`, and run the Java tests with `./gradlew testDebugUnitTest`. Without the SDK, `UpdateRulesTest` compiles and runs with plain `javac` and JUnit. The update dialogs are tested in happy-dom against a fake `AppUpdaterPlugin` (`src/ui/updates.test.ts`).
 
+**The icon**, an open games box with a card, a draughts piece and a pawn, is drawn in `tools/icons.ts`. `pnpm icons` writes everything made from it: the app's adaptive icon as vector drawables in `android/app/src/main/res/drawable/` (a background of squares, the box, and a one-colour layer for themed icons), its PNGs for Android 7 in `mipmap-*/`, and the website's `public/icon.svg`. The app's start screen shows the same box on the same dark blue.
+
 ### Workflows
 
 | Workflow      | Runs on                            | Does                                                                                                                                                         |
@@ -146,6 +149,5 @@ Every feature or fix gets its own branch off `main`, named `feature/<name_in_sna
 - **Tested end to end in Chromium only.** Real phones still need trying on a hotspot.
 - **The app's updates are unit-tested, but not yet tried on phones.** An app installed before builds were signed with the same key has to be uninstalled once.
 - **Some Wi-Fi networks** isolate their clients, so the phones cannot see each other there; a phone's own hotspot does not.
-- **The app has Capacitor's default icon** for now.
 - **A game on one device is not saved:** closing the page or the app ends it, scores and all.
 - **A host who closes the page ends the table:** players cannot sit down again until the host opens a new one. A player who drops out gets their place and score back by pairing again.

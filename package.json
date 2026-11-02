@@ -23,7 +23,8 @@
     "test:e2e": "pnpm build && playwright test",
     "test:e2e:coverage": "COVERAGE=1 pnpm test:e2e",
     "check": "pnpm typecheck && pnpm lint && pnpm test",
-    "android:sync": "pnpm build && cap sync android"
+    "android:sync": "pnpm build && cap sync android",
+    "icons": "node tools/icons.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",

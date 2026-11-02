@@ -32,6 +32,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 ### Changed
 
+- The Android app has an icon of its own instead of Capacitor's: an open games box with a card, a draughts piece and a pawn, on a dark blue board. Android 13 and newer can tint it to the wallpaper's colours, and the app starts on the same box and blue. The website's tab shows the same box.
 - Every build of the Android app is now signed with the same key, so a new one installs over the one before and keeps the app's settings. An app installed before this change has to be uninstalled once.
 
 ### Fixed
