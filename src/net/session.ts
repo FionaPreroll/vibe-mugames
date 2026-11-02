@@ -4,6 +4,11 @@ import type { GameId, Move } from '../core/board'
 import { Table, type TableState } from '../core/table'
 import { type Event, type Input, PROTOCOL, parseEvent, parseInput, parseState } from './protocol'
 
+/** Numbers from 0 up to, not including, 1, from the browser's cryptographic randomness. */
+function random(): number {
+  return (crypto.getRandomValues(new Uint32Array(1))[0] ?? 0) / 2 ** 32
+}
+
 /** Board games need no more: the table goes out ten times a second. */
 const TICK_MS = 100
 
@@ -31,7 +36,7 @@ export interface Seat {
 export class HostSeat implements Seat {
   readonly id = HOST_ID
   readonly isHost = true
-  readonly table = new Table()
+  readonly table = new Table(random)
   readonly room: HostRoom<Input, TableState, Event>
   onChange: () => void = () => {}
   onLost: (ended: boolean) => void = () => {}
@@ -60,10 +65,12 @@ export class HostSeat implements Seat {
       if (this.table.move(player.id, event.game, event.moveNo, event.move)) this.onChange()
     }
     this.room.onTick = () => this.table.state()
+    // Each player gets the table as they may see it: their own cards, nobody else's.
+    this.room.stateFor = (player) => this.table.state(player.id)
   }
 
   state(): TableState {
-    return this.table.state()
+    return this.table.state(HOST_ID)
   }
 
   move(game: GameId, moveNo: number, move: Move): void {

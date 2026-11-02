@@ -2,6 +2,7 @@ import {
   type BoardGame,
   EMPTY,
   type GameId,
+  isBoardGame,
   isCrowned,
   type Move,
   sameMove,
@@ -83,7 +84,7 @@ export function boardView(
 ): HTMLElement {
   const game = state.game
   const position = state.position
-  if (game === null || position === null) return h('div')
+  if (game === null || position === null || !isBoardGame(game)) return h('div')
   const rules = GAMES[game]
   const moves = onMove && state.outcome === null ? rules.moves(position) : []
   let path = picker.current(state)

@@ -1,5 +1,6 @@
 import { linkPair } from '@fionapreroll/p2p/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { encode } from '../core/miaumiau'
 import { parseEvent, parseState } from './protocol'
 import { GuestSeat, HostSeat } from './session'
 
@@ -91,6 +92,28 @@ describe('a table over the network', () => {
     host.close()
   })
 
+  it('deals Miau-Miau to three phones, each seeing only its own cards', async () => {
+    const host = new HostSeat('Ada')
+    const bo = await join(host, 'Bo')
+    const cy = await join(host, 'Cy')
+    expect(host.choose('miaumiau')).toBe(true)
+    await later(200)
+    const hands = [host.state(), bo.state(), cy.state()].map((s) => s?.cards?.hand ?? [])
+    expect(hands.map((hand) => hand.length)).toEqual([5, 5, 5])
+    expect(new Set(hands.flat()).size).toBe(15)
+    expect(bo.state()?.cards?.counts).toEqual([5, 5, 5])
+    // Bo's phone hears nothing of Ada's cards.
+    expect(JSON.stringify(bo.state())).not.toContain(JSON.stringify(hands[0]))
+
+    // Ada draws; Bo's draw before his turn is not taken.
+    bo.move('miaumiau', 0, encode({ kind: 'draw' }))
+    host.move('miaumiau', 0, encode({ kind: 'draw' }))
+    await later(200)
+    expect(bo.state()?.cards?.counts[0]).toBe(6)
+    expect(bo.state()?.cards?.counts[1]).toBe(5)
+    host.close()
+  })
+
   it('tells a player when the host closes the table', async () => {
     const host = new HostSeat('Ada')
     const bo = await join(host, 'Bo')
@@ -155,6 +178,55 @@ describe('the protocol', () => {
     // Names are cleaned like the library's.
     const named = parseState({ ...state, players: [{ id: 0, name: 'A\u0000da', away: 1 }] })
     expect(named?.players).toEqual([{ id: 0, name: 'Ada', away: false }])
+    host.close()
+  })
+
+  it('reads moves of Miau-Miau only as cards, draws and passes', () => {
+    const play = { type: 'move', game: 'miaumiau', moveNo: 2, move: [9, 3] }
+    expect(parseEvent(play)).toEqual(play)
+    expect(parseEvent({ ...play, move: [52] })).toEqual({ ...play, move: [52] })
+    expect(parseEvent({ ...play, move: [53] })).toEqual({ ...play, move: [53] })
+    for (const move of [[], [54], [52, 1], [9, 4], [9, 1, 1], [-1], ['9']]) {
+      expect(parseEvent({ ...play, move })).toBeUndefined()
+    }
+  })
+
+  it('reads the cards of Miau-Miau only when they fit', () => {
+    const host = new HostSeat('Ada')
+    host.table.join(1, 'Bo')
+    host.table.join(2, 'Cy')
+    host.choose('miaumiau')
+    const state = JSON.parse(JSON.stringify(host.state()))
+    expect(parseState(state)).toEqual(host.state())
+    const cards = (change: object) => ({ ...state, cards: { ...state.cards, ...change } })
+    const hand: number[] = state.cards.hand
+    expect(parseState(cards({ hand: [...hand, hand[0]] }))).toBeUndefined()
+    expect(parseState(cards({ hand: [...hand, 52] }))).toBeUndefined()
+    expect(parseState(cards({ counts: [5, 5] }))).toBeUndefined()
+    expect(parseState(cards({ top: 52 }))).toBeUndefined()
+    expect(parseState(cards({ pile: 0 }))).toBeUndefined()
+    expect(parseState(cards({ turn: 3 }))).toBeUndefined()
+    expect(parseState(cards({ wish: 4 }))).toBeUndefined()
+    expect(parseState(cards({ wish: 2 }))?.cards?.wish).toBe(2)
+    expect(parseState(cards({ penalty: -2 }))).toBeUndefined()
+    // A card drawn must be one in the hand.
+    expect(parseState(cards({ drawn: hand[0] }))?.cards?.drawn).toBe(hand[0])
+    expect(parseState(cards({ drawn: 52 }))).toBeUndefined()
+    expect(parseState(cards({ winner: 5 }))).toBeUndefined()
+    expect(parseState(cards({ stuck: 'no' }))).toBeUndefined()
+    expect(parseState({ ...state, cards: null })).toBeUndefined()
+    expect(parseState({ ...state, position: state.cards })).toBeUndefined()
+    expect(parseState({ ...state, seats: [0] })).toBeUndefined()
+    expect(parseState({ ...state, seats: [0, 1, 2, 3, 4, 5, 6] })).toBeUndefined()
+    expect(parseState({ ...state, outcome: { winner: 2, line: [] } })?.outcome).toEqual({
+      winner: 2,
+      line: [],
+    })
+    expect(parseState({ ...state, outcome: { winner: 2, line: [0] } })).toBeUndefined()
+    host.lobby()
+    host.choose('tictactoe')
+    const board = JSON.parse(JSON.stringify(host.state()))
+    expect(parseState({ ...board, cards: state.cards })).toBeUndefined()
     host.close()
   })
 

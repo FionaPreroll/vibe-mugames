@@ -4,6 +4,7 @@ import {
   type BoardGame,
   EMPTY,
   type GameId,
+  isBoardGame,
   isGameId,
   KIND,
   type Move,
@@ -11,7 +12,8 @@ import {
   PHASES,
   type Position,
 } from '../core/board'
-import { GAMES } from '../core/games'
+import { GAMES, seatRange } from '../core/games'
+import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
 
 /**
@@ -20,7 +22,7 @@ import type { Player, TableState } from '../core/table'
  * which arrive once each. Raise PROTOCOL whenever any of it changes, so phones of different
  * versions refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 2
+export const PROTOCOL = 3
 
 /** Players send no continuous input: board games need none. */
 export type Input = null
@@ -43,13 +45,22 @@ export const parseInput: Parse<Input> = (value) => (value === null ? null : unde
 export const parseEvent: Parse<Event> = (value) => {
   if (!isObject(value) || value.type !== 'move' || !isGameId(value.game)) return undefined
   if (!isWhole(value.moveNo, 0, MAX_MOVES)) return undefined
-  const move = parseMove(value.move, GAMES[value.game])
+  const move = parseMove(value.move, value.game)
   if (!move) return undefined
   return { type: 'move', game: value.game, moveNo: value.moveNo, move }
 }
 
-/** A path of one or more cells of the game's board, no longer than its longest move. */
-function parseMove(value: unknown, rules: BoardGame): Move | undefined {
+/**
+ * A board game's move, a path of one or more cells of its board, no longer than its longest
+ * move; or a move of Miau-Miau, in numbers as `encode` makes them.
+ */
+function parseMove(value: unknown, game: GameId): Move | undefined {
+  if (!isBoardGame(game)) {
+    const numbers = list(value, 2, (n) => (isWhole(n, 0, DECK + 1) ? n : undefined))
+    const move = numbers && decode(numbers)
+    return move ? encode(move) : undefined
+  }
+  const rules = GAMES[game]
   const move = list(value, rules.steps, (cell) =>
     isWhole(cell, 0, rules.cells - 1) ? cell : undefined,
   )
@@ -63,17 +74,25 @@ export const parseState: Parse<TableState> = (value) => {
   if (!players) return undefined
   const game = value.game === null ? null : isGameId(value.game) ? value.game : undefined
   if (game === undefined) return undefined
-  const rules = game ? GAMES[game] : null
-  const seats = list(value.seats, rules?.seats ?? 0, (id) => (isId(id) ? id : undefined))
-  if (!seats || (rules && seats.length !== rules.seats)) return undefined
+  const range = game ? seatRange(game) : { min: 0, max: 0 }
+  const seats = list(value.seats, range.max, (id) => (isId(id) ? id : undefined))
+  if (!seats || seats.length < range.min) return undefined
+  const rules = game && isBoardGame(game) ? GAMES[game] : null
   const position = rules
     ? parsePosition(value.position, rules)
     : value.position === null
       ? null
       : undefined
   if (position === undefined) return undefined
+  const cards =
+    game === 'miaumiau'
+      ? parseCards(value.cards, seats.length)
+      : value.cards === null
+        ? null
+        : undefined
+  if (cards === undefined) return undefined
   if (!isWhole(value.moveNo, 0, MAX_MOVES)) return undefined
-  const last = value.last === null || !rules ? null : parseMove(value.last, rules)
+  const last = value.last === null || !game ? null : parseMove(value.last, game)
   if (last === undefined) return undefined
   const outcome = parseOutcome(value.outcome, position?.board ?? [], seats.length)
   if (outcome === undefined) return undefined
@@ -82,7 +101,24 @@ export const parseState: Parse<TableState> = (value) => {
   for (const [id, score] of Object.entries(value.scores).slice(0, MAX_PLAYERS * 4)) {
     if (isId(Number(id)) && isWhole(score, 0, 1_000_000)) scores[Number(id)] = score
   }
-  return { players, game, seats, position, moveNo: value.moveNo, last, outcome, scores }
+  return { players, game, seats, position, cards, moveNo: value.moveNo, last, outcome, scores }
+}
+
+/** Miau-Miau as the host shows it to this phone: cards of one deck, counts for every seat. */
+function parseCards(value: unknown, seats: number): MiauView | undefined {
+  if (!isObject(value)) return undefined
+  const hand = list(value.hand, DECK, (card) => (isCard(card) ? card : undefined))
+  if (!hand || new Set(hand).size !== hand.length) return undefined
+  const counts = list(value.counts, seats, (n) => (isWhole(n, 0, DECK) ? n : undefined))
+  if (!counts || counts.length !== seats) return undefined
+  const { top, stock, pile, turn, wish, penalty, drawn, winner } = value
+  if (!isCard(top) || !isWhole(stock, 0, DECK) || !isWhole(pile, 1, DECK)) return undefined
+  if (!isWhole(turn, 0, seats - 1) || !isWhole(penalty, 0, DECK)) return undefined
+  if (wish !== null && !isSuit(wish)) return undefined
+  if (drawn !== null && !(isCard(drawn) && hand.includes(drawn))) return undefined
+  if (winner !== null && !isWhole(winner, 0, seats - 1)) return undefined
+  if (typeof value.stuck !== 'boolean') return undefined
+  return { hand, counts, top, stock, pile, turn, wish, penalty, drawn, winner, stuck: value.stuck }
 }
 
 /** A game's position: its board, of the game's size and pieces, and whose turn it is. */

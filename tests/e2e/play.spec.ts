@@ -159,3 +159,45 @@ test('in Dame a piece is picked, then moved, and a jump takes', async ({ browser
   await expect(point(bo, 21)).toHaveClass(/seat-0/)
   await expect(bo.locator('.status.turn')).toHaveText('Your turn')
 })
+
+test('three phones play Miau-Miau, each seeing only its own cards', async ({ browser }) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  const cy = await phone(browser, 'Cy')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await expect(ada.getByRole('button', { name: 'Miau-Miau' })).toBeDisabled()
+  await seat(ada, bo)
+  await seat(ada, cy)
+  await ada.getByRole('button', { name: 'Miau-Miau' }).click()
+
+  for (const page of [ada, bo, cy]) {
+    await expect(page.locator('.hand .card')).toHaveCount(5)
+    // The two others' cards lie face down, five each.
+    await expect(page.locator('.opponent .count')).toHaveText(['5', '5'])
+  }
+  await expect(ada.locator('.status.turn')).toHaveText('Your turn')
+  await expect(bo.locator('.status.turn')).toHaveText('Ada’s turn')
+  // Not Bo's turn: none of his cards, nor the stock, can be played.
+  await expect(bo.locator('.hand .card:enabled')).toHaveCount(0)
+  await expect(bo.locator('.stock')).toBeDisabled()
+
+  // Ada draws a card. If it fits, she keeps it and passes; either way it is Bo's turn after.
+  await ada.locator('.stock').click()
+  await expect(bo.locator('.opponent', { hasText: 'Ada' }).locator('.count')).toHaveText('6')
+  const keep = ada.getByRole('button', { name: 'Keep it' })
+  if (await keep.isVisible()) await keep.click()
+  await expect(bo.locator('.status.turn')).toHaveText('Your turn')
+  await expect(cy.locator('.status.turn')).toHaveText('Bo’s turn')
+
+  // Bo plays a card that fits, choosing a suit if it is a jack, or draws.
+  const playable = bo.locator('.hand .card:enabled')
+  if ((await playable.count()) > 0) {
+    await playable.first().click()
+    const hearts = bo.locator('.suit-choice').getByRole('button', { name: 'hearts', exact: true })
+    if (await hearts.isVisible()) await hearts.click()
+    await expect(cy.locator('.opponent', { hasText: 'Bo' }).locator('.count')).toHaveText('4')
+  } else {
+    await bo.locator('.stock').click()
+    await expect(cy.locator('.opponent', { hasText: 'Bo' }).locator('.count')).toHaveText('6')
+  }
+})

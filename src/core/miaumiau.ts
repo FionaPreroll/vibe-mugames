@@ -44,6 +44,35 @@ export type MiauMove =
   | { readonly kind: 'draw' }
   | { readonly kind: 'pass' }
 
+/** A move as the table and the protocol carry it, a list of numbers: see `encode`. */
+const DRAW_CODE = DECK
+const PASS_CODE = DECK + 1
+
+/** A move as numbers: the card (and a jack's suit), or 52 to draw, 53 to pass. */
+export function encode(move: MiauMove): number[] {
+  if (move.kind === 'draw') return [DRAW_CODE]
+  if (move.kind === 'pass') return [PASS_CODE]
+  return move.suit === undefined ? [move.card] : [move.card, move.suit]
+}
+
+/** The move these numbers stand for, or undefined if they stand for none. */
+export function decode(numbers: readonly number[]): MiauMove | undefined {
+  const [first, suit, ...rest] = numbers
+  if (!Number.isInteger(first) || rest.length > 0) return undefined
+  if (first === DRAW_CODE || first === PASS_CODE) {
+    if (suit !== undefined) return undefined
+    return { kind: first === DRAW_CODE ? 'draw' : 'pass' }
+  }
+  if (!isCard(first)) return undefined
+  if (suit === undefined) return { kind: 'play', card: first }
+  return isSuit(suit) ? { kind: 'play', card: first, suit } : undefined
+}
+
+/** Whether a value is a card, 0 to 51. */
+export function isCard(value: unknown): value is Card {
+  return Number.isInteger(value) && (value as number) >= 0 && (value as number) < DECK
+}
+
 /** The whole game, as only the host knows it. */
 export interface MiauState {
   /** Every seat's cards. */

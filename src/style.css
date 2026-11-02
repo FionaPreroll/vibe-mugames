@@ -210,6 +210,22 @@ textarea {
   color: var(--seat-1);
 }
 
+.piece.seat-2 {
+  color: #4fb3a9;
+}
+
+.piece.seat-3 {
+  color: #8f7cf0;
+}
+
+.piece.seat-4 {
+  color: #e98ac0;
+}
+
+.piece.seat-5 {
+  color: #8fc75b;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
@@ -490,6 +506,17 @@ textarea {
   border: 1px solid #cfc6b4;
   color: #1b1b1b;
   line-height: 1;
+  position: relative;
+}
+
+/* Sevens, eights and jacks carry a mark in their corner, as the card help explains. */
+.cards .mark {
+  position: absolute;
+  top: 0.15rem;
+  right: 0.2rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #2f5fa8;
 }
 
 .cards .card .rank {
@@ -629,6 +656,11 @@ textarea {
 
 .cards .hand .card:disabled {
   opacity: 1;
+  cursor: default;
+}
+
+/* On this player's turn, the cards that do not fit step back. */
+.cards.active .hand .card:disabled {
   filter: brightness(0.7);
 }
 
@@ -666,6 +698,55 @@ textarea {
 
 .cards .suit-button.red {
   color: #c62a2f;
+}
+
+.cards .card-help {
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--panel);
+}
+
+.cards .card-help summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.cards .card-help ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.cards .card-help li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cards .help-card {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2.8rem;
+  border-radius: 0.3rem;
+  background: #fbf8f1;
+  color: #1b1b1b;
+  font-weight: 700;
+}
+
+.cards .help-card .mark {
+  top: 0.05rem;
+  right: 0.1rem;
+  font-size: 0.55rem;
 }
 
 /* Hidden must win over every display rule above. */

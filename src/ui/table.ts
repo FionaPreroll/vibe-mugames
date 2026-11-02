@@ -1,9 +1,11 @@
 import { GAME_IDS } from '../core/board'
-import { GAMES } from '../core/games'
+import { seatRange } from '../core/games'
+import { encode } from '../core/miaumiau'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
 import { HostSeat, type Seat } from '../net/session'
 import { boardView, handText, hint, Picker, seatName, symbol } from './boards'
+import { cardsHint, cardsView } from './cards'
 import { codePanel } from './codes'
 import { failureText, h, show, toast } from './dom'
 
@@ -77,7 +79,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
           type: 'button',
           class: 'game-choice',
           textContent: t(id),
-          disabled: here < GAMES[id].seats,
+          disabled: here < seatRange(id).min,
           onclick: () => seat.choose(id),
         }),
       ),
@@ -90,10 +92,10 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     if (game === null) return []
     const name = (seatNo: number) => seatName(state, seatNo)
     const mine = state.seats.indexOf(seat.id)
-    const turn = state.position?.turn ?? 0
+    const turn = state.position?.turn ?? state.cards?.turn ?? 0
     const myTurn = state.outcome === null && mine >= 0 && turn === mine
     const taking = state.position?.phase === 'remove'
-    if (state.outcome === 'draw') status.textContent = t('draw')
+    if (state.outcome === 'draw') status.textContent = t(state.cards ? 'stuck' : 'draw')
     else if (state.outcome)
       status.textContent =
         state.outcome.winner === mine
@@ -103,10 +105,23 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
       status.textContent = myTurn
         ? t('youTake', { name: name(1 - turn) })
         : t('theyTake', { name: name(turn) })
-    else if (mine < 0) status.textContent = t('watching', { a: name(0), b: name(1) })
+    else if (mine < 0)
+      status.textContent =
+        state.seats.length === 2
+          ? t('watching', { a: name(0), b: name(1) })
+          : t('watchingAll', { names: state.seats.map((_, i) => name(i)).join(', ') })
     else status.textContent = myTurn ? t('yourTurn') : t('theirTurn', { name: name(turn) })
     status.classList.toggle('mine', myTurn)
-    const help = myTurn ? hint(state, picker.current(state)) : ''
+    const help = state.cards
+      ? (cardsHint(
+          state.cards,
+          mine,
+          state.last,
+          state.seats.map((_, i) => name(i)),
+        ) ?? '')
+      : myTurn
+        ? hint(state, picker.current(state))
+        : ''
     const hand = handText(state)
 
     if (seat instanceof HostSeat && state.outcome !== null) {
@@ -124,12 +139,19 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
       actions.replaceChildren(h('p', { class: 'muted' }, t('waitForHost', { host })))
     } else actions.replaceChildren()
 
-    const board = boardView(
-      state,
-      seat.id,
-      picker,
-      myTurn ? (move) => seat.move(game, state.moveNo, move) : null,
-    )
+    const board = state.cards
+      ? cardsView(
+          state.cards,
+          mine,
+          state.seats.map((_, i) => name(i)),
+          myTurn ? (move) => seat.move(game, state.moveNo, encode(move)) : null,
+        )
+      : boardView(
+          state,
+          seat.id,
+          picker,
+          myTurn ? (move) => seat.move(game, state.moveNo, move) : null,
+        )
     return [
       h('h2', {}, t(game)),
       status,

@@ -39,7 +39,7 @@ export type Outcome = { readonly winner: number; readonly line: readonly number[
 
 export interface BoardGame {
   /** The game's id, as the protocol carries it. */
-  readonly id: GameId
+  readonly id: BoardGameId
   /** Cells on the board. */
   readonly cells: number
   /** Players at the board; everyone else at the table watches. */
@@ -58,11 +58,20 @@ export interface BoardGame {
   outcome(position: Position): Outcome | null
 }
 
-export const GAME_IDS = ['tictactoe', 'fourinarow', 'muehle', 'dame'] as const
+/** The games played on a board, each a `BoardGame`. */
+export const BOARD_GAME_IDS = ['tictactoe', 'fourinarow', 'muehle', 'dame'] as const
+export type BoardGameId = (typeof BOARD_GAME_IDS)[number]
+
+/** Every game, in the order the lobby shows them: the board games, then the card game. */
+export const GAME_IDS = [...BOARD_GAME_IDS, 'miaumiau'] as const
 export type GameId = (typeof GAME_IDS)[number]
 
 export function isGameId(value: unknown): value is GameId {
   return (GAME_IDS as readonly unknown[]).includes(value)
+}
+
+export function isBoardGame(id: GameId): id is BoardGameId {
+  return (BOARD_GAME_IDS as readonly string[]).includes(id)
 }
 
 /** Whether the seat to move may make this move now (whose turn it is, the table checks). */

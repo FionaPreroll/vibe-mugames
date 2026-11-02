@@ -52,6 +52,19 @@ const en = {
   playDrawn: 'You drew the {card}: play it, or keep it.',
   stuck: 'Nobody can play or draw: a draw.',
   watchingAll: 'You are watching: {names}.',
+  theyMustDraw: '{name} must draw {n} cards, or answer with a seven.',
+  youMiss: 'An eight: you miss this turn.',
+  theyMiss: 'An eight: {name} misses a turn.',
+  followWish: 'A jack wished for {suit}: play a {suit} card or a jack.',
+  cardHelp: 'What the cards do',
+  helpMatch:
+    'Play a card of the same suit or rank as the top card. If you cannot or will not, draw one.',
+  helpSeven:
+    'The next player draws two cards, unless they play a seven too: then the player after them draws four.',
+  helpEight: 'The next player misses their turn.',
+  helpJack: 'Goes on any card. You wish for a suit: the next card must be of that suit, or a jack.',
+  helpStart: 'The first card turned up counts only for its suit and rank.',
+  helpWin: 'Whoever plays their last card first wins. “Miau!” shows who has one card left.',
   yourTurn: 'Your turn',
   theirTurn: '{name}’s turn',
   youWin: 'You win!',
@@ -147,6 +160,21 @@ const de: Texts = {
   playDrawn: 'Du hast {card} gezogen: Spiel sie aus oder behalte sie.',
   stuck: 'Keiner kann spielen oder ziehen: unentschieden.',
   watchingAll: 'Du schaust zu: {names}.',
+  theyMustDraw: '{name} muss {n} Karten ziehen oder eine Sieben drauflegen.',
+  youMiss: 'Eine Acht: Du setzt diese Runde aus.',
+  theyMiss: 'Eine Acht: {name} setzt aus.',
+  followWish: 'Ein Bube wünscht sich {suit}: Spiel eine {suit}-Karte oder einen Buben.',
+  cardHelp: 'Was die Karten bedeuten',
+  helpMatch:
+    'Leg eine Karte mit derselben Farbe oder demselben Wert wie die oberste. Wenn du nicht kannst oder willst, zieh eine.',
+  helpSeven:
+    'Der Nächste zieht zwei Karten, außer er legt auch eine Sieben: Dann zieht der danach vier.',
+  helpEight: 'Der Nächste setzt aus.',
+  helpJack:
+    'Passt auf jede Karte. Du wünschst dir eine Farbe: Die nächste Karte muss diese Farbe haben oder ein Bube sein.',
+  helpStart: 'Die erste aufgedeckte Karte zählt nur mit Farbe und Wert.',
+  helpWin:
+    'Wer zuerst seine letzte Karte ablegt, gewinnt. „Miau!“ zeigt, wer nur noch eine Karte hat.',
   yourTurn: 'Du bist dran',
   theirTurn: '{name} ist dran',
   youWin: 'Du gewinnst!',

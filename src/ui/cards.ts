@@ -1,10 +1,13 @@
 import {
   allowed,
   type Card,
+  decode,
+  EIGHT,
   JACK,
   type MiauMove,
   type MiauView,
   rankOf,
+  SEVEN,
   SUITS,
   suitOf,
 } from '../core/miaumiau'
@@ -32,13 +35,58 @@ export function cardName(card: Card): string {
   return t('cardName', { rank: name, suit: t(SUIT_NAMES[suitOf(card)] as TextKey) })
 }
 
-/** One card's face: its rank and suit, red or black. */
+/** The mark a card that does something carries, as the card help explains it; '' for others. */
+function specialMark(rank: number): string {
+  return rank === SEVEN ? '+2' : rank === EIGHT ? '»' : rank === JACK ? '★' : ''
+}
+
+/** One card's face: its rank and suit, red or black, and the mark of a card that does something. */
 function face(card: Card): Node[] {
   const red = suitOf(card) >= 2
+  const mark = specialMark(rankOf(card))
   return [
     h('span', { class: `rank${red ? ' red' : ''}` }, rankMark(card)),
     h('span', { class: `suit${red ? ' red' : ''}` }, suitSymbol(suitOf(card))),
-  ]
+    mark ? h('span', { class: 'mark', ariaHidden: 'true' }, mark) : null,
+  ].filter((node): node is HTMLSpanElement => node !== null)
+}
+
+/** Whether the card help is open: it stays as the player left it while the table redraws. */
+let helpOpen = true
+
+/** What each card does, for players learning the game. */
+function cardHelp(): HTMLElement {
+  const row = (rank: number, text: TextKey) =>
+    h(
+      'li',
+      {},
+      h(
+        'span',
+        { class: 'help-card' },
+        rankMark(rank),
+        h('span', { class: 'mark' }, specialMark(rank)),
+      ),
+      h('span', {}, t(text)),
+    )
+  const details = h(
+    'details',
+    { class: 'card-help', open: helpOpen },
+    h('summary', {}, t('cardHelp')),
+    h(
+      'ul',
+      {},
+      h('li', {}, h('span', {}, t('helpMatch'))),
+      row(SEVEN, 'helpSeven'),
+      row(EIGHT, 'helpEight'),
+      row(JACK, 'helpJack'),
+      h('li', {}, h('span', {}, t('helpStart'))),
+      h('li', {}, h('span', {}, t('helpWin'))),
+    ),
+  )
+  details.addEventListener('toggle', () => {
+    helpOpen = details.open
+  })
+  return details
 }
 
 /** Hands sorted by suit, then by rank, so a player finds their cards. */
@@ -180,13 +228,34 @@ export function cardsView(
     seat >= 0 ? hand : null,
     choice,
     buttons,
+    cardHelp(),
   )
 }
 
-/** What a player whose turn it is should know about it, beyond whose turn it is. */
-export function cardsHint(view: MiauView): string | null {
+/**
+ * What the card on top does now, for everyone at the table, and what the player whose turn it
+ * is may do: draw for sevens, miss a turn for an eight, follow a jack's wish, or play the card
+ * just drawn. `last` is the move made last, `seat` this phone's seat or -1, `names` the seats'.
+ */
+export function cardsHint(
+  view: MiauView,
+  seat: number,
+  last: readonly number[] | null,
+  names: readonly string[],
+): string | null {
   if (view.winner !== null || view.stuck) return null
-  if (view.penalty > 0) return t('mustDraw', { n: view.penalty })
-  if (view.drawn !== null) return t('playDrawn', { card: cardName(view.drawn) })
+  const mine = seat === view.turn
+  const name = names[view.turn] ?? '?'
+  if (view.penalty > 0) {
+    return mine ? t('mustDraw', { n: view.penalty }) : t('theyMustDraw', { name, n: view.penalty })
+  }
+  if (mine && view.drawn !== null) return t('playDrawn', { card: cardName(view.drawn) })
+  const move = last && decode(last)
+  if (move?.kind === 'play' && move.card === view.top && rankOf(move.card) === EIGHT) {
+    const seats = view.counts.length
+    const skipped = (view.turn - 1 + seats) % seats
+    return skipped === seat ? t('youMiss') : t('theyMiss', { name: names[skipped] ?? '?' })
+  }
+  if (view.wish !== null) return t('followWish', { suit: suitSymbol(view.wish) })
   return null
 }
