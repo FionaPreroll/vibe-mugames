@@ -88,7 +88,7 @@ pnpm check
 
 `pnpm check` runs the type check, Biome and the unit tests: the rules, the table, and whole games between a host and players over the library's connections in memory (`src/net/session.test.ts`). `pnpm test:e2e` builds the app and plays in Chromium over real WebRTC. On phones, `pnpm dev:phone` serves over HTTPS with a self-signed certificate, as phones open the camera only on HTTPS pages.
 
-**The library** is installed from the file on its release, [`p2p-v0.4.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.4.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
+**The library** is installed from the file on its release, [`p2p-v0.5.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.5.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
 
 **The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`, and run the Java tests with `./gradlew testDebugUnitTest`. Without the SDK, `UpdateRulesTest` compiles and runs with plain `javac` and JUnit. The update dialogs are tested in happy-dom against a fake `AppUpdaterPlugin` (`src/ui/updates.test.ts`).
 

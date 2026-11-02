@@ -176,8 +176,8 @@ importers:
         specifier: ^8.6.0
         version: 8.6.0
       '@fionapreroll/p2p':
-        specifier: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.4.0/fionapreroll-p2p-0.4.0.tgz
-        version: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.4.0/fionapreroll-p2p-0.4.0.tgz
+        specifier: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.5.0/fionapreroll-p2p-0.5.0.tgz
+        version: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.5.0/fionapreroll-p2p-0.5.0.tgz
     devDependencies:
       '@biomejs/biome':
         specifier: 2.6.3
@@ -323,9 +323,9 @@ packages:
   '@capacitor/core@8.6.0':
     resolution: {integrity: sha512-9F2zzuGYTJu+wqmQSEmqnFBfGrhC/njjMCfmxbvg9mq8xJT4wNh5pxbMFZxvW/yDhYJWPEBFQxeqzfo1gKrvxg==}
 
-  '@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.4.0/fionapreroll-p2p-0.4.0.tgz':
-    resolution: {integrity: sha512-KgWWFUYaIm+uUREbgZG+s9LgQzGXcgXmbHuCCNoJl4ktfZJSLLirjiFgqu4KvDAZSCCktZTD9MnVZw55WgT3wQ==, tarball: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.4.0/fionapreroll-p2p-0.4.0.tgz}
-    version: 0.4.0
+  '@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.5.0/fionapreroll-p2p-0.5.0.tgz':
+    resolution: {integrity: sha512-LfzT2LXr/N9D6W5h3sZG/GokHeH80n0nkFQLPShUadReTFYt41V27zVJoSFaKTgvx7/wYA0WvBvXK7pGUAH/bA==, tarball: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.5.0/fionapreroll-p2p-0.5.0.tgz}
+    version: 0.5.0
 
   '@ionic/cli-framework-output@2.2.8':
     resolution: {integrity: sha512-TshtaFQsovB4NWRBydbNFawql6yul7d5bMiW1WYYf17hd99V6xdDdk3vtF51bw6sLkxON3bDQpWsnUc9/hVo3g==}
@@ -1389,7 +1389,7 @@ snapshots:
     dependencies:
       tslib: 2.9.1
 
-  '@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.4.0/fionapreroll-p2p-0.4.0.tgz':
+  '@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.5.0/fionapreroll-p2p-0.5.0.tgz':
     dependencies:
       jsqr: 1.4.0
       uqr: 0.1.3
