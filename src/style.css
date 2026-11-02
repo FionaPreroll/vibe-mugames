@@ -343,6 +343,202 @@ textarea {
   opacity: 0;
 }
 
+/* Miau-Miau: cards face up are white, face down blue. */
+.cards {
+  margin: 0.75rem 0;
+}
+
+.cards .card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 4.8rem;
+  padding: 0;
+  border-radius: 0.45rem;
+  background: #fbf8f1;
+  border: 1px solid #cfc6b4;
+  color: #1b1b1b;
+  line-height: 1;
+}
+
+.cards .card .rank {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.cards .card .suit {
+  font-size: 1.6rem;
+}
+
+.cards .red {
+  color: #c62a2f;
+}
+
+.cards .back {
+  display: inline-block;
+  width: 1.1rem;
+  height: 1.6rem;
+  border-radius: 0.2rem;
+  background: repeating-linear-gradient(45deg, #2f5fa8 0 4px, #24508f 4px 8px);
+  border: 1px solid #a9c1e6;
+}
+
+.cards .opponents {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.cards .opponent {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--panel);
+}
+
+.cards .opponent.turn {
+  border-color: var(--accent);
+}
+
+.cards .opponent .backs {
+  display: inline-flex;
+}
+
+.cards .opponent .backs .back + .back {
+  margin-left: -0.75rem;
+}
+
+.cards .opponent .count {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.cards .miau {
+  color: var(--seat-1);
+  font-weight: 700;
+}
+
+.cards .middle {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.cards .stock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  background: none;
+}
+
+.cards .stock .back {
+  width: 3.4rem;
+  height: 4.8rem;
+  border-radius: 0.45rem;
+}
+
+.cards .stock .label {
+  font-size: 0.85rem;
+}
+
+.cards.active .stock:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.cards .pile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+}
+
+.cards .pile .card {
+  width: 4.2rem;
+  height: 6rem;
+}
+
+.cards .pile .card .rank {
+  font-size: 1.5rem;
+}
+
+.cards .pile .card .suit {
+  font-size: 2rem;
+}
+
+.cards .wish {
+  font-weight: 600;
+  background: #fbf8f1;
+  color: #1b1b1b;
+  border-radius: 1rem;
+  padding: 0.15rem 0.6rem;
+}
+
+.cards .wish.red {
+  color: #c62a2f;
+}
+
+.cards .hand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.cards .hand .card:disabled {
+  opacity: 1;
+  filter: brightness(0.7);
+}
+
+.cards.active .hand .card.playable {
+  border: 2px solid var(--accent);
+  transform: translateY(-0.3rem);
+}
+
+.cards .hand .card.drawn {
+  outline: 3px solid var(--seat-1);
+}
+
+.cards .suit-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.cards .suit-choice p {
+  flex-basis: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.cards .suit-button {
+  font-size: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  background: #fbf8f1;
+  color: #1b1b1b;
+}
+
+.cards .suit-button.red {
+  color: #c62a2f;
+}
+
 /* Hidden must win over every display rule above. */
 [hidden] {
   /* biome-ignore lint/complexity/noImportantStyles: see above */
