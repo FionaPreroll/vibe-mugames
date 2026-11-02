@@ -1,8 +1,8 @@
 import fc from 'fast-check'
 import { describe, expect, it } from 'vitest'
-import { type Board, type BoardGame, EMPTY, isLegal, plain } from './board'
+import { type Board, type BoardGame, EMPTY, GAME_IDS, isLegal, plain } from './board'
 import { fourInARow } from './fourInARow'
-import { GAMES } from './games'
+import { GAMES, hasHiddenCards } from './games'
 import { ticTacToe } from './tictactoe'
 
 /** Plays one-cell moves in turn, seat 0 first, and returns the board. */
@@ -114,5 +114,11 @@ describe('every game', () => {
         { numRuns: 60 },
       )
     }
+  })
+})
+
+describe('hidden cards', () => {
+  it('are in Miau-Miau only: board games show everything to everyone', () => {
+    expect(GAME_IDS.filter(hasHiddenCards)).toEqual(['miaumiau'])
   })
 })

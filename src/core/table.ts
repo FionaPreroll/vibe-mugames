@@ -40,6 +40,13 @@ export interface TableState {
   readonly scores: Readonly<Record<number, number>>
 }
 
+/** The id of the player whose turn it is, or null in the lobby and once the game is over. */
+export function playerToMove(state: TableState): number | null {
+  if (state.game === null || state.outcome !== null) return null
+  const turn = state.position?.turn ?? state.cards?.turn
+  return turn === undefined ? null : (state.seats[turn] ?? null)
+}
+
 export class Table {
   /** `random` shuffles the cards: numbers from 0 up to, not including, 1. */
   constructor(private readonly random: () => number = Math.random) {}

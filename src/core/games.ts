@@ -18,3 +18,14 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (isBoardGame(game)) return { min: GAMES[game].seats, max: GAMES[game].seats }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
+
+/** Games in which players hold cards the others must not see. */
+const HIDDEN: ReadonlySet<GameId> = new Set<GameId>(['miaumiau'])
+
+/**
+ * Whether a game hides something from some players, such as the cards in each hand. Played on
+ * one device, everyone there sees it all: such games are played with open cards.
+ */
+export function hasHiddenCards(game: GameId): boolean {
+  return HIDDEN.has(game)
+}

@@ -2,12 +2,8 @@ import { type Connection, opened } from '@fionapreroll/p2p'
 import { GuestRoom, HOST_ID, HostRoom, type Pairing } from '@fionapreroll/p2p/room'
 import type { GameId, Move } from '../core/board'
 import { Table, type TableState } from '../core/table'
+import { random } from '../random'
 import { type Event, type Input, PROTOCOL, parseEvent, parseInput, parseState } from './protocol'
-
-/** Numbers from 0 up to, not including, 1, from the browser's cryptographic randomness. */
-function random(): number {
-  return (crypto.getRandomValues(new Uint32Array(1))[0] ?? 0) / 2 ** 32
-}
 
 /** Board games need no more: the table goes out ten times a second. */
 const TICK_MS = 100
@@ -32,8 +28,18 @@ export interface Seat {
   close(): void
 }
 
+/** What whoever keeps the table does between games: the host's phone, or a table on one device. */
+export interface TableHost {
+  /** Starts a game with the next players in the queue; false if too few are here. */
+  choose(game: GameId): boolean
+  /** The same game again, once one is over. */
+  rematch(): void
+  /** Back to the lobby, to choose another game. */
+  lobby(): void
+}
+
 /** The host's phone: it keeps the table and lets players in. */
-export class HostSeat implements Seat {
+export class HostSeat implements Seat, TableHost {
   readonly id = HOST_ID
   readonly isHost = true
   readonly table = new Table(random)

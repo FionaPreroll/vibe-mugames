@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { decode, encode, moves } from './miaumiau'
-import { Table } from './table'
+import { playerToMove, Table } from './table'
 
 /** A table with players 0 (the host), 1 and 2 as given. */
 function table(...names: string[]): Table {
@@ -221,5 +221,30 @@ describe('the table', () => {
     t.choose('fourinarow')
     t.lobby()
     expect(t.state()).toMatchObject({ game: null, seats: [], position: null, outcome: null })
+  })
+})
+
+describe('whose turn it is', () => {
+  it('names the player to move, by id: nobody in the lobby or once the game is over', () => {
+    const t = table('Ada', 'Bo', 'Cy')
+    expect(playerToMove(t.state())).toBeNull()
+    t.choose('tictactoe')
+    expect(playerToMove(t.state())).toBe(0)
+    play(t, 0)
+    expect(playerToMove(t.state())).toBe(1)
+    play(t, 3, 1, 4, 2)
+    expect(playerToMove(t.state())).toBeNull()
+    // The winner stays and Cy comes in; Bo waits.
+    t.rematch()
+    expect(t.state().seats).toEqual([0, 2])
+    play(t, 4)
+    expect(playerToMove(t.state())).toBe(2)
+  })
+
+  it('follows the cards in Miau-Miau', () => {
+    const t = table('Ada', 'Bo', 'Cy')
+    t.choose('miaumiau')
+    const turn = t.state().cards?.turn ?? -1
+    expect(playerToMove(t.state())).toBe(t.state().seats[turn])
   })
 })

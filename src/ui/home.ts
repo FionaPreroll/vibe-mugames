@@ -6,6 +6,7 @@ import { playerToken, settings, updateSettings } from '../storage'
 import { AppUpdater } from '../updates'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
+import { localSetup } from './local'
 import { tableScreen } from './table'
 import { updatesSection } from './updates'
 import { webUpdateBanner } from './webUpdates'
@@ -74,6 +75,17 @@ export function homeScreen(): void {
           class: 'big',
           textContent: t('join'),
           onclick: () => joinScreen(playerName()),
+        }),
+        h('button', {
+          type: 'button',
+          class: 'big',
+          textContent: t('local'),
+          onclick: () => {
+            // The name typed here is the first player's; none typed, none made up.
+            const typed = name.value.trim()
+            if (typed) updateSettings({ name: typed })
+            localSetup(homeScreen)
+          },
         }),
       ),
       h('label', { class: 'language' }, t('language'), language),

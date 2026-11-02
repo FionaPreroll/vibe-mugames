@@ -4,7 +4,7 @@
 [![Coverage](https://codecov.io/gh/FionaPreroll/vibe-mugames/branch/main/graph/badge.svg)](https://codecov.io/gh/FionaPreroll/vibe-mugames)
 [![Android](https://github.com/FionaPreroll/vibe-mugames/actions/workflows/android.yml/badge.svg)](https://github.com/FionaPreroll/vibe-mugames/actions/workflows/android.yml)
 
-Board games for phones side by side, in the browser and as an Android app. The phones connect directly to each other by QR code, over Wi-Fi or a hotspot one of them opens: no internet, no server, no accounts. The connection comes from [`@fionapreroll/p2p`](https://github.com/FionaPreroll/vibe-p2pgame/tree/main/packages/p2p), the library behind [Spark Hunt](https://github.com/FionaPreroll/vibe-p2pgame).
+Board games for phones side by side, in the browser and as an Android app, or for everyone around one laptop or tablet. The phones connect directly to each other by QR code, over Wi-Fi or a hotspot one of them opens: no internet, no server, no accounts. The connection comes from [`@fionapreroll/p2p`](https://github.com/FionaPreroll/vibe-p2pgame/tree/main/packages/p2p), the library behind [Spark Hunt](https://github.com/FionaPreroll/vibe-p2pgame).
 
 ## Playing
 
@@ -13,6 +13,8 @@ Play in the browser at **[fionapreroll.github.io/vibe-mugames](https://fionaprer
 1. **Open a table** on the first phone, then **Add player**: it shows a QR code.
 2. On the new player's phone, **Join a table** and scan that code. The phone then shows a code of its own, which the first phone scans. Without a camera, both codes can be copied and pasted as text. If the camera will not focus on the screen, tap the picture to focus, zoom out and hold the phone further away, switch cameras, or take a photo of the code instead. Sending a code over may take its time: the joining phone waits up to 10 minutes for the host to take its code. If a connection fails, both phones say so and offer **Try again**.
 3. The host chooses a game. Up to eight phones sit at a table: two play the board games, up to six Miau-Miau, and the others watch and take turns. After a game, the winner stays and the others who played go to the back of the queue; when nobody waits, the next player in turn starts.
+
+**On one device:** on a laptop or a tablet, **Play on this device** on the start screen seats two to six players at the device, with their names, and no network at all. They either take turns on one screen, which names whose turn it is and keeps the board the same way round for everyone, or, from two to four, split the screen into a part for each player, with their own view: their own cards, and in Draughts their own pieces at the bottom. A part turns round with **⟲**, for a player sitting across the table. Games with hidden cards, such as Miau-Miau, are played with open cards there: everyone can see every hand, and the lobby and the game say so. The device remembers who played and how.
 
 The games:
 
@@ -46,6 +48,7 @@ English and German, as the browser's language says, or chosen on the start scree
 - **The host decides everything.** The host's phone keeps the table (`src/core/table.ts`): who sits there, the game, the board and the scores, and sends it to every phone ten times a second as the room's state. Players send their moves as events, which arrive once each, in order; each move names the move number it is meant to be, so a move sent twice counts once. The host takes a move only from the player whose turn it is, and only if the rules allow it.
 - **Rules are pure TypeScript** in `src/core`: no DOM, no network. Each game is a `BoardGame` (`src/core/board.ts`): where a game starts, every move legal now, what a move does, and how a game ends. A game's `Position` is its board of cells (each empty or a piece: its seat, plus `KIND` once crowned), whose turn it is, which the rules decide, the pieces still in hand, the phase (such as taking a piece after a mill) and a count of quiet moves for draws. A move is a path of cells: a cell or column, from and to, or every square of a jump.
 - **Cards stay hidden.** Miau-Miau (`src/core/miaumiau.ts`) is a game of its own, not a `BoardGame`: the host alone knows every hand, and the library's `stateFor` sends each phone the table with only its own cards (`MiauView`), and how many the others hold. Its moves travel as numbers too: a card (with a jack's wished suit), 52 to draw, 53 to pass. The host shuffles with the browser's cryptographic randomness.
+- **One device keeps its own table.** `LocalTable` (`src/local.ts`) is the table of `src/core/table.ts` with every player on the device and nothing sent anywhere; each move is taken from whoever's turn it is. Taking turns, the screen (`src/ui/local.ts`) shows the game as the player to move sees it; a split screen shows each player's own view of it side by side. Both draw the game with the same views as a phone's table (`src/ui/game.ts`). `hasHiddenCards` (`src/core/games.ts`) names the games that are played with open cards there.
 - **Everything from another phone is checked** before use (`src/net/protocol.ts`), as is everything read from storage (`src/storage.ts`).
 - **App updates** (`src/updates.ts`, `src/ui/updates.ts`, `AppUpdaterPlugin.java`): the release _Spielekiste for Android_ holds `version.json` beside the APK, naming its build and size. The app compares it with its own build number, the APK's `versionCode`; CI sets both to the Android workflow's run number. The plugin reads and downloads only from this repository's releases, over HTTPS, and its decisions are in plain Java (`UpdateRules`), with JUnit tests beside them. Android installs an update only if it is signed with the same key as the app installed: every build is signed with `android/app/debug.keystore`, in the repository on purpose. It is public, so it proves only that an update comes from a build of this project.
 - **Website updates** (`src/webUpdates.ts`, `src/ui/webUpdates.ts`): every build writes `version.json` beside the page (`vite.config.ts`), with its version, commit and time. The page reads the deployed one, past every cache, and calls it newer if it is another commit, built later. The app does not look there, as its files are inside it.
@@ -54,22 +57,26 @@ English and German, as the browser's language says, or chosen on the start scree
 src/
   core/       the rules: board.ts, tictactoe.ts, fourInARow.ts, muehle.ts, dame.ts, miaumiau.ts, games.ts, table.ts
   net/        protocol.ts: the messages and their parsers; session.ts: the host's and players' seats
-  ui/         the screens: home.ts, table.ts, boards.ts, cards.ts, codes.ts (QR codes and text codes),
+  ui/         the screens: home.ts, table.ts, local.ts (playing on one device), game.ts (what every
+              table shows), boards.ts, cards.ts, codes.ts (QR codes and text codes),
               updates.ts and webUpdates.ts (the update dialogs and notes)
   i18n.ts     every text players see, in English and German
-  storage.ts  name, language, the update switch, the camera last used and the player's token, in local storage
+  local.ts    the table on one device
+  storage.ts  name, language, the update switch, the camera last used, who last played on this device
+              and the player's token, in local storage
   native.ts   the Android app's back button
   updates.ts  the app's updates from its release; webUpdates.ts: the website's
 android/      the Android app's project (Capacitor), with AppUpdaterPlugin and UpdateRules
 tests/e2e/    Playwright: phones in separate browser profiles pair through the text codes and play;
-              the website offers a newer build; pairing.spec.ts: slow, wrong and failed codes, and copying
+              the website offers a newer build; pairing.spec.ts: slow, wrong and failed codes, and copying;
+              local.spec.ts: playing on one device, taking turns and on a split screen
 ```
 
 ### Adding a game
 
 1. Write its rules as a `BoardGame` in `src/core`, with tests beside them, and add its id to `GAME_IDS` and `GAMES`.
 2. Give it a name in `src/i18n.ts`, in English and German, and a board in `src/ui/boards.ts`. Moves of several cells are picked there one cell at a time from the rules' `moves()`, so a board only needs to draw its cells.
-3. If it needs more than a board of cells, such as dice or hidden cards, extend the table and the protocol, and raise `PROTOCOL` in `src/net/protocol.ts`. Miau-Miau shows how: its own state on the table, a view per player sent through `stateFor`, its seat range in `seatRange` (`src/core/games.ts`), and a parser for its view.
+3. If it needs more than a board of cells, such as dice or hidden cards, extend the table and the protocol, and raise `PROTOCOL` in `src/net/protocol.ts`. Miau-Miau shows how: its own state on the table, a view per player sent through `stateFor`, its seat range in `seatRange` (`src/core/games.ts`), and a parser for its view. A game that hides something from some players also goes into `hasHiddenCards` there, so that on one device it says it is played open.
 
 ## Development
 
@@ -124,4 +131,5 @@ Every feature or fix gets its own branch off `main`, named `feature/<name_in_sna
 - **The app's updates are unit-tested, but not yet tried on phones.** An app installed before builds were signed with the same key has to be uninstalled once.
 - **Some Wi-Fi networks** isolate their clients, so the phones cannot see each other there; a phone's own hotspot does not.
 - **The app has Capacitor's default icon** for now.
+- **A game on one device is not saved:** closing the page or the app ends it, scores and all.
 - **A host who closes the page ends the table:** players cannot sit down again until the host opens a new one. A player who drops out gets their place and score back by pairing again.
