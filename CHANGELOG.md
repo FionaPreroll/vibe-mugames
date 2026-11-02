@@ -18,5 +18,11 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - Hints for learning Miau-Miau: sevens, eights and jacks carry a mark, a card help explains what each card does, and a line says what the last card does now, such as who must draw or who misses a turn.
 - After a game of more than two, the winner stays and the others go to the back of the queue; when nobody waits, the next player in turn starts.
 - An Android app, whose newest build is always on the repository's releases page.
+- Updates in the Android app, if you agree at its first start or switch them on under _Updates_ on the start screen: at every start, the app looks for a newer build and offers to install it, and _Look for a new version now_ looks at once. The dialog says how large the download is, and warns on mobile data or another metered connection. The download can be paused and goes on where it stopped, also after the app was closed. Android asks before installing; the first time, it wants you to allow the app to install apps, and installing goes on by itself when you come back. If Android's installer does not open, or the update was not installed, the dialog says so and offers to try again.
+- The website tells you on the start screen when a newer version is out, and loads it with a tap.
+
+### Changed
+
+- Every build of the Android app is now signed with the same key, so a new one installs over the one before and keeps the app's settings. An app installed before this change has to be uninstalled once.
 
 [Unreleased]: https://github.com/FionaPreroll/vibe-mugames/commits/main

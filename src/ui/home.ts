@@ -1,10 +1,14 @@
 import { answerOffer } from '@fionapreroll/p2p'
 import { currentLanguage, type Language, setLanguage, t } from '../i18n'
+import { isApp } from '../native'
 import { GuestSeat, HostSeat } from '../net/session'
 import { playerToken, settings, updateSettings } from '../storage'
+import { AppUpdater } from '../updates'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
 import { tableScreen } from './table'
+import { updatesSection } from './updates'
+import { webUpdateBanner } from './webUpdates'
 
 /** The start screen: the player's name, and opening a table or joining one. */
 export function homeScreen(): void {
@@ -37,10 +41,22 @@ export function homeScreen(): void {
     homeScreen()
   })
 
+  const web = { version: __BUILD__.version, commit: __BUILD__.commit }
+  const build = h('p', { class: 'muted build' }, t('build', web))
+  // In the app, its own build number too, as its updates count by it.
+  if (isApp()) {
+    void AppUpdater.info()
+      .then(({ build: number }) => {
+        build.textContent = t('appBuild', { ...web, build: number })
+      })
+      .catch(() => {})
+  }
+
   show(
     h(
       'div',
       { class: 'screen home' },
+      webUpdateBanner(),
       h('h1', {}, t('title')),
       h('p', { class: 'tagline' }, t('tagline')),
       h('label', {}, t('yourName'), name),
@@ -61,11 +77,8 @@ export function homeScreen(): void {
         }),
       ),
       h('label', { class: 'language' }, t('language'), language),
-      h(
-        'p',
-        { class: 'muted build' },
-        t('build', { version: __BUILD__.version, commit: __BUILD__.commit }),
-      ),
+      isApp() && updatesSection(),
+      build,
     ),
     null,
   )

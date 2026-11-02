@@ -104,6 +104,45 @@ const en = {
   hostLeft: 'The connection to the host is gone.',
   hostClosed: 'The host closed the table.',
   build: 'Version {version}, build {commit}.',
+  appBuild: 'Version {version}, build {commit}, app build {build}.',
+  webUpdateReady: 'A new version of the Spielekiste is out.',
+  webUpdateReload: 'Load it',
+  updatesTitle: 'Updates',
+  updatesAsk:
+    'Should the Spielekiste look for a new version on GitHub whenever it starts? That needs internet at the start; without it, the app starts as usual. You can change this on the start screen, under Updates.',
+  updatesYes: 'Yes, look',
+  updatesNo: 'No',
+  updatesSetting: 'Look for a new version when the app starts',
+  updatesNote:
+    'New versions come from the Spielekiste’s releases on GitHub. Android asks before it installs one.',
+  updateReady: 'A new version of the Spielekiste is ready (build {build}).',
+  updateInstall: 'Install',
+  updateLater: 'Later',
+  updatesCheckNow: 'Look for a new version now',
+  updatesChecking: 'Looking…',
+  updatesCurrent: 'This is the newest version (build {build}).',
+  updatesCheckFailed: 'Could not look for a new version. Is there internet?',
+  updateDownload: 'Download',
+  updateDownloadAnyway: 'Download anyway',
+  updateSize: 'The download is {size}.',
+  updateContinues: 'An earlier download stopped at {percent} % of {size}: it goes on from there.',
+  updateMobileData:
+    'You are on mobile data, which the download would use. On Wi-Fi it costs nothing.',
+  updateMetered:
+    'This connection is metered, as a phone’s hotspot often is: the download may cost. On another Wi-Fi it may not.',
+  updateProgress: '{done} of {total} · {percent} %',
+  updatePause: 'Pause',
+  updateResume: 'Resume',
+  updatePaused: 'Paused at {percent} %. It goes on from there, also after closing the app.',
+  updateInstalling: 'Opening Android’s installer…',
+  updateConfirm: 'Confirm the update in Android’s dialog.',
+  updateInstalled: 'Installed. The app starts again in its new version.',
+  updateAborted: 'The update was not installed. Tap Install to try again.',
+  updateInstallFailed: 'Android could not install the update: {message}',
+  updateNoInstaller: 'Android’s installer did not open. Tap Install to try again.',
+  updatePermission:
+    'Allow the Spielekiste to install apps in the settings that have just opened, then come back: installing goes on by itself.',
+  updateFailed: 'The download stopped. Try again: it goes on where it stopped.',
 }
 
 type Texts = Record<keyof typeof en, string>
@@ -215,6 +254,49 @@ const de: Texts = {
   hostLeft: 'Die Verbindung zum Gastgeber ist weg.',
   hostClosed: 'Der Gastgeber hat den Tisch geschlossen.',
   build: 'Version {version}, Build {commit}.',
+  appBuild: 'Version {version}, Build {commit}, App-Build {build}.',
+  webUpdateReady: 'Eine neue Version der Spielekiste ist da.',
+  webUpdateReload: 'Laden',
+  updatesTitle: 'Aktualisierungen',
+  updatesAsk:
+    'Soll die Spielekiste bei jedem Start auf GitHub nach einer neuen Version suchen? Dafür braucht es beim Start Internet; ohne startet die App wie gewohnt. Auf dem Startbildschirm lässt sich das unter Aktualisierungen ändern.',
+  updatesYes: 'Ja, suchen',
+  updatesNo: 'Nein',
+  updatesSetting: 'Beim Start nach einer neuen Version suchen',
+  updatesNote:
+    'Neue Versionen kommen von den Releases der Spielekiste auf GitHub. Android fragt, bevor es eine installiert.',
+  updateReady: 'Eine neue Version der Spielekiste ist da (Build {build}).',
+  updateInstall: 'Installieren',
+  updateLater: 'Später',
+  updatesCheckNow: 'Jetzt nach einer neuen Version suchen',
+  updatesChecking: 'Suche…',
+  updatesCurrent: 'Das ist die neueste Version (Build {build}).',
+  updatesCheckFailed: 'Konnte nicht nach einer neuen Version suchen. Gibt es Internet?',
+  updateDownload: 'Herunterladen',
+  updateDownloadAnyway: 'Trotzdem herunterladen',
+  updateSize: 'Der Download ist {size} groß.',
+  updateContinues:
+    'Ein früherer Download hielt bei {percent} % von {size} an: Er geht dort weiter.',
+  updateMobileData:
+    'Du bist im Mobilfunknetz, das der Download nutzen würde. Im WLAN kostet er nichts.',
+  updateMetered:
+    'Diese Verbindung wird nach Menge abgerechnet, wie oft beim Hotspot eines Handys: Der Download kann kosten. In einem anderen WLAN vielleicht nicht.',
+  updateProgress: '{done} von {total} · {percent} %',
+  updatePause: 'Pausieren',
+  updateResume: 'Fortsetzen',
+  updatePaused: 'Angehalten bei {percent} %. Es geht dort weiter, auch nach dem Schließen der App.',
+  updateInstalling: 'Androids Installer öffnet sich…',
+  updateConfirm: 'Bestätige die Aktualisierung in Androids Dialog.',
+  updateInstalled: 'Installiert. Die App startet in ihrer neuen Version neu.',
+  updateAborted:
+    'Die Aktualisierung wurde nicht installiert. Tippe auf Installieren, um es noch einmal zu versuchen.',
+  updateInstallFailed: 'Android konnte die Aktualisierung nicht installieren: {message}',
+  updateNoInstaller:
+    'Androids Installer hat sich nicht geöffnet. Tippe auf Installieren, um es noch einmal zu versuchen.',
+  updatePermission:
+    'Erlaube der Spielekiste in den eben geöffneten Einstellungen, Apps zu installieren, und komm dann zurück: Die Installation geht von selbst weiter.',
+  updateFailed:
+    'Der Download hat aufgehört. Versuch es noch einmal: Er geht dort weiter, wo er aufhörte.',
 }
 
 export type TextKey = keyof typeof en

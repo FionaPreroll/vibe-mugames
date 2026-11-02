@@ -36,6 +36,18 @@ export function show(screen: HTMLElement, back: (() => void) | null, leave?: () 
   backAction = back
 }
 
+/**
+ * What Android's back button does: closes a dialog as its first button does (Cancel, Later, No),
+ * else goes where the screen's own back button goes. At a host's table it does nothing, as it
+ * would end the game for everyone; on the start screen it leaves the app.
+ */
+export function handleBack(exit: () => void): void {
+  const modal = document.querySelector('.modal')
+  if (modal) modal.querySelector<HTMLButtonElement>('.buttons button')?.click()
+  else if (backAction) backAction()
+  else if (document.querySelector('.home')) exit()
+}
+
 /** A short message that fades away by itself. */
 export function toast(text: string): void {
   const element = h('div', { class: 'toast', role: 'status' } as Partial<HTMLDivElement>, text)

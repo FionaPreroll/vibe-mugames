@@ -4,7 +4,8 @@ import type { Language } from './i18n'
 
 /**
  * What this phone remembers, in the browser's local storage: the player's name, the language,
- * and the token with which a player gets their place back. Everything read is checked.
+ * whether the app looks for updates, and the token with which a player gets their place back.
+ * Everything read is checked.
  */
 
 const PREFIX = 'spielekiste.'
@@ -12,9 +13,18 @@ const PREFIX = 'spielekiste.'
 export interface Settings {
   readonly name: string
   readonly language: Language | 'auto'
+  /** In the Android app: look for a new version at every start (see src/updates.ts). */
+  readonly checkUpdates: boolean
+  /** Whether the app has asked about `checkUpdates` yet, which it does once, at the first start. */
+  readonly updatesAsked: boolean
 }
 
-const DEFAULTS: Settings = { name: '', language: 'auto' }
+const DEFAULTS: Settings = {
+  name: '',
+  language: 'auto',
+  checkUpdates: false,
+  updatesAsked: false,
+}
 
 function read(key: string): unknown {
   try {
@@ -36,10 +46,12 @@ function write(key: string, value: unknown): void {
 /** Settings from storage, checked: anything that does not fit falls back to the default. */
 export function parseSettings(value: unknown): Settings {
   if (typeof value !== 'object' || value === null) return DEFAULTS
-  const { name, language } = value as Record<string, unknown>
+  const { name, language, checkUpdates, updatesAsked } = value as Record<string, unknown>
   return {
     name: typeof name === 'string' ? cleanName(name, '') : '',
     language: language === 'en' || language === 'de' ? language : 'auto',
+    checkUpdates: checkUpdates === true,
+    updatesAsked: updatesAsked === true,
   }
 }
 

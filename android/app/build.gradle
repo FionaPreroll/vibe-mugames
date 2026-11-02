@@ -17,7 +17,22 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        // A fixed debug key, in the repository on purpose: every build, on any computer or CI
+        // runner, then signs alike, so a new APK installs over the old one, as in-app updates
+        // need, keeping the app's saved settings. It is no secret; a Play Store release needs a
+        // key of its own.
+        debug {
+            storeFile file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

@@ -33,7 +33,12 @@ To make a move of several steps, tap the piece, then where it goes, and every sq
 
 English and German, as the browser's language says, or chosen on the start screen.
 
-**Android app:** download [`spielekiste.apk`](https://github.com/FionaPreroll/vibe-mugames/releases/latest/download/spielekiste.apk) from the release _Spielekiste for Android_ and open it on the phone; Android asks once to allow installing apps from that source. These are debug builds, for playing with friends, not for the Play Store.
+**Android app:** download [`spielekiste.apk`](https://github.com/FionaPreroll/vibe-mugames/releases/latest/download/spielekiste.apk) from the release _Spielekiste for Android_ and open it on the phone; Android asks once to allow installing apps from that source. A newer APK installs over the older one and keeps the settings. These are debug builds, for playing with friends, not for the Play Store.
+
+**Updates:**
+
+- **In the app,** if you agree at its first start or switch it on under _Updates_ on the start screen: at every start, the app looks for a newer build and offers to install it; _Look for a new version now_ looks at once. The dialog says how large the download is, and warns when the phone is on mobile data or another metered connection. While downloading, it shows the progress; **Pause** stops, and the download goes on where it stopped, also after the app was closed. Android asks before installing; the first time, it wants you to allow the app to install apps: the app opens that setting, and goes on installing by itself when you come back, without downloading again. The app hands the update to Android as an installer session, which reports back: the dialog says when Android waits for your confirmation, and if Android's installer does not open, or the update was not installed, it says so and offers to try again. The start screen shows the app's build number.
+- **On the website,** an open page looks for a newer build when it starts, every quarter of an hour and when it comes back to the front. The start screen then says so, and _Load it_ loads the new version. It does not say so at a table, as loading the page anew there would end the table.
 
 ## How it works
 
@@ -41,17 +46,22 @@ English and German, as the browser's language says, or chosen on the start scree
 - **Rules are pure TypeScript** in `src/core`: no DOM, no network. Each game is a `BoardGame` (`src/core/board.ts`): where a game starts, every move legal now, what a move does, and how a game ends. A game's `Position` is its board of cells (each empty or a piece: its seat, plus `KIND` once crowned), whose turn it is, which the rules decide, the pieces still in hand, the phase (such as taking a piece after a mill) and a count of quiet moves for draws. A move is a path of cells: a cell or column, from and to, or every square of a jump.
 - **Cards stay hidden.** Miau-Miau (`src/core/miaumiau.ts`) is a game of its own, not a `BoardGame`: the host alone knows every hand, and the library's `stateFor` sends each phone the table with only its own cards (`MiauView`), and how many the others hold. Its moves travel as numbers too: a card (with a jack's wished suit), 52 to draw, 53 to pass. The host shuffles with the browser's cryptographic randomness.
 - **Everything from another phone is checked** before use (`src/net/protocol.ts`), as is everything read from storage (`src/storage.ts`).
+- **App updates** (`src/updates.ts`, `src/ui/updates.ts`, `AppUpdaterPlugin.java`): the release _Spielekiste for Android_ holds `version.json` beside the APK, naming its build and size. The app compares it with its own build number, the APK's `versionCode`; CI sets both to the Android workflow's run number. The plugin reads and downloads only from this repository's releases, over HTTPS, and its decisions are in plain Java (`UpdateRules`), with JUnit tests beside them. Android installs an update only if it is signed with the same key as the app installed: every build is signed with `android/app/debug.keystore`, in the repository on purpose. It is public, so it proves only that an update comes from a build of this project.
+- **Website updates** (`src/webUpdates.ts`, `src/ui/webUpdates.ts`): every build writes `version.json` beside the page (`vite.config.ts`), with its version, commit and time. The page reads the deployed one, past every cache, and calls it newer if it is another commit, built later. The app does not look there, as its files are inside it.
 
 ```
 src/
   core/       the rules: board.ts, tictactoe.ts, fourInARow.ts, muehle.ts, dame.ts, miaumiau.ts, games.ts, table.ts
   net/        protocol.ts: the messages and their parsers; session.ts: the host's and players' seats
-  ui/         the screens: home.ts, table.ts, boards.ts, cards.ts, codes.ts (QR codes and text codes)
+  ui/         the screens: home.ts, table.ts, boards.ts, cards.ts, codes.ts (QR codes and text codes),
+              updates.ts and webUpdates.ts (the update dialogs and notes)
   i18n.ts     every text players see, in English and German
-  storage.ts  name, language and the player's token, in local storage
+  storage.ts  name, language, the update switch and the player's token, in local storage
   native.ts   the Android app's back button
-android/      the Android app's project (Capacitor)
-tests/e2e/    Playwright: phones in separate browser profiles pair through the text codes and play
+  updates.ts  the app's updates from its release; webUpdates.ts: the website's
+android/      the Android app's project (Capacitor), with AppUpdaterPlugin and UpdateRules
+tests/e2e/    Playwright: phones in separate browser profiles pair through the text codes and play;
+              the website offers a newer build
 ```
 
 ### Adding a game
@@ -80,15 +90,15 @@ pnpm check
 
 **The library** is installed from the file on its release, [`p2p-v0.4.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.4.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
 
-**The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`.
+**The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`, and run the Java tests with `./gradlew testDebugUnitTest`. Without the SDK, `UpdateRulesTest` compiles and runs with plain `javac` and JUnit. The update dialogs are tested in happy-dom against a fake `AppUpdaterPlugin` (`src/ui/updates.test.ts`).
 
 ### Workflows
 
-| Workflow      | Runs on                            | Does                                                                                                     |
-| ------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `ci.yml`      | Pull requests and pushes to `main` | Type check, Biome, unit tests with coverage, build, browser tests                                        |
-| `deploy.yml`  | Pushes to `main`, by hand          | Publishes the website on GitHub Pages                                                                    |
-| `android.yml` | Pull requests and pushes to `main` | Builds the APK; from `main`, replaces it in the release _Spielekiste for Android_ (tag `android-latest`) |
+| Workflow      | Runs on                            | Does                                                                                                                                                         |
+| ------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ci.yml`      | Pull requests and pushes to `main` | Type check, Biome, unit tests with coverage, build, browser tests                                                                                            |
+| `deploy.yml`  | Pushes to `main`, by hand          | Publishes the website on GitHub Pages                                                                                                                        |
+| `android.yml` | Pull requests and pushes to `main` | Builds the APK and runs the Java tests; from `main`, replaces the APK and its `version.json` in the release _Spielekiste for Android_ (tag `android-latest`) |
 
 ### Branches and pull requests
 
@@ -101,6 +111,7 @@ Every feature or fix gets its own branch off `main`, named `feature/<name_in_sna
 ## Known limits
 
 - **Tested end to end in Chromium only.** Real phones still need trying on a hotspot.
+- **The app's updates are unit-tested, but not yet tried on phones.** An app installed before builds were signed with the same key has to be uninstalled once.
 - **Some Wi-Fi networks** isolate their clients, so the phones cannot see each other there; a phone's own hotspot does not.
 - **The app has Capacitor's default icon** for now.
 - **A host who closes the page ends the table:** players cannot sit down again until the host opens a new one. A player who drops out gets their place and score back by pairing again.
