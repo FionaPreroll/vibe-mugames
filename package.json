@@ -1,0 +1,46 @@
+{
+  "name": "spielekiste",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Die Spielekiste: board games for phones side by side, in the browser and as an Android app, connected directly by QR code, without internet or a server.",
+  "author": "FionaPreroll <fipreroll+app@gmail.com>",
+  "type": "module",
+  "packageManager": "pnpm@12.15.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite",
+    "dev:phone": "vite --host --mode phone",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json",
+    "lint": "biome check",
+    "format": "biome check --write",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "pnpm build && playwright test",
+    "check": "pnpm typecheck && pnpm lint && pnpm test",
+    "android:sync": "pnpm build && cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@fionapreroll/p2p": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.4.0/fionapreroll-p2p-0.4.0.tgz"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.3",
+    "@capacitor/cli": "^8.6.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "^24.19.2",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "@vitest/coverage-v8": "5.0.5",
+    "fast-check": "^4.10.2",
+    "happy-dom": "^21.0.4",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}
