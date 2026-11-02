@@ -8,6 +8,21 @@ import { phone, seat } from './helpers'
  */
 
 const cell = (page: Page, index: number) => page.locator('.board .cell').nth(index)
+const point = (page: Page, index: number) => page.locator(`.board [data-cell="${index}"]`)
+
+/**
+ * Places pieces in turn, each by a tap on the phone whose turn it is, and waits until every phone
+ * shows the piece before the next. A player's phone draws only the table the host sends, a tick
+ * later: without the wait, the next tap could land on a board that does not yet show the last
+ * move, and the host would rightly refuse it.
+ */
+async function places(phones: Page[], ...steps: (readonly [Page, number])[]): Promise<void> {
+  for (const [page, index] of steps) {
+    await expect(point(page, index)).toBeEnabled()
+    await point(page, index).click()
+    for (const other of phones) await expect(point(other, index)).not.toHaveClass(/\bempty\b/)
+  }
+}
 
 test('two phones play Tic Tac Toe, and again with the other one starting', async ({ browser }) => {
   const ada = await phone(browser, 'Ada')
@@ -25,16 +40,7 @@ test('two phones play Tic Tac Toe, and again with the other one starting', async
   // Not Bo's turn: Bo's board takes nothing.
   await expect(cell(bo, 0)).toBeDisabled()
 
-  for (const [page, index] of [
-    [ada, 0],
-    [bo, 3],
-    [ada, 1],
-    [bo, 4],
-    [ada, 2],
-  ] as const) {
-    await expect(cell(page, index)).toBeEnabled()
-    await cell(page, index).click()
-  }
+  await places([ada, bo], [ada, 0], [bo, 3], [ada, 1], [bo, 4], [ada, 2])
   await expect(ada.locator('.status.turn')).toHaveText('You win!')
   await expect(bo.locator('.status.turn')).toHaveText('Ada wins.')
   await expect(bo.locator('.board .cell.win')).toHaveCount(3)
@@ -67,9 +73,7 @@ test('a third player watches Four in a Row, and the host closes the table', asyn
   await expect(bo.getByRole('button', { name: 'Join a table' })).toBeVisible()
 })
 
-const point = (page: Page, index: number) => page.locator(`.board [data-cell="${index}"]`)
-
-/** Taps cells in turn, each on the phone whose turn it is. */
+/** Taps cells on one phone, such as a piece and where it goes, each once the board offers it. */
 async function taps(...steps: (readonly [Page, number])[]): Promise<void> {
   for (const [page, index] of steps) {
     await expect(point(page, index)).toBeEnabled()
@@ -87,7 +91,7 @@ test('in Mühle a mill takes a piece, on every phone', async ({ browser }) => {
   await expect(ada.locator('.hint')).toHaveText('Place a piece on a free point.')
   await expect(bo.locator('.hand')).toHaveText('Ada: 9 to place · Bo: 9 to place')
 
-  await taps([ada, 0], [bo, 8], [ada, 1], [bo, 9], [ada, 2])
+  await places([ada, bo], [ada, 0], [bo, 8], [ada, 1], [bo, 9], [ada, 2])
   await expect(ada.locator('.status.turn')).toHaveText('A mill! Take one of Bo’s pieces.')
   await expect(bo.locator('.status.turn')).toHaveText('Ada closed a mill and takes a piece.')
   // Only Bo's pieces can be taken.
