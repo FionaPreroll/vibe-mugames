@@ -75,6 +75,8 @@ export interface MiauView {
   readonly top: Card
   /** How many cards are left to draw. */
   readonly stock: number
+  /** How many cards are on the pile, the top one too. */
+  readonly pile: number
   readonly turn: number
   readonly wish: number | null
   readonly penalty: number
@@ -137,11 +139,6 @@ export function fits(card: Card, top: Card, wish: number | null, penalty: number
   return suitOf(card) === suitOf(top) || rankOf(card) === rankOf(top)
 }
 
-/** Whether there is any card left to draw, in the stock or below the pile's top card. */
-function canDraw(state: MiauState): boolean {
-  return state.stock.length > 0 || state.pile.length > 1
-}
-
 /** How the game ended: the seat who won, 'draw', or null while it goes on. */
 export function outcome(state: MiauState): number | 'draw' | null {
   if (state.winner !== null) return state.winner
@@ -150,20 +147,28 @@ export function outcome(state: MiauState): number | 'draw' | null {
 
 /** Whether `seat` may make this move now. */
 export function legal(state: MiauState, seat: number, move: MiauMove): boolean {
-  if (outcome(state) !== null || seat !== state.turn) return false
-  const hand = state.hands[seat] ?? []
+  return seat === state.turn && allowed(view(state, seat), move)
+}
+
+/**
+ * Whether the seat whose view this is may make this move now: the same answer as `legal`, from
+ * what the seat sees, so that a phone can tell which of its cards it may play.
+ */
+export function allowed(view: MiauView, move: MiauMove): boolean {
+  if (view.winner !== null || view.stuck) return false
+  const canDraw = view.stock > 0 || view.pile > 1
   switch (move.kind) {
     case 'play': {
-      if (!hand.includes(move.card)) return false
-      if (state.drawn !== null && move.card !== state.drawn) return false
+      if (!view.hand.includes(move.card)) return false
+      if (view.drawn !== null && move.card !== view.drawn) return false
       const jack = rankOf(move.card) === JACK
       if (jack ? !isSuit(move.suit) : move.suit !== undefined) return false
-      return fits(move.card, top(state), state.wish, state.penalty)
+      return fits(move.card, view.top, view.wish, view.penalty)
     }
     case 'draw':
-      return state.drawn === null && (state.penalty > 0 || canDraw(state))
+      return view.drawn === null && (view.penalty > 0 || canDraw)
     case 'pass':
-      return state.drawn !== null || (state.penalty === 0 && !canDraw(state))
+      return view.drawn !== null || (view.penalty === 0 && !canDraw)
   }
 }
 
@@ -238,6 +243,7 @@ export function view(state: MiauState, seat: number): MiauView {
     counts: state.hands.map((hand) => hand.length),
     top: top(state),
     stock: state.stock.length,
+    pile: state.pile.length,
     turn: state.turn,
     wish: state.wish,
     penalty: state.penalty,
