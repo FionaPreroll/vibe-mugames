@@ -1,4 +1,4 @@
-import type { Board, GameId, Outcome } from './board'
+import { type GameId, isLegal, type Move, type Outcome, type Position } from './board'
 import { GAMES } from './games'
 
 /**
@@ -24,11 +24,12 @@ export interface TableState {
   readonly game: GameId | null
   /** The ids of the players at the board, in seat order: seat 0 starts. */
   readonly seats: readonly number[]
-  readonly board: Board
-  /** The seat whose turn it is. */
-  readonly turn: number
+  /** Where the game stands, with whose turn it is; null in the lobby. */
+  readonly position: Position | null
   /** Moves made so far: a move names the number it is meant to be, so none counts twice. */
   readonly moveNo: number
+  /** The move made last, for every phone to show; null before the first. */
+  readonly last: Move | null
   readonly outcome: Outcome | null
   /** Games won, by player id. */
   readonly scores: Readonly<Record<number, number>>
@@ -40,9 +41,9 @@ export class Table {
   private queue: number[] = []
   private game: GameId | null = null
   private seats: number[] = []
-  private board: Board = []
-  private turn = 0
+  private position: Position | null = null
   private moveNo = 0
+  private last: Move | null = null
   private outcome: Outcome | null = null
   private readonly scores = new Map<number, number>()
 
@@ -76,16 +77,18 @@ export class Table {
    * A move by a player: taken only from the player whose turn it is, in the game on the table,
    * as the move it is meant to be, and if the rules allow it. Returns whether it was taken.
    */
-  move(id: number, game: GameId, moveNo: number, move: number): boolean {
-    if (this.game !== game || this.outcome !== null || moveNo !== this.moveNo) return false
-    if (this.seats[this.turn] !== id) return false
+  move(id: number, game: GameId, moveNo: number, move: Move): boolean {
+    const position = this.position
+    if (this.game !== game || position === null) return false
+    if (this.outcome !== null || moveNo !== this.moveNo) return false
+    if (this.seats[position.turn] !== id) return false
     const rules = GAMES[game]
-    if (!rules.legal(this.board, move)) return false
-    this.board = rules.play(this.board, this.turn, move)
+    if (!isLegal(rules, position, move)) return false
+    this.position = rules.play(position, move)
     this.moveNo++
-    this.outcome = rules.outcome(this.board)
-    if (this.outcome === null) this.turn = (this.turn + 1) % this.seats.length
-    else if (this.outcome !== 'draw') {
+    this.last = [...move]
+    this.outcome = rules.outcome(this.position)
+    if (this.outcome !== null && this.outcome !== 'draw') {
       const winner = this.seats[this.outcome.winner]
       if (winner !== undefined) this.scores.set(winner, (this.scores.get(winner) ?? 0) + 1)
     }
@@ -117,7 +120,8 @@ export class Table {
   lobby(): void {
     this.game = null
     this.seats = []
-    this.board = []
+    this.position = null
+    this.last = null
     this.outcome = null
   }
 
@@ -126,9 +130,9 @@ export class Table {
       players: this.players,
       game: this.game,
       seats: this.seats,
-      board: this.board,
-      turn: this.turn,
+      position: this.position,
       moveNo: this.moveNo,
+      last: this.last,
       outcome: this.outcome,
       scores: Object.fromEntries(this.scores),
     }
@@ -136,9 +140,9 @@ export class Table {
 
   private begin(): void {
     if (this.game === null) return
-    this.board = GAMES[this.game].start()
-    this.turn = 0
+    this.position = GAMES[this.game].start()
     this.moveNo = 0
+    this.last = null
     this.outcome = null
   }
 }

@@ -19,6 +19,14 @@ The games:
 | ------------------------------------- | ------- |
 | Tic Tac Toe                           | 2       |
 | Four in a Row (_Vier in einer Reihe_) | 2       |
+| Nine Men's Morris (_Mühle_)           | 2       |
+| Draughts (_Dame_)                     | 2       |
+
+**Nine Men's Morris:** each player places nine pieces, one a turn, then moves them along a line to a free neighbouring point; with only three left, they jump to any free point. Three in a row on a line make a mill, which takes one of the other player's pieces, one outside a mill if there is any. Fewer than three pieces, or none that can move, lose; fifty moves without a mill are a draw.
+
+**Draughts:** twelve pieces each on the dark squares of 8 by 8. Pieces step diagonally forward and take by jumping, forward and backward, on and on while they can. Taking is a must, but any way to take may be chosen. A piece that ends its move on the far row is crowned and then moves and takes at any distance. A player who cannot move loses; fifty moves of crowned pieces without taking are a draw.
+
+To make a move of several steps, tap the piece, then where it goes, and every square a jump lands on.
 
 English and German, as the browser's language says, or chosen on the start screen.
 
@@ -27,12 +35,12 @@ English and German, as the browser's language says, or chosen on the start scree
 ## How it works
 
 - **The host decides everything.** The host's phone keeps the table (`src/core/table.ts`): who sits there, the game, the board and the scores, and sends it to every phone ten times a second as the room's state. Players send their moves as events, which arrive once each, in order; each move names the move number it is meant to be, so a move sent twice counts once. The host takes a move only from the player whose turn it is, and only if the rules allow it.
-- **Rules are pure TypeScript** in `src/core`: no DOM, no network. Each game is a `BoardGame` (`src/core/board.ts`): a board of cells, which moves are legal, what a move does, and how a game ends.
+- **Rules are pure TypeScript** in `src/core`: no DOM, no network. Each game is a `BoardGame` (`src/core/board.ts`): where a game starts, every move legal now, what a move does, and how a game ends. A game's `Position` is its board of cells (each empty or a piece: its seat, plus `KIND` once crowned), whose turn it is, which the rules decide, the pieces still in hand, the phase (such as taking a piece after a mill) and a count of quiet moves for draws. A move is a path of cells: a cell or column, from and to, or every square of a jump.
 - **Everything from another phone is checked** before use (`src/net/protocol.ts`), as is everything read from storage (`src/storage.ts`).
 
 ```
 src/
-  core/       the rules: board.ts, tictactoe.ts, fourInARow.ts, games.ts, table.ts
+  core/       the rules: board.ts, tictactoe.ts, fourInARow.ts, muehle.ts, dame.ts, games.ts, table.ts
   net/        protocol.ts: the messages and their parsers; session.ts: the host's and players' seats
   ui/         the screens: home.ts, table.ts, boards.ts, codes.ts (QR codes and text codes)
   i18n.ts     every text players see, in English and German
@@ -45,7 +53,7 @@ tests/e2e/    Playwright: phones in separate browser profiles pair through the t
 ### Adding a game
 
 1. Write its rules as a `BoardGame` in `src/core`, with tests beside them, and add its id to `GAME_IDS` and `GAMES`.
-2. Give it a name in `src/i18n.ts`, in English and German.
+2. Give it a name in `src/i18n.ts`, in English and German, and a board in `src/ui/boards.ts`. Moves of several cells are picked there one cell at a time from the rules' `moves()`, so a board only needs to draw its cells.
 3. If it needs more than a board of cells, such as dice or hidden cards, extend the table and the protocol, and raise `PROTOCOL` in `src/net/protocol.ts`. `@fionapreroll/p2p` gives each player a state of their own with `stateFor`, for cards only one player may see.
 
 ## Development

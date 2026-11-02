@@ -3,7 +3,7 @@ import { GAMES } from '../core/games'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
 import { HostSeat, type Seat } from '../net/session'
-import { boardView, symbol } from './boards'
+import { boardView, handText, hint, Picker, seatName, symbol } from './boards'
 import { codePanel } from './codes'
 import { failureText, h, show, toast } from './dom'
 
@@ -16,7 +16,10 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
   const main = h('div', { class: 'main' })
   const status = h('p', { class: 'status turn', role: 'status' } as Partial<HTMLParagraphElement>)
   const actions = h('div', { class: 'buttons' })
+  const picker = new Picker()
   let gone = false
+  /** What the screen shows now: players' phones hear the same table ten times a second. */
+  let shown = ''
 
   const leave = () => {
     gone = true
@@ -28,6 +31,9 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     if (gone) return
     const state = seat.state()
     if (!state) return
+    const drawn = JSON.stringify([state, picker.current(state)])
+    if (drawn === shown) return
+    shown = drawn
     players.replaceChildren(
       ...state.players.map((player) => {
         const marks = [player.id === seat.id ? t('you') : '', player.away ? t('away') : ''].filter(
@@ -82,19 +88,26 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
   const game = (state: TableState): Node[] => {
     const game = state.game
     if (game === null) return []
-    const name = (seatNo: number) =>
-      state.players.find((p) => p.id === state.seats[seatNo])?.name ?? '?'
+    const name = (seatNo: number) => seatName(state, seatNo)
     const mine = state.seats.indexOf(seat.id)
-    const myTurn = state.outcome === null && mine >= 0 && state.turn === mine
+    const turn = state.position?.turn ?? 0
+    const myTurn = state.outcome === null && mine >= 0 && turn === mine
+    const taking = state.position?.phase === 'remove'
     if (state.outcome === 'draw') status.textContent = t('draw')
     else if (state.outcome)
       status.textContent =
         state.outcome.winner === mine
           ? t('youWin')
           : t('theyWin', { name: name(state.outcome.winner) })
+    else if (taking)
+      status.textContent = myTurn
+        ? t('youTake', { name: name(1 - turn) })
+        : t('theyTake', { name: name(turn) })
     else if (mine < 0) status.textContent = t('watching', { a: name(0), b: name(1) })
-    else status.textContent = myTurn ? t('yourTurn') : t('theirTurn', { name: name(state.turn) })
+    else status.textContent = myTurn ? t('yourTurn') : t('theirTurn', { name: name(turn) })
     status.classList.toggle('mine', myTurn)
+    const help = myTurn ? hint(state, picker.current(state)) : ''
+    const hand = handText(state)
 
     if (seat instanceof HostSeat && state.outcome !== null) {
       actions.replaceChildren(
@@ -111,11 +124,24 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
       actions.replaceChildren(h('p', { class: 'muted' }, t('waitForHost', { host })))
     } else actions.replaceChildren()
 
-    const board = boardView(state, myTurn ? (move) => seat.move(game, state.moveNo, move) : null)
-    return [h('h2', {}, t(game)), status, board, actions]
+    const board = boardView(
+      state,
+      seat.id,
+      picker,
+      myTurn ? (move) => seat.move(game, state.moveNo, move) : null,
+    )
+    return [
+      h('h2', {}, t(game)),
+      status,
+      help ? h('p', { class: 'hint muted' }, help) : null,
+      board,
+      hand ? h('p', { class: 'hand muted' }, hand) : null,
+      actions,
+    ].filter((node): node is HTMLElement => node !== null)
   }
 
   seat.onChange = render
+  picker.onChange = render
   seat.onLost = (ended) => {
     if (gone) return
     gone = true

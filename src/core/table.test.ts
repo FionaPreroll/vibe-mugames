@@ -14,9 +14,9 @@ function table(...names: string[]): Table {
 function play(t: Table, ...cells: number[]): void {
   for (const cell of cells) {
     const s = t.state()
-    const id = s.seats[s.turn]
+    const id = s.seats[s.position?.turn ?? -1]
     if (id === undefined) throw new Error('nobody to move')
-    expect(t.move(id, 'tictactoe', s.moveNo, cell)).toBe(true)
+    expect(t.move(id, 'tictactoe', s.moveNo, [cell])).toBe(true)
   }
 }
 
@@ -24,17 +24,19 @@ describe('the table', () => {
   it('seats the first two players and lets them move in turn', () => {
     const t = table('Ada', 'Bo')
     expect(t.choose('tictactoe')).toBe(true)
-    expect(t.state()).toMatchObject({ game: 'tictactoe', seats: [0, 1], turn: 0, moveNo: 0 })
+    expect(t.state()).toMatchObject({ game: 'tictactoe', seats: [0, 1], moveNo: 0, last: null })
+    expect(t.state().position?.turn).toBe(0)
     // Not Bo's turn, nor a move meant for later.
-    expect(t.move(1, 'tictactoe', 0, 4)).toBe(false)
-    expect(t.move(0, 'tictactoe', 1, 4)).toBe(false)
-    expect(t.move(0, 'tictactoe', 0, 4)).toBe(true)
+    expect(t.move(1, 'tictactoe', 0, [4])).toBe(false)
+    expect(t.move(0, 'tictactoe', 1, [4])).toBe(false)
+    expect(t.move(0, 'tictactoe', 0, [4])).toBe(true)
     // The same move again, as a phone might resend it: taken once.
-    expect(t.move(0, 'tictactoe', 0, 4)).toBe(false)
-    expect(t.state()).toMatchObject({ turn: 1, moveNo: 1 })
+    expect(t.move(0, 'tictactoe', 0, [4])).toBe(false)
+    expect(t.state()).toMatchObject({ moveNo: 1, last: [4] })
+    expect(t.state().position?.turn).toBe(1)
     // Another game's move, or an illegal one, is not taken.
-    expect(t.move(1, 'fourinarow', 1, 3)).toBe(false)
-    expect(t.move(1, 'tictactoe', 1, 4)).toBe(false)
+    expect(t.move(1, 'fourinarow', 1, [3])).toBe(false)
+    expect(t.move(1, 'tictactoe', 1, [4])).toBe(false)
   })
 
   it('needs enough players who are here to start', () => {
@@ -53,7 +55,7 @@ describe('the table', () => {
     play(t, 0, 3, 1, 4, 2)
     expect(t.state().outcome).toEqual({ winner: 0, line: [0, 1, 2] })
     expect(t.state().scores).toEqual({ 0: 1 })
-    expect(t.move(1, 'tictactoe', 5, 5)).toBe(false)
+    expect(t.move(1, 'tictactoe', 5, [5])).toBe(false)
   })
 
   it('lets two players take turns in starting', () => {
@@ -62,7 +64,8 @@ describe('the table', () => {
     t.choose('tictactoe')
     play(t, 0, 3, 1, 4, 2)
     expect(t.rematch()).toBe(true)
-    expect(t.state()).toMatchObject({ seats: [1, 0], turn: 0, moveNo: 0, outcome: null })
+    expect(t.state()).toMatchObject({ seats: [1, 0], moveNo: 0, outcome: null, last: null })
+    expect(t.state().position?.turn).toBe(0)
   })
 
   it('keeps the winner at the board and sends the loser to the back of the queue', () => {
@@ -99,10 +102,42 @@ describe('the table', () => {
     expect(t.state().scores).toEqual({ 1: 1 })
   })
 
+  it('lets the rules decide whose turn it is: a mill in Mühle takes a piece first', () => {
+    const t = table('Ada', 'Bo')
+    t.choose('muehle')
+    for (const [id, point] of [
+      [0, 0],
+      [1, 8],
+      [0, 1],
+      [1, 9],
+      [0, 2],
+    ] as const) {
+      expect(t.move(id, 'muehle', t.state().moveNo, [point])).toBe(true)
+    }
+    // Ada closed a mill: still her turn, to take one of Bo's pieces.
+    expect(t.state().position).toMatchObject({ turn: 0, phase: 'remove' })
+    expect(t.move(1, 'muehle', 5, [10])).toBe(false)
+    expect(t.move(0, 'muehle', 5, [3])).toBe(false)
+    expect(t.move(0, 'muehle', 5, [8])).toBe(true)
+    expect(t.state().position).toMatchObject({ turn: 1, phase: 'move' })
+    expect(t.state().last).toEqual([8])
+  })
+
+  it('takes a jump of several squares in Dame as one move', () => {
+    const t = table('Ada', 'Bo')
+    t.choose('dame')
+    // Ada c3-d4, Bo f6-e5, Ada d4xf6 (a jump), …: here only the first steps.
+    expect(t.move(0, 'dame', 0, [42, 35])).toBe(true)
+    expect(t.move(1, 'dame', 1, [21, 28])).toBe(true)
+    expect(t.move(0, 'dame', 2, [35, 28])).toBe(false)
+    expect(t.move(0, 'dame', 2, [35, 21])).toBe(true)
+    expect(t.state().position?.board[28]).toBe(-1)
+  })
+
   it('goes back to the lobby', () => {
     const t = table('Ada', 'Bo')
     t.choose('fourinarow')
     t.lobby()
-    expect(t.state()).toMatchObject({ game: null, seats: [], board: [], outcome: null })
+    expect(t.state()).toMatchObject({ game: null, seats: [], position: null, outcome: null })
   })
 })

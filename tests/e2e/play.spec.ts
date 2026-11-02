@@ -99,3 +99,63 @@ test('a third player watches Four in a Row, and the host closes the table', asyn
   await expect(bo.locator('.toast')).toHaveText('The host closed the table.')
   await expect(bo.getByRole('button', { name: 'Join a table' })).toBeVisible()
 })
+
+const point = (page: Page, index: number) => page.locator(`.board [data-cell="${index}"]`)
+
+/** Taps cells in turn, each on the phone whose turn it is. */
+async function taps(...steps: (readonly [Page, number])[]): Promise<void> {
+  for (const [page, index] of steps) {
+    await expect(point(page, index)).toBeEnabled()
+    await point(page, index).click()
+  }
+}
+
+test('in Mühle a mill takes a piece, on every phone', async ({ browser }) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await ada.getByRole('button', { name: 'Nine Men’s Morris' }).click()
+  await expect(bo.locator('.board .cell')).toHaveCount(24)
+  await expect(ada.locator('.hint')).toHaveText('Place a piece on a free point.')
+  await expect(bo.locator('.hand')).toHaveText('Ada: 9 to place · Bo: 9 to place')
+
+  await taps([ada, 0], [bo, 8], [ada, 1], [bo, 9], [ada, 2])
+  await expect(ada.locator('.status.turn')).toHaveText('A mill! Take one of Bo’s pieces.')
+  await expect(bo.locator('.status.turn')).toHaveText('Ada closed a mill and takes a piece.')
+  // Only Bo's pieces can be taken.
+  await expect(point(ada, 1)).toBeDisabled()
+  await expect(point(ada, 3)).toBeDisabled()
+  await point(ada, 9).click()
+  await expect(point(bo, 9)).toHaveClass(/empty/)
+  await expect(point(bo, 9)).toHaveClass(/last/)
+  await expect(bo.locator('.status.turn')).toHaveText('Your turn')
+  await expect(bo.locator('.hand')).toHaveText('Ada: 6 to place · Bo: 7 to place')
+})
+
+test('in Dame a piece is picked, then moved, and a jump takes', async ({ browser }) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await ada.getByRole('button', { name: 'Draughts' }).click()
+  // Each player's own pieces at the bottom: Bo's board is turned round.
+  await expect(ada.locator('.board [data-cell]').first()).toHaveAttribute('data-cell', '1')
+  await expect(bo.locator('.board [data-cell]').first()).toHaveAttribute('data-cell', '62')
+
+  // Ada picks c3: d4 and b4 light up, and the piece goes to d4.
+  await point(ada, 42).click()
+  await expect(point(ada, 42)).toHaveClass(/picked/)
+  await expect(ada.locator('.board .cell.target')).toHaveCount(2)
+  await point(ada, 35).click()
+  await expect(point(bo, 35)).toHaveClass(/seat-0/)
+  await taps([bo, 21], [bo, 28])
+
+  // Now Ada must take: only d4 can move, and it jumps over e5.
+  await expect(ada.locator('.hint')).toHaveText('You must take: pick a piece that can jump.')
+  await expect(point(ada, 44)).toBeDisabled()
+  await taps([ada, 35], [ada, 21])
+  await expect(point(bo, 28)).toHaveClass(/empty/)
+  await expect(point(bo, 21)).toHaveClass(/seat-0/)
+  await expect(bo.locator('.status.turn')).toHaveText('Your turn')
+})

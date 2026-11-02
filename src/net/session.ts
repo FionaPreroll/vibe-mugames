@@ -1,6 +1,6 @@
 import { type Connection, opened } from '@fionapreroll/p2p'
 import { GuestRoom, HOST_ID, HostRoom, type Pairing } from '@fionapreroll/p2p/room'
-import type { GameId } from '../core/board'
+import type { GameId, Move } from '../core/board'
 import { Table, type TableState } from '../core/table'
 import { type Event, type Input, PROTOCOL, parseEvent, parseInput, parseState } from './protocol'
 
@@ -18,7 +18,7 @@ export interface Seat {
   /** The table as this phone knows it; null until a player has heard from the host. */
   state(): TableState | null
   /** Makes a move as move number `moveNo` of `game`; the host takes it if it is legal. */
-  move(game: GameId, moveNo: number, move: number): void
+  move(game: GameId, moveNo: number, move: Move): void
   /** Called whenever the table may have changed. */
   onChange: () => void
   /** Called once if the connection to the host is gone: `ended` if the host closed the table. */
@@ -66,7 +66,7 @@ export class HostSeat implements Seat {
     return this.table.state()
   }
 
-  move(game: GameId, moveNo: number, move: number): void {
+  move(game: GameId, moveNo: number, move: Move): void {
     if (this.table.move(HOST_ID, game, moveNo, move)) this.onChange()
   }
 
@@ -135,7 +135,7 @@ export class GuestSeat implements Seat {
     return this.room.state()
   }
 
-  move(game: GameId, moveNo: number, move: number): void {
+  move(game: GameId, moveNo: number, move: Move): void {
     this.room.send({ type: 'move', game, moveNo, move })
   }
 
