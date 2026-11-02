@@ -219,9 +219,14 @@ function addPlayer(seat: HostSeat): void {
       .then((p) => p.accept(answer))
       .then(close)
       .catch((error: unknown) => {
-        if (!closed) panel.status(failureText(error))
+        if (!closed) panel.failed(failureText(error), retry)
       })
   })
+  // A new invitation: the player has to scan or paste its code again.
+  const retry = () => {
+    close()
+    addPlayer(seat)
+  }
   const pairing = seat.pair()
   pairing
     .then((p) => {
@@ -229,7 +234,7 @@ function addPlayer(seat: HostSeat): void {
       if (closed) p.cancel()
       else panel.showOwn(p.code, t('showPlayer'))
     })
-    .catch((error: unknown) => panel.status(failureText(error)))
+    .catch((error: unknown) => panel.failed(failureText(error), retry))
   const modal = h(
     'div',
     { class: 'modal' },

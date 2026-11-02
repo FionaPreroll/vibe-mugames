@@ -88,15 +88,19 @@ export function homeScreen(): void {
 function joinScreen(name: string): void {
   let left = false
   const panel = codePanel('offer', t('scanHost'), async (offer) => {
+    let answered: { close(): void } | undefined
     try {
       const { link, code } = await answerOffer(offer)
+      answered = link
       if (left) return link.close()
       panel.showOwn(code, t('showHost'))
+      panel.status(t('waitingForHost'))
       const seat = await GuestSeat.join(link, name, playerToken())
       if (left) return seat.close()
       tableScreen(seat, homeScreen)
     } catch (error) {
-      if (!left) panel.status(failureText(error))
+      answered?.close()
+      if (!left) panel.failed(failureText(error), () => joinScreen(name))
     }
   })
   const back = () => {

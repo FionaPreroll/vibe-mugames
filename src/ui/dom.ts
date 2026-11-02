@@ -63,5 +63,7 @@ export function failureText(error: unknown): string {
     ? t('full')
     : reason === 'version'
       ? t('versionMismatch')
-      : t('connectFailed')
+      : reason === 'Connection timed out'
+        ? t('timedOut')
+        : t('connectFailed')
 }

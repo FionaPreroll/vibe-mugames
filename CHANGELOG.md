@@ -25,4 +25,9 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 - Every build of the Android app is now signed with the same key, so a new one installs over the one before and keeps the app's settings. An app installed before this change has to be uninstalled once.
 
+### Fixed
+
+- Pairing by copied text codes works even when sending a code over takes minutes: the joining phone now waits up to 10 minutes for the host, instead of giving up after 30 seconds.
+- Pairing says what is going on at every step: that a code was read, that the joining phone waits for the host, and why a connection failed, with **Try again** on both phones. **Copy** always says whether it worked, and a wrong code pasted earlier no longer leaves its message behind.
+
 [Unreleased]: https://github.com/FionaPreroll/vibe-mugames/commits/main

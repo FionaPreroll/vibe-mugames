@@ -11,8 +11,10 @@ export interface CodePanel {
   readonly element: HTMLElement
   /** Shows this phone's code; the camera stops, as the other phone scans now. */
   showOwn(code: string, hint: string): void
-  /** Says what is going on, such as an error. */
+  /** Says what is going on, such as that the phone waits for the other one. */
   status(text: string): void
+  /** Says what went wrong, with a button to try again. */
+  failed(text: string, retry: () => void): void
   /** Stops the camera. */
   stop(): void
 }
@@ -36,13 +38,15 @@ export function codePanel(
     type: 'button',
     hidden: true,
     textContent: t('copy'),
-    onclick: () =>
-      void navigator.clipboard
-        ?.writeText(own.value)
-        .then(() => toast(t('copied')))
-        .catch(() => own.select()),
+    onclick: () => void copyCode(own).then((done) => toast(done ? t('copied') : t('copyByHand'))),
   })
   const paste = h('textarea', { class: 'paste-code', rows: 3 })
+  const pasteLabel = h('label', {}, t('pasteCode'), paste)
+  const use = h('button', {
+    type: 'button',
+    textContent: t('useCode'),
+    onclick: () => take(paste.value),
+  })
   let taken = false
   let scanner: Scanner | null = null
 
@@ -50,12 +54,16 @@ export function codePanel(
     if (taken) return true
     const signal = unpack(text.trim())
     if (!signal || signal.type !== expect) {
-      statusLine.textContent = t('notACode')
+      status(t('notACode'))
       return false
     }
     taken = true
     scanner?.stop()
     video.hidden = true
+    // Taken: there is nothing more to paste here, and an earlier complaint no longer holds.
+    pasteLabel.hidden = true
+    use.hidden = true
+    status(t('codeTaken'))
     onCode(signal)
     return true
   }
@@ -73,14 +81,16 @@ export function codePanel(
       h('summary', {}, t('textCodes')),
       ownLabel,
       copy,
-      h('label', {}, t('pasteCode'), paste),
-      h('button', {
-        type: 'button',
-        textContent: t('useCode'),
-        onclick: () => take(paste.value),
-      }),
+      pasteLabel,
+      use,
     ),
   )
+
+  /** Puts a line in the status, where the player sees it, as they may have scrolled away. */
+  function status(text: string, ...extra: Node[]) {
+    statusLine.replaceChildren(text, ...extra)
+    if (text) statusLine.scrollIntoView?.({ block: 'nearest' })
+  }
 
   startScanner(video, take)
     .then((started) => {
@@ -89,7 +99,7 @@ export function codePanel(
     })
     .catch(() => {
       video.hidden = true
-      if (!taken) statusLine.textContent = t('cameraOff')
+      if (!taken) status(t('cameraOff'))
     })
 
   return {
@@ -104,11 +114,36 @@ export function codePanel(
       copy.hidden = false
     },
     status(text) {
-      statusLine.textContent = text
+      status(text)
+    },
+    failed(text, retry) {
+      status(
+        text,
+        document.createTextNode(' '),
+        h('button', { type: 'button', textContent: t('tryAgain'), onclick: retry }),
+      )
     },
     stop() {
       taken = true
       scanner?.stop()
     },
+  }
+}
+
+/**
+ * Copies a code. Where the browser has no clipboard for the page, or refuses, the code is
+ * selected and copied the old way. False if that did not work either: the player copies by hand.
+ */
+async function copyCode(field: HTMLTextAreaElement): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(field.value)
+    return true
+  } catch {
+    field.select()
+    try {
+      return document.execCommand('copy')
+    } catch {
+      return false
+    }
   }
 }

@@ -102,6 +102,12 @@ export class HostSeat implements Seat {
   }
 }
 
+/**
+ * How long a player's phone waits for the host to take its answer. Scanning takes seconds, but
+ * a code sent over a messenger and pasted on the other phone can take minutes.
+ */
+export const ANSWER_WAIT_MS = 10 * 60_000
+
 /** A player's phone: it draws the host's table and sends its moves. */
 export class GuestSeat implements Seat {
   readonly isHost = false
@@ -118,7 +124,7 @@ export class GuestSeat implements Seat {
    * different versions, `full` if there is no seat left, and `timeout` if the host is silent.
    */
   static async join(link: Connection, name: string, token: string): Promise<GuestSeat> {
-    await opened(link)
+    await opened(link, ANSWER_WAIT_MS)
     const room = await GuestRoom.join<Input, TableState, Event>(link, {
       name,
       token,
