@@ -197,7 +197,7 @@ describe('Miau-Miau', () => {
     const drew = step(state, DRAW, seeded(2))
     expect(drew.pile).toEqual(cards('9h'))
     expect(drew.stock).toHaveLength(1)
-    expect([...drew.hands[0], ...drew.stock].sort((a, b) => a - b)).toEqual(
+    expect([...(drew.hands[0] ?? []), ...drew.stock].sort((a, b) => a - b)).toEqual(
       cards('8h', '10h', 'Kc').sort((a, b) => a - b),
     )
   })
