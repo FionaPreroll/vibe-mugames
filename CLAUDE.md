@@ -13,6 +13,10 @@ The README describes the Spielekiste, its layout and its conventions. These rule
 - A new version is made only when asked: see "Changelog and versions" in the README.
 - A change that players or developers notice updates the README in the same branch. The README starts with its badges (CI, Coverage, Android) and keeps them.
 
+## Privacy
+
+- `PRIVACY.md` and `PRIVACY.de.md` are the privacy policy, shown under About and built into `privacy.html` for app stores. A change to what the Spielekiste keeps, shows other phones, sends anywhere or asks permission for updates both in the same branch, and the changelog says so.
+
 ## Games
 
 - Only games that are free to make: traditional games (Tic Tac Toe, Mühle, Dame, Ludo, Mau-Mau, …) and games of our own. No copies of games that belong to someone, nor their names: "Vier in einer Reihe", not "4 gewinnt".

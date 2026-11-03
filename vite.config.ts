@@ -3,8 +3,10 @@ import { readFileSync } from 'node:fs'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import type { Plugin } from 'vite'
 import { defineConfig } from 'vitest/config'
+import { licenses } from './tools/licenses.ts'
+import { privacyPage } from './tools/privacyPage.ts'
 
-/** Which build this is, for the start screen: the version, the commit and the time. */
+/** Which build this is, for the start screen and About: the version, the commit and the time. */
 function buildInfo(): { version: string; commit: string; time: string } {
   const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'))
   let commit = process.env.GITHUB_SHA?.slice(0, 7)
@@ -45,11 +47,17 @@ export default defineConfig(({ mode }) => {
     base: './',
     // Source maps only for measuring coverage in the browser tests (COVERAGE, see tests/e2e/coverage.ts).
     build: { sourcemap: Boolean(process.env.COVERAGE) },
-    // Phones only open the camera on HTTPS pages, so `pnpm dev:phone` serves with a self-signed
-    // certificate that each phone accepts once.
-    plugins: [versionFile(build), ...(mode === 'phone' ? [basicSsl()] : [])],
+    // Beside the page: version.json for website updates, licenses.json for About, and the
+    // privacy policy as a page of its own. Phones only open the camera on HTTPS pages, so
+    // `pnpm dev:phone` serves with a self-signed certificate that each phone accepts once.
+    plugins: [
+      versionFile(build),
+      licenses(),
+      privacyPage(),
+      ...(mode === 'phone' ? [basicSsl()] : []),
+    ],
     test: {
-      include: ['src/**/*.test.ts'],
+      include: ['src/**/*.test.ts', 'tools/**/*.test.ts'],
       coverage: {
         provider: 'v8',
         // Every source file, so files without tests count as uncovered instead of missing.

@@ -65,6 +65,10 @@ To make a move of several steps, tap the piece, then where it goes, and every sq
 
 English and German, as the browser's language says, or chosen on the start screen.
 
+**About the Spielekiste,** at the bottom of the start screen, shows the version, build and date, the contact address (fipreroll+app@gmail.com), the source code, the changelog, the open-source libraries inside with their license texts (in the app, also its native parts), and the privacy policy.
+
+**Privacy:** no accounts, no server, no advertising, no tracking. The policy is [`PRIVACY.md`](PRIVACY.md), in German [`PRIVACY.de.md`](PRIVACY.de.md); the Spielekiste shows it in the player's language, and every build puts both on one page of its own, [`privacy.html`](https://fionapreroll.github.io/vibe-mugames/privacy.html), the address for an app store. A change to what the Spielekiste keeps, shows other phones, sends anywhere or asks permission for changes both files, with the same sections (`src/privacy.test.ts` checks that), and the changelog says so.
+
 **Android app:** download [`spielekiste.apk`](https://github.com/FionaPreroll/vibe-mugames/releases/latest/download/spielekiste.apk) from the release _Spielekiste for Android_ and open it on the phone; Android asks once to allow installing apps from that source. The website links there too, on its start screen and in the settings. A newer APK installs over the older one and keeps the settings. These are debug builds, for playing with friends, not for the Play Store.
 
 **Updates** are opt-in, in the settings (⚙ on the start screen):
@@ -84,6 +88,7 @@ English and German, as the browser's language says, or chosen on the start scree
 - **One device keeps its own table.** `LocalTable` (`src/local.ts`) is the table of `src/core/table.ts` with every player on the device and nothing sent anywhere; each move is taken from whoever's turn it is. Taking turns, the screen (`src/ui/local.ts`) shows the game as the player to move sees it; a split screen shows each player's own view of it side by side. Both draw the game with the same views as a phone's table (`src/ui/game.ts`). `hasHiddenCards` (`src/core/games.ts`) names the games that are played with open cards there, and `handsOver` those that are hidden there instead: taking turns, the screen asks for the device to be handed over between players; on a split screen, it hides each player's own until they ask.
 - **Everything from another phone is checked** before use (`src/net/protocol.ts`), as is everything read from storage (`src/storage.ts`).
 - **App updates** (`src/updates.ts`, `src/ui/updates.ts`, `AppUpdaterPlugin.java`): the release _Spielekiste for Android_ holds `version.json` beside the APK, naming its build and size. The app compares it with its own build number, the APK's `versionCode`; CI sets both to the Android workflow's run number. The plugin reads and downloads only from this repository's releases, over HTTPS, and its decisions are in plain Java (`UpdateRules`), with JUnit tests beside them. Android installs an update only if it is signed with the same key as the app installed: every build is signed with `android/app/debug.keystore`, in the repository on purpose. It is public, so it proves only that an update comes from a build of this project.
+- **About** (`src/ui/about.ts`, `src/ui/privacy.ts`) reads `CHANGELOG.md` and the privacy policy as Markdown (`src/markdown.ts`), into elements built from text, so nothing in them is taken as HTML. Every build writes `licenses.json` beside the page (`tools/licenses.ts`): the packages of other people's code in the bundle, found from the bundle's own modules, with their license and NOTICE files; `@fionapreroll/p2p` is left out, as it is the same developer's. The Android app's native parts are listed by hand in `NATIVE` (`src/ui/about.ts`), from its Gradle files. `tools/privacyPage.ts` writes `privacy.html`.
 - **Website updates** (`src/webUpdates.ts`, `src/ui/webUpdates.ts`, switched in `src/ui/settings.ts`): every build writes `version.json` beside the page (`vite.config.ts`), with its version, commit and time. The page reads the deployed one, past every cache, and calls it newer if it is another commit, built later. The app does not look there, as its files are inside it.
 
 ```
@@ -97,20 +102,25 @@ src/
               Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), live.ts, canvas.ts, race.ts
               and rink.ts (the fields of the games in real time), codes.ts (QR codes and text
               codes), rules/ (each game's thumbnail and rules with drawings), updates.ts and
-              webUpdates.ts (the update dialogs and notes), settings.ts
+              webUpdates.ts (the update dialogs and notes), settings.ts, about.ts,
+              privacy.ts and markdownView.ts (About and the privacy policy)
+  markdown.ts the little Markdown of the changelog and the privacy policy
   i18n.ts     every text players see, in English and German
   local.ts    the table on one device
   storage.ts  name, language, the update switches, the camera last used, who last played on this device
               and the player's token, in local storage
   native.ts   the Android app's back button
   updates.ts  the app's updates from its release; webUpdates.ts: the website's
+PRIVACY.md    the privacy policy, PRIVACY.de.md in German
 android/      the Android app's project (Capacitor), with AppUpdaterPlugin and UpdateRules
-tools/        icons.ts: draws the icon, for the app and the website
+tools/        icons.ts: draws the icon, for the app and the website; licenses.ts and privacyPage.ts:
+              licenses.json and privacy.html in every build
 tests/e2e/    Playwright: phones in separate browser profiles pair through the text codes and play;
               the website offers a newer build; pairing.spec.ts: slow, wrong and failed codes, and copying;
               local.spec.ts: playing on one device, taking turns (Sea Battle handed over) and on a split screen;
               live.spec.ts: the games in real time between phones and on one device;
               party.spec.ts: Mäxchen and Werwolf between phones, and Werwolf handed round one device
+              about.spec.ts: About, its licenses, and the privacy policy in it and as privacy.html
 ```
 
 ### Adding a game

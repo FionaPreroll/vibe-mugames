@@ -4,6 +4,7 @@ import { isApp } from '../native'
 import { GuestSeat, HostSeat } from '../net/session'
 import { playerToken, settings, updateSettings } from '../storage'
 import { AppUpdater } from '../updates'
+import { aboutScreen } from './about'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
 import { localSetup } from './local'
@@ -102,6 +103,12 @@ export function homeScreen(): void {
       ),
       !isApp() && appLink(),
       h('label', { class: 'language' }, t('language'), language),
+      h('button', {
+        type: 'button',
+        class: 'link about-link',
+        textContent: t('about'),
+        onclick: () => aboutScreen(homeScreen),
+      }),
       build,
     ),
     null,

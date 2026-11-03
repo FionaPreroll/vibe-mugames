@@ -40,6 +40,8 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - Ludo, for two to four players, with four pieces each: roll the die, and move a piece that many squares round the board and into your home squares. A six brings a piece out of your corner and rolls again, landing on another player's piece sends it back to its corner, and with no piece out you get three tries for a six. The first with all four pieces home wins. Tap a piece to see where it goes, then tap there; hints say what was rolled and what to do, and _How Ludo goes_ explains the rules. Each phone shows its own corner at the bottom left; it also plays on one device, taking turns or on a split screen.
 - Rules for every game, with drawings: the **?** on each game in the chooser, or **Rules** beside the game's name while it is played, explains the game a step at a time, in English and German. Players can read them while the host chooses a game.
 - The game chooser shows a small picture of each game's board.
+- **About the Spielekiste,** at the bottom of the start screen: the version and build with its date, the contact address, the source code, what changed from version to version, and the open-source libraries inside with their licenses.
+- A privacy policy, in English and German, under _About the Spielekiste_ and on the website at [fionapreroll.github.io/vibe-mugames/privacy.html](https://fionapreroll.github.io/vibe-mugames/privacy.html): no accounts, no server, no advertising and no tracking, and what stays on your device and what other phones see.
 
 ### Changed
 
