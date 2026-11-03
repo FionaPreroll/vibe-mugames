@@ -1,5 +1,6 @@
 import { MAX_MESSAGE_LENGTH } from '@fionapreroll/p2p'
 import { describe, expect, it } from 'vitest'
+import { GAMES } from '../core/games'
 import { CELLS, COLUMNS, COUNTDOWN, MAX_RIDERS, ROWS } from '../core/lichtrenner'
 import { Table, type TableState } from '../core/table'
 import { parseEvent, parseInput, parseState } from './protocol'
@@ -106,5 +107,48 @@ describe('the protocol of games in real time', () => {
     }
     expect(parseEvent({ type: 'move', game: 'lichtrenner', moveNo: 0, move: [1] })).toBeUndefined()
     expect(parseEvent({ type: 'move', game: 'airhockey', moveNo: 0, move: [1] })).toBeUndefined()
+  })
+})
+
+describe('the protocol of board games for more than two', () => {
+  /** Sternhalma for `players`, after a move or two. */
+  function star(players: number): TableState {
+    const t = new Table()
+    for (let id = 0; id < players; id++) t.join(id, `Player ${id}`)
+    t.choose('sternhalma')
+    for (let id = 0; id < 2; id++) {
+      const state = t.state()
+      const move = state.position && GAMES.sternhalma.moves(state.position).at(-1)
+      if (move) t.move(id, 'sternhalma', state.moveNo, move)
+    }
+    return t.state()
+  }
+
+  it('reads back Sternhalma for two to six players, with long jumps', () => {
+    for (let players = 2; players <= 6; players++) {
+      const state = star(players)
+      expect(state.seats).toHaveLength(players)
+      expect(parseState(wire(state))).toEqual(wire(state))
+    }
+    const path = Array.from({ length: 12 }, (_, i) => i)
+    expect(parseEvent({ type: 'move', game: 'sternhalma', moveNo: 3, move: path })).toEqual({
+      type: 'move',
+      game: 'sternhalma',
+      moveNo: 3,
+      move: path,
+    })
+  })
+
+  it('turns down pieces or turns of seats that are not at the board', () => {
+    const state = wire(star(3))
+    const board = [...state.position.board]
+    board[board.indexOf(-1)] = 3
+    for (const value of [
+      { ...state, position: { ...state.position, board } },
+      { ...state, position: { ...state.position, turn: 3 } },
+      { ...state, position: { ...state.position, board: board.slice(1) } },
+    ]) {
+      expect(parseState(value)).toBeUndefined()
+    }
   })
 })

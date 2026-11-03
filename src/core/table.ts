@@ -299,7 +299,7 @@ export class Table {
   private begin(): void {
     if (this.game === null) return
     const game = this.game
-    this.position = isBoardGame(game) ? GAMES[game].start() : null
+    this.position = isBoardGame(game) ? GAMES[game].start(this.seats.length) : null
     this.cards = game === 'miaumiau' ? miau.deal(this.seats.length, this.random) : null
     this.sea = game === 'seeschlacht' ? sea.start() : null
     this.race = game === 'lichtrenner' ? licht.start(this.seats.length) : null

@@ -27,7 +27,7 @@ import type { Player, TableState } from '../core/table'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 5
+export const PROTOCOL = 6
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of
@@ -104,7 +104,7 @@ export const parseState: Parse<TableState> = (value) => {
   if (!seats || seats.length < range.min) return undefined
   const rules = game && isBoardGame(game) ? GAMES[game] : null
   const position = rules
-    ? parsePosition(value.position, rules)
+    ? parsePosition(value.position, rules, seats.length)
     : value.position === null
       ? null
       : undefined
@@ -270,21 +270,26 @@ function parseCards(value: unknown, seats: number): MiauView | undefined {
   return { hand, counts, top, stock, pile, turn, wish, penalty, drawn, winner, stuck: value.stuck }
 }
 
-/** A game's position: its board, of the game's size and pieces, and whose turn it is. */
-function parsePosition(value: unknown, rules: BoardGame): Position | undefined {
+/**
+ * A game's position: its board, of the game's size and with pieces of the `seats` players at
+ * it, and whose turn it is.
+ */
+function parsePosition(value: unknown, rules: BoardGame, seats: number): Position | undefined {
   if (!isObject(value)) return undefined
-  const board = list(value.board, rules.cells, (cell) => (isPiece(cell, rules) ? cell : undefined))
+  const board = list(value.board, rules.cells, (cell) =>
+    isPiece(cell, rules, seats) ? cell : undefined,
+  )
   if (!board || board.length !== rules.cells) return undefined
-  if (!isWhole(value.turn, 0, rules.seats - 1)) return undefined
-  const hand = list(value.hand, rules.seats, (n) => (isWhole(n, 0, MAX_HAND) ? n : undefined))
-  if (!hand || (hand.length !== 0 && hand.length !== rules.seats)) return undefined
+  if (!isWhole(value.turn, 0, seats - 1)) return undefined
+  const hand = list(value.hand, seats, (n) => (isWhole(n, 0, MAX_HAND) ? n : undefined))
+  if (!hand || (hand.length !== 0 && hand.length !== seats)) return undefined
   const phase = PHASES.find((p) => p === value.phase)
   if (!phase || !isWhole(value.quiet, 0, MAX_MOVES)) return undefined
   return { board, turn: value.turn, hand, phase, quiet: value.quiet }
 }
 
-function isPiece(cell: unknown, rules: BoardGame): cell is number {
-  return cell === EMPTY || (isWhole(cell, 0, KIND * rules.kinds - 1) && cell % KIND < rules.seats)
+function isPiece(cell: unknown, rules: BoardGame, seats: number): cell is number {
+  return cell === EMPTY || (isWhole(cell, 0, KIND * rules.kinds - 1) && cell % KIND < seats)
 }
 
 function parsePlayer(value: unknown): Player | undefined {
@@ -296,7 +301,8 @@ function parseOutcome(value: unknown, board: Board, seats: number): Outcome | nu
   if (value === null) return null
   if (value === 'draw') return 'draw'
   if (!isObject(value) || !isWhole(value.winner, 0, seats - 1)) return undefined
-  const line = list(value.line, 4, (cell) =>
+  // The cells that won: a line of a few, or the pieces in a triangle of Sternhalma.
+  const line = list(value.line, Math.max(4, board.length), (cell) =>
     isWhole(cell, 0, board.length - 1) ? cell : undefined,
   )
   return line ? { winner: value.winner, line } : undefined

@@ -1,10 +1,13 @@
 import { type BoardGame, type BoardGameId, type GameId, isBoardGame } from './board'
 import { dame } from './dame'
 import { fourInARow } from './fourInARow'
+import { kaesekaestchen } from './kaesekaestchen'
 import { MAX_RIDERS, MIN_RIDERS } from './lichtrenner'
 import { MAX_SEATS, MIN_SEATS } from './miaumiau'
 import { muehle } from './muehle'
+import { reversi } from './reversi'
 import { SEA_SEATS } from './seeschlacht'
+import { sternhalma } from './sternhalma'
 import { ticTacToe } from './tictactoe'
 
 /** Every board game in the Spielekiste. */
@@ -13,11 +16,17 @@ export const GAMES: Record<BoardGameId, BoardGame> = {
   fourinarow: fourInARow,
   muehle,
   dame,
+  kaesekaestchen,
+  reversi,
+  sternhalma,
 }
 
 /** How many players a game takes: the fewest it starts with, and the most who play. */
 export function seatRange(game: GameId): { readonly min: number; readonly max: number } {
-  if (isBoardGame(game)) return { min: GAMES[game].seats, max: GAMES[game].seats }
+  if (isBoardGame(game)) {
+    const rules = GAMES[game]
+    return { min: rules.minSeats ?? rules.seats, max: rules.seats }
+  }
   if (game === 'seeschlacht') return { min: SEA_SEATS, max: SEA_SEATS }
   if (game === 'lichtrenner') return { min: MIN_RIDERS, max: MAX_RIDERS }
   if (game === 'airhockey') return { min: 2, max: 2 }

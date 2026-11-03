@@ -136,6 +136,21 @@ describe('the table', () => {
     expect(t.state().position?.board[28]).toBe(-1)
   })
 
+  it('seats as many as come, up to six, at Sternhalma, and starts each in a triangle', () => {
+    const t = table('Ada')
+    expect(t.choose('sternhalma')).toBe(false)
+    t.join(1, 'Bo')
+    t.join(2, 'Cy')
+    expect(t.choose('sternhalma')).toBe(true)
+    const state = t.state()
+    expect(state.seats).toEqual([0, 1, 2])
+    const board = state.position?.board ?? []
+    for (const seat of [0, 1, 2]) expect(board.filter((cell) => cell === seat)).toHaveLength(10)
+    // Reversi and Dots and Boxes take two of them, the others watch.
+    expect(t.choose('reversi')).toBe(true)
+    expect(t.state().seats).toHaveLength(2)
+  })
+
   it('seats two to six players at Miau-Miau, and shows each only their own hand', () => {
     const t = table('Ada')
     expect(t.choose('miaumiau')).toBe(false)

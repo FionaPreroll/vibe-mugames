@@ -29,6 +29,9 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - Light Racers (_Lichtrenner_), the first game in real time, for two to six: every rider races across the grid leaving a wall of light behind, and whoever rides into a wall, the edge or another rider is out. The last one riding wins. Turn by swiping on the field, with the ⟲ and ⟳ buttons, or with the arrow keys; a ring shows you your rider before the start.
 - Air Hockey, in real time, for two, across two phones laid top edge to top edge: each screen is its player's half of the rink, and the puck slides from one phone to the other. Move your mallet with a finger; the first to seven goals wins. Anyone else at the table watches the whole rink, and the host can stop the game.
 - The games in real time on one device: on one screen, each player steers with their own keys (W A S D, the arrow keys, I J K L, the number pad) or buttons, and in Air Hockey with a finger on their half of the rink; on a split screen, each player gets their own field, and in Air Hockey their own half, turned their way.
+- Dots and Boxes (_Käsekästchen_), for two: draw lines between the dots in turn; whoever draws the fourth side of a box wins it and draws again. Most of the 25 boxes wins.
+- Reversi, for two: place a piece so that it encloses a line of the other's pieces, which turn to your colour. A player who cannot move passes; once neither can, more pieces win. The board marks where you can place a piece, and says when a player had to pass.
+- Chinese Checkers (_Sternhalma_), for two to six on a star of 121 holes: bring all ten pieces into the triangle across, by steps and by jumps over any pieces, as many in a row as you like. Pick a piece and tap where it goes, however many jumps away. Each phone turns the star so that its own pieces start at the bottom, and each player's goal is ringed in their colour.
 
 ### Changed
 

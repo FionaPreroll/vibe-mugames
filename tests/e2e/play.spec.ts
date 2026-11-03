@@ -131,6 +131,64 @@ test('in Dame a piece is picked, then moved, and a jump takes', async ({ browser
   await expect(bo.locator('.status.turn')).toHaveText('Your turn')
 })
 
+test('in Reversi a piece turns the pieces it encloses, on every phone', async ({ browser }) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await ada.getByRole('button', { name: 'Reversi' }).click()
+  await expect(bo.locator('.board .cell')).toHaveCount(64)
+  // Ada's four moves to open are marked.
+  await expect(ada.locator('.board .cell.target')).toHaveCount(4)
+  await expect(bo.locator('.board .cell.target')).toHaveCount(0)
+
+  // Ada on d6 encloses d5, which turns to her colour.
+  await point(ada, 19).click()
+  await expect(point(bo, 27)).toHaveClass(/seat-0/)
+  await expect(bo.locator('.hand')).toHaveText('Pieces: Ada 4 · Bo 1')
+  // Bo on c6 turns it back.
+  await taps([bo, 18])
+  await expect(point(ada, 27)).toHaveClass(/seat-1/)
+  await expect(ada.locator('.hand')).toHaveText('Pieces: Ada 3 · Bo 3')
+  await expect(ada.locator('.status.turn')).toHaveText('Your turn')
+})
+
+test('three phones play Chinese Checkers, each with their own triangle at the bottom', async ({
+  browser,
+}) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  const cy = await phone(browser, 'Cy')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await seat(ada, cy)
+  await ada.getByRole('button', { name: 'Chinese Checkers' }).click()
+  for (const page of [ada, bo, cy]) await expect(page.locator('.board .cell')).toHaveCount(121)
+  // Every phone turns the star so that its own pieces start at the bottom.
+  for (const [page, seatNo] of [
+    [ada, 0],
+    [bo, 1],
+    [cy, 2],
+  ] as const) {
+    const tops = await page
+      .locator(`.board .cell.seat-${seatNo}`)
+      .evaluateAll((cells) =>
+        cells.map((cell) => Number.parseFloat((cell as HTMLElement).style.top)),
+      )
+    expect(Math.min(...tops)).toBeGreaterThan(70)
+  }
+
+  // Ada picks a piece and steps out of her triangle.
+  await point(ada, 111).click()
+  await expect(ada.locator('.hint')).toContainText('Tap where it goes')
+  await point(ada, 102).click()
+  await expect(point(cy, 102)).toHaveClass(/seat-0/)
+  await expect(point(cy, 111)).toHaveClass(/empty/)
+  await expect(bo.locator('.status.turn')).toHaveText('Your turn')
+  await expect(cy.locator('.status.turn')).toHaveText('Bo’s turn')
+  await expect(cy.locator('.hand')).toHaveText('Arrived: Ada 0/10 · Bo 0/10 · Cy 0/10')
+})
+
 test('three phones play Miau-Miau, each seeing only its own cards', async ({ browser }) => {
   const ada = await phone(browser, 'Ada')
   const bo = await phone(browser, 'Bo')

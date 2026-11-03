@@ -117,6 +117,48 @@ test('a split screen gives two players a part each, and turns one round', async 
   await expect(ada.locator('.status.turn')).toHaveText('Your turn')
 })
 
+test('two take turns at Dots and Boxes, and closing a box draws again', async ({ browser }) => {
+  const page = await phone(browser, 'Ada')
+  await startLocal(page, ['Ada', 'Bo'], false)
+  await page.getByRole('button', { name: 'Dots and Boxes' }).click()
+  const status = page.locator('.status.turn')
+  // The top, the left and the right of the first box, then Bo draws its bottom.
+  for (const [line, next] of [
+    [0, 'Bo, your turn'],
+    [30, 'Ada, your turn'],
+    [31, 'Bo, your turn'],
+    [5, 'Bo, your turn'],
+  ] as const) {
+    await cell(page, line).click()
+    await expect(cell(page, line)).not.toHaveClass(/\bempty\b/)
+    await expect(status).toHaveText(next)
+  }
+  await expect(cell(page, 60)).toHaveClass(/seat-1/)
+  await expect(page.locator('.hint')).toHaveText('Bo closed a box and draws again.')
+  await expect(page.locator('.hand')).toHaveText('Boxes: Ada 0 · Bo 1')
+  await expect(cell(page, 0)).toBeDisabled()
+})
+
+test('three play Chinese Checkers on a split screen, each with their own side', async ({
+  browser,
+}) => {
+  const page = await phone(browser, 'Ada')
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await startLocal(page, ['Ada', 'Bo', 'Cy'], true)
+  await page.getByRole('button', { name: 'Chinese Checkers' }).click()
+  const ada = page.getByRole('region', { name: 'Ada' })
+  const bo = page.getByRole('region', { name: 'Bo' })
+  await expect(page.locator('.pane')).toHaveCount(3)
+  await expect(ada.locator('.status.turn')).toHaveText('Your turn')
+  // A jump: from the second row of Ada's triangle over the piece in front of it.
+  await cell(ada, 116).click()
+  await expect(ada.locator('.board .cell.target').first()).toBeVisible()
+  await cell(ada, 103).click()
+  await expect(cell(bo, 103)).toHaveClass(/seat-0/)
+  await expect(cell(bo, 116)).toHaveClass(/last/)
+  await expect(bo.locator('.status.turn')).toHaveText('Your turn')
+})
+
 test('four play Miau-Miau on a split screen, each part with its own cards', async ({ browser }) => {
   const page = await phone(browser, 'Ada')
   await page.setViewportSize({ width: 1280, height: 900 })

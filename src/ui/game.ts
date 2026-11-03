@@ -4,7 +4,7 @@ import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
 import { t } from '../i18n'
 import type { TableHost } from '../net/session'
-import { boardView, handText, hint, type Picker, seatName, symbol } from './boards'
+import { boardView, handText, hint, news, type Picker, seatName, symbol } from './boards'
 import { cardsHint, cardsView } from './cards'
 import { h } from './dom'
 import type { LiveSlot } from './live'
@@ -153,9 +153,7 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
   const names = state.seats.map((_, i) => name(i))
   const help = state.cards
     ? (cardsHint(state.cards, mine, state.last, names) ?? '')
-    : myTurn
-      ? hint(state, picker.current(state))
-      : ''
+    : news(state, mine, shared) || (myTurn ? hint(state, picker.current(state)) : '')
   const hand = handText(state)
   const board = state.cards
     ? cardsView(

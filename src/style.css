@@ -8,6 +8,10 @@
   --wood: #c8833b;
   --seat-0: #e5484d;
   --seat-1: #f5c542;
+  --seat-2: #4fb3a9;
+  --seat-3: #8f7cf0;
+  --seat-4: #e98ac0;
+  --seat-5: #8fc75b;
   --accent: #4fb3a9;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
@@ -211,19 +215,19 @@ textarea {
 }
 
 .piece.seat-2 {
-  color: #4fb3a9;
+  color: var(--seat-2);
 }
 
 .piece.seat-3 {
-  color: #8f7cf0;
+  color: var(--seat-3);
 }
 
 .piece.seat-4 {
-  color: #e98ac0;
+  color: var(--seat-4);
 }
 
 .piece.seat-5 {
-  color: #8fc75b;
+  color: var(--seat-5);
 }
 
 .board {
@@ -414,6 +418,221 @@ textarea {
 .board .cell.win {
   outline: 3px solid var(--text);
   outline-offset: -3px;
+}
+
+/* Reversi: discs on green squares. */
+.board.reversi {
+  gap: 2px;
+  padding: 4px;
+  background: #143d2b;
+  border-radius: 0.3rem;
+}
+
+.board.reversi .cell {
+  border-radius: 0;
+  border: none;
+  background: #1f6b47;
+  display: flex;
+}
+
+.board.reversi .cell:not(.empty)::before {
+  content: "";
+  width: 80%;
+  height: 80%;
+  margin: auto;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.5);
+}
+
+.board.reversi .cell.seat-0::before {
+  background: var(--seat-0);
+}
+
+.board.reversi .cell.seat-1::before {
+  background: var(--seat-1);
+}
+
+/* Käsekästchen: dots on a grid, lines between them as wide buttons, boxes in their owner's colour. */
+.board.kaesekaestchen {
+  --dot: 1fr;
+  --gap: 3.5fr;
+  grid-template-columns: repeat(5, var(--dot) var(--gap)) var(--dot);
+  grid-template-rows: repeat(5, var(--dot) var(--gap)) var(--dot);
+  gap: 0;
+  aspect-ratio: 1;
+  width: min(100%, 26rem);
+  background: #f4efe1;
+  border-radius: 0.5rem;
+}
+
+.board.kaesekaestchen .dot {
+  width: 70%;
+  aspect-ratio: 1;
+  margin: auto;
+  border-radius: 50%;
+  background: #1d2b3a;
+}
+
+.board.kaesekaestchen .cell {
+  aspect-ratio: auto;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+}
+
+.board.kaesekaestchen .cell.across::before,
+.board.kaesekaestchen .cell.down::before {
+  content: "";
+  margin: auto;
+  border-radius: 2px;
+  background: #c9c2b0;
+}
+
+.board.kaesekaestchen .cell.across::before {
+  width: 100%;
+  height: 22%;
+}
+
+.board.kaesekaestchen .cell.down::before {
+  width: 22%;
+  height: 100%;
+}
+
+.board.kaesekaestchen .cell.across.empty::before {
+  height: 8%;
+}
+
+.board.kaesekaestchen .cell.down.empty::before {
+  width: 8%;
+}
+
+.board.kaesekaestchen.active .cell.can:hover::before,
+.board.kaesekaestchen .cell.can:focus-visible::before {
+  background: var(--accent);
+}
+
+.board.kaesekaestchen .cell.seat-0::before {
+  background: var(--seat-0);
+}
+
+.board.kaesekaestchen .cell.seat-1::before {
+  background: var(--seat-1);
+}
+
+.board.kaesekaestchen .cell.last {
+  box-shadow: none;
+}
+
+.board.kaesekaestchen .cell.last::before {
+  outline: 2px solid #1d2b3a;
+}
+
+.board.kaesekaestchen .cell.box.seat-0 {
+  background: color-mix(in srgb, var(--seat-0) 55%, transparent);
+}
+
+.board.kaesekaestchen .cell.box.seat-1 {
+  background: color-mix(in srgb, var(--seat-1) 55%, transparent);
+}
+
+/* Sternhalma: holes on a star, each triangle a player is bound for ringed in their colour. */
+.board.sternhalma {
+  position: relative;
+  display: block;
+  aspect-ratio: 13.2 / 15.06;
+  width: min(100%, 28rem);
+  padding: 0;
+}
+
+.board.sternhalma svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.board.sternhalma svg polygon {
+  fill: var(--wood);
+  stroke: #3b2410;
+  stroke-width: 0.006;
+}
+
+.board.sternhalma .cell {
+  position: absolute;
+  width: 6.4%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+}
+
+.board.sternhalma .cell.empty::before {
+  content: "";
+  position: absolute;
+  inset: 30%;
+  border-radius: 50%;
+  background: #3b2410;
+}
+
+.board.sternhalma .cell:not(.empty) {
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.5);
+}
+
+.board.sternhalma .cell.can {
+  outline: 2px dashed var(--text);
+  outline-offset: 1px;
+}
+
+.board.sternhalma .cell.seat-0 {
+  background: var(--seat-0);
+}
+
+.board.sternhalma .cell.goal-0.empty {
+  box-shadow: 0 0 0 2px var(--seat-0) inset;
+}
+
+.board.sternhalma .cell.seat-1 {
+  background: var(--seat-1);
+}
+
+.board.sternhalma .cell.goal-1.empty {
+  box-shadow: 0 0 0 2px var(--seat-1) inset;
+}
+
+.board.sternhalma .cell.seat-2 {
+  background: var(--seat-2);
+}
+
+.board.sternhalma .cell.goal-2.empty {
+  box-shadow: 0 0 0 2px var(--seat-2) inset;
+}
+
+.board.sternhalma .cell.seat-3 {
+  background: var(--seat-3);
+}
+
+.board.sternhalma .cell.goal-3.empty {
+  box-shadow: 0 0 0 2px var(--seat-3) inset;
+}
+
+.board.sternhalma .cell.seat-4 {
+  background: var(--seat-4);
+}
+
+.board.sternhalma .cell.goal-4.empty {
+  box-shadow: 0 0 0 2px var(--seat-4) inset;
+}
+
+.board.sternhalma .cell.seat-5 {
+  background: var(--seat-5);
+}
+
+.board.sternhalma .cell.goal-5.empty {
+  box-shadow: 0 0 0 2px var(--seat-5) inset;
 }
 
 .codes {
@@ -1054,11 +1273,17 @@ textarea {
 /* Boards fit their part of the screen, as wide as its height leaves room for. */
 .pane .board,
 .pane .board.tictactoe,
-.pane .board.muehle {
+.pane .board.muehle,
+.pane .board.kaesekaestchen,
+.pane .board.sternhalma {
   width: min(100%, calc(100cqh - 6.5rem));
   max-width: none;
   min-width: 9rem;
   margin: 0.25rem auto;
+}
+
+.pane .board.sternhalma {
+  width: min(100%, calc((100cqh - 6.5rem) * 0.87));
 }
 
 .pane .board .cell {

@@ -42,14 +42,16 @@ export interface BoardGame {
   readonly id: BoardGameId
   /** Cells on the board. */
   readonly cells: number
-  /** Players at the board; everyone else at the table watches. */
+  /** The most players at the board; everyone else at the table watches. */
   readonly seats: number
+  /** The fewest players a game starts with, if fewer than `seats`. */
+  readonly minSeats?: number
   /** Kinds of piece: 2 where pieces can be crowned, otherwise 1. */
   readonly kinds: number
   /** The most cells a move names. */
   readonly steps: number
-  /** The position a game starts with: seat 0 moves first. */
-  start(): Position
+  /** The position a game starts with, for `seats` players (the most if not given): seat 0 first. */
+  start(seats?: number): Position
   /** Every move the seat to move may make now. */
   moves(position: Position): Move[]
   /** The position after a move, which must be one of `moves`. */
@@ -59,7 +61,15 @@ export interface BoardGame {
 }
 
 /** The games played on a board, each a `BoardGame`. */
-export const BOARD_GAME_IDS = ['tictactoe', 'fourinarow', 'muehle', 'dame'] as const
+export const BOARD_GAME_IDS = [
+  'tictactoe',
+  'fourinarow',
+  'muehle',
+  'dame',
+  'kaesekaestchen',
+  'reversi',
+  'sternhalma',
+] as const
 export type BoardGameId = (typeof BOARD_GAME_IDS)[number]
 
 /** The games played in real time, with input many times a second instead of moves in turn. */
