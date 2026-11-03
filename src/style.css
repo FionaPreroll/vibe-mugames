@@ -633,6 +633,8 @@ textarea {
 
 .board.sternhalma .cell.goal-5.empty {
   box-shadow: 0 0 0 2px var(--seat-5) inset;
+}
+
 /* Ludo: a cross of 11 by 11 squares, a corner for each player, home squares to the middle. */
 .board.ludo {
   gap: 0.15rem;
