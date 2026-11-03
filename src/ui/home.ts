@@ -7,8 +7,8 @@ import { AppUpdater } from '../updates'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
 import { localSetup } from './local'
+import { appLink, settingsScreen } from './settings'
 import { tableScreen } from './table'
-import { updatesSection } from './updates'
 import { webUpdateBanner } from './webUpdates'
 
 /** The start screen: the player's name, and opening a table or joining one. */
@@ -57,6 +57,18 @@ export function homeScreen(): void {
     h(
       'div',
       { class: 'screen home' },
+      h(
+        'div',
+        { class: 'top-bar' },
+        h('button', {
+          type: 'button',
+          class: 'icon',
+          ariaLabel: t('settings'),
+          title: t('settings'),
+          textContent: '⚙',
+          onclick: () => settingsScreen(homeScreen),
+        }),
+      ),
       webUpdateBanner(),
       h('h1', {}, t('title')),
       h('p', { class: 'tagline' }, t('tagline')),
@@ -88,8 +100,8 @@ export function homeScreen(): void {
           },
         }),
       ),
+      !isApp() && appLink(),
       h('label', { class: 'language' }, t('language'), language),
-      isApp() && updatesSection(),
       build,
     ),
     null,

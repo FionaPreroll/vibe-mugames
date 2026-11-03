@@ -5,7 +5,7 @@ import type { Language } from './i18n'
 
 /**
  * What this phone remembers, in the browser's local storage: the player's name, the language,
- * whether the app looks for updates, the camera last used for scanning with its zoom and
+ * whether the app and the website look for updates, the camera last used for scanning with its zoom and
  * brightness, who last played on this device, and the token with which a player gets their place back. Everything read is
  * checked.
  */
@@ -19,6 +19,8 @@ export interface Settings {
   readonly checkUpdates: boolean
   /** Whether the app has asked about `checkUpdates` yet, which it does once, at the first start. */
   readonly updatesAsked: boolean
+  /** On the website: look now and then for a newer build, and say so (see src/webUpdates.ts). */
+  readonly webUpdates: boolean
   /** The names of the players who last played on this device, as many as played. */
   readonly localNames: readonly string[]
   /** Whether they last played on a split screen, or took turns on one. */
@@ -33,6 +35,7 @@ const DEFAULTS: Settings = {
   language: 'auto',
   checkUpdates: false,
   updatesAsked: false,
+  webUpdates: false,
   localNames: [],
   localSplit: false,
 }
@@ -57,15 +60,14 @@ function write(key: string, value: unknown): void {
 /** Settings from storage, checked: anything that does not fit falls back to the default. */
 export function parseSettings(value: unknown): Settings {
   if (typeof value !== 'object' || value === null) return DEFAULTS
-  const { name, language, checkUpdates, updatesAsked, localNames, localSplit } = value as Record<
-    string,
-    unknown
-  >
+  const { name, language, checkUpdates, updatesAsked, webUpdates, localNames, localSplit } =
+    value as Record<string, unknown>
   return {
     name: typeof name === 'string' ? cleanName(name, '') : '',
     language: language === 'en' || language === 'de' ? language : 'auto',
     checkUpdates: checkUpdates === true,
     updatesAsked: updatesAsked === true,
+    webUpdates: webUpdates === true,
     localNames: Array.isArray(localNames)
       ? localNames
           .slice(0, MAX_LOCAL_NAMES)

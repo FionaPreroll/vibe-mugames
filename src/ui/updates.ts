@@ -232,10 +232,10 @@ export function offer(release: Release, updater: Updater = AppUpdater): void {
 }
 
 /**
- * The start screen's part about updates, in the app only: whether to look at every start, and
- * looking now, which offers what it finds whatever the switch says.
+ * The settings' part about the app's updates: whether to look at every start, and looking now,
+ * which offers what it finds whatever the switch says.
  */
-export function updatesSection(updater: Updater = AppUpdater): HTMLElement {
+export function appUpdateSettings(updater: Updater = AppUpdater): HTMLElement {
   const toggle = h('input', { type: 'checkbox', checked: settings().checkUpdates })
   toggle.addEventListener('change', () =>
     updateSettings({ checkUpdates: toggle.checked, updatesAsked: true }),
@@ -261,9 +261,8 @@ export function updatesSection(updater: Updater = AppUpdater): HTMLElement {
     },
   })
   return h(
-    'details',
+    'section',
     { class: 'app-updates' },
-    h('summary', {}, t('updatesTitle')),
     h('label', { class: 'toggle' }, toggle, t('updatesSetting')),
     h('p', { class: 'muted' }, t('updatesNote')),
     h('div', { class: 'buttons' }, button),

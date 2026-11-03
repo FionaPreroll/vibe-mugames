@@ -1056,13 +1056,23 @@ textarea {
 }
 
 /* The app's updates: the switch, looking now, and the dialog with its progress. */
-.app-updates {
+.app-updates,
+.web-updates {
   margin: 0.75rem 0;
 }
 
-.app-updates summary {
-  cursor: pointer;
-  color: var(--muted);
+/* The start screen's top bar, with the settings at its right. */
+.home .top-bar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.app-link {
+  text-align: center;
+}
+
+.app-link a {
+  color: var(--accent);
 }
 
 .toggle {

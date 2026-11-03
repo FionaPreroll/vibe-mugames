@@ -8,7 +8,7 @@ vi.mock('../native', () => ({ isApp: () => true }))
 const { handleBack } = await import('./dom')
 const { setLanguage } = await import('../i18n')
 const { settings } = await import('../storage')
-const { formatBytes, offer, offerUpdates, updatesSection } = await import('./updates')
+const { formatBytes, offer, offerUpdates, appUpdateSettings } = await import('./updates')
 type Updater = import('../updates').Updater
 type Network = import('../updates').Network
 
@@ -367,7 +367,7 @@ describe('the update dialog', () => {
   })
 })
 
-describe('the start screen’s updates', () => {
+describe('the settings’ app updates', () => {
   function checking(check: { build: number } | 'offline') {
     const fake = fakeUpdater()
     const updater = {
@@ -378,7 +378,7 @@ describe('the start screen’s updates', () => {
         return { text: JSON.stringify({ build: check.build, commit: 'abc1234' }) }
       }),
     } as unknown as Updater
-    const section = updatesSection(updater)
+    const section = appUpdateSettings(updater)
     document.body.append(section)
     return section
   }

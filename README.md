@@ -65,12 +65,12 @@ To make a move of several steps, tap the piece, then where it goes, and every sq
 
 English and German, as the browser's language says, or chosen on the start screen.
 
-**Android app:** download [`spielekiste.apk`](https://github.com/FionaPreroll/vibe-mugames/releases/latest/download/spielekiste.apk) from the release _Spielekiste for Android_ and open it on the phone; Android asks once to allow installing apps from that source. A newer APK installs over the older one and keeps the settings. These are debug builds, for playing with friends, not for the Play Store.
+**Android app:** download [`spielekiste.apk`](https://github.com/FionaPreroll/vibe-mugames/releases/latest/download/spielekiste.apk) from the release _Spielekiste for Android_ and open it on the phone; Android asks once to allow installing apps from that source. The website links there too, on its start screen and in the settings. A newer APK installs over the older one and keeps the settings. These are debug builds, for playing with friends, not for the Play Store.
 
-**Updates:**
+**Updates** are opt-in, in the settings (⚙ on the start screen):
 
-- **In the app,** if you agree at its first start or switch it on under _Updates_ on the start screen: at every start, the app looks for a newer build and offers to install it; _Look for a new version now_ looks at once. The dialog says how large the download is, and warns when the phone is on mobile data or another metered connection. While downloading, it shows the progress; **Pause** stops, and the download goes on where it stopped, also after the app was closed. Android asks before installing; the first time, it wants you to allow the app to install apps: the app opens that setting, and goes on installing by itself when you come back, without downloading again. The app hands the update to Android as an installer session, which reports back: the dialog says when Android waits for your confirmation, and if Android's installer does not open, or the update was not installed, it says so and offers to try again. The start screen shows the app's build number.
-- **On the website,** an open page looks for a newer build when it starts, every quarter of an hour and when it comes back to the front. The start screen then says so, and _Load it_ loads the new version. It does not say so at a table, as loading the page anew there would end the table.
+- **In the app,** if you agree at its first start or switch it on in the settings: at every start, the app looks for a newer build and offers to install it; _Look for a new version now_ looks at once. The dialog says how large the download is, and warns when the phone is on mobile data or another metered connection. While downloading, it shows the progress; **Pause** stops, and the download goes on where it stopped, also after the app was closed. Android asks before installing; the first time, it wants you to allow the app to install apps: the app opens that setting, and goes on installing by itself when you come back, without downloading again. The app hands the update to Android as an installer session, which reports back: the dialog says when Android waits for your confirmation, and if Android's installer does not open, or the update was not installed, it says so and offers to try again. The start screen shows the app's build number.
+- **On the website,** once switched on in the settings, an open page looks for a newer build when it starts, every quarter of an hour and when it comes back to the front; _Look for a new version now_ in the settings looks at once, whatever the switch says. The start screen then says so, and _Load it_ loads the new version. It does not say so at a table, as loading the page anew there would end the table.
 
 ## How it works
 
@@ -84,7 +84,7 @@ English and German, as the browser's language says, or chosen on the start scree
 - **One device keeps its own table.** `LocalTable` (`src/local.ts`) is the table of `src/core/table.ts` with every player on the device and nothing sent anywhere; each move is taken from whoever's turn it is. Taking turns, the screen (`src/ui/local.ts`) shows the game as the player to move sees it; a split screen shows each player's own view of it side by side. Both draw the game with the same views as a phone's table (`src/ui/game.ts`). `hasHiddenCards` (`src/core/games.ts`) names the games that are played with open cards there, and `handsOver` those that are hidden there instead: taking turns, the screen asks for the device to be handed over between players; on a split screen, it hides each player's own until they ask.
 - **Everything from another phone is checked** before use (`src/net/protocol.ts`), as is everything read from storage (`src/storage.ts`).
 - **App updates** (`src/updates.ts`, `src/ui/updates.ts`, `AppUpdaterPlugin.java`): the release _Spielekiste for Android_ holds `version.json` beside the APK, naming its build and size. The app compares it with its own build number, the APK's `versionCode`; CI sets both to the Android workflow's run number. The plugin reads and downloads only from this repository's releases, over HTTPS, and its decisions are in plain Java (`UpdateRules`), with JUnit tests beside them. Android installs an update only if it is signed with the same key as the app installed: every build is signed with `android/app/debug.keystore`, in the repository on purpose. It is public, so it proves only that an update comes from a build of this project.
-- **Website updates** (`src/webUpdates.ts`, `src/ui/webUpdates.ts`): every build writes `version.json` beside the page (`vite.config.ts`), with its version, commit and time. The page reads the deployed one, past every cache, and calls it newer if it is another commit, built later. The app does not look there, as its files are inside it.
+- **Website updates** (`src/webUpdates.ts`, `src/ui/webUpdates.ts`, switched in `src/ui/settings.ts`): every build writes `version.json` beside the page (`vite.config.ts`), with its version, commit and time. The page reads the deployed one, past every cache, and calls it newer if it is another commit, built later. The app does not look there, as its files are inside it.
 
 ```
 src/
@@ -97,10 +97,10 @@ src/
               Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), live.ts, canvas.ts, race.ts
               and rink.ts (the fields of the games in real time), codes.ts (QR codes and text
               codes), rules/ (each game's thumbnail and rules with drawings), updates.ts and
-              webUpdates.ts (the update dialogs and notes)
+              webUpdates.ts (the update dialogs and notes), settings.ts
   i18n.ts     every text players see, in English and German
   local.ts    the table on one device
-  storage.ts  name, language, the update switch, the camera last used, who last played on this device
+  storage.ts  name, language, the update switches, the camera last used, who last played on this device
               and the player's token, in local storage
   native.ts   the Android app's back button
   updates.ts  the app's updates from its release; webUpdates.ts: the website's
@@ -176,4 +176,5 @@ Every feature or fix gets its own branch off `main`, named `feature/<name_in_sna
 - **The app's updates are unit-tested, but not yet tried on phones.** An app installed before builds were signed with the same key has to be uninstalled once.
 - **Some Wi-Fi networks** isolate their clients, so the phones cannot see each other there; a phone's own hotspot does not.
 - **A game on one device is not saved:** closing the page or the app ends it, scores and all.
+- **The website is not yet a PWA:** it cannot be installed from the browser, and it needs the network to start. Planned: a manifest and a service worker, so browsers can install it and it starts offline.
 - **A host who closes the page ends the table:** players cannot sit down again until the host opens a new one. A player who drops out gets their place and score back by pairing again.

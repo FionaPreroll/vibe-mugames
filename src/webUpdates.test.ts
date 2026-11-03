@@ -5,6 +5,7 @@ import {
   CHECK_EVERY_MS,
   checkWebUpdate,
   isNewer,
+  lookForWebUpdate,
   parseWebBuild,
   watchWebUpdates,
 } from './webUpdates'
@@ -59,6 +60,22 @@ describe('checkWebUpdate', () => {
         throw new Error('offline')
       }),
     ).toBeNull()
+  })
+})
+
+describe('lookForWebUpdate', () => {
+  it('tells a newer build, the same one, and a failure apart', async () => {
+    expect(await lookForWebUpdate(running, async () => newer)).toEqual({
+      kind: 'newer',
+      build: newer,
+    })
+    expect(await lookForWebUpdate(running, async () => running)).toEqual({ kind: 'current' })
+    expect(await lookForWebUpdate(running, async () => ({ build: 3 }))).toEqual({ kind: 'failed' })
+    expect(
+      await lookForWebUpdate(running, async () => {
+        throw new Error('offline')
+      }),
+    ).toEqual({ kind: 'failed' })
   })
 })
 

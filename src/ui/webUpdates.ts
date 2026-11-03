@@ -1,19 +1,37 @@
 import { t } from '../i18n'
 import { isApp } from '../native'
+import { settings, updateSettings } from '../storage'
 import { type WebBuild, watchWebUpdates } from '../webUpdates'
 import { h } from './dom'
 
 /**
- * The website's note about a newer build. It shows on the start screen only: loading the page
- * anew at a table would end the table for everyone.
+ * The website's note about a newer build, if the player switched it on in the settings. It shows
+ * on the start screen only: loading the page anew at a table would end the table for everyone.
  */
 
 let found: WebBuild | null = null
+let stopWatching: (() => void) | null = null
 
-/** Starts looking, on the website only: in the app, and while developing, it does nothing. */
+/**
+ * Starts looking now and then, on the website only and only if the player switched it on: in the
+ * app, and while developing, it does nothing.
+ */
 export function watchForWebUpdates(): void {
-  if (isApp() || import.meta.env.DEV) return
-  watchWebUpdates(foundNewer)
+  if (isApp() || import.meta.env.DEV || !settings().webUpdates || stopWatching) return
+  stopWatching = watchWebUpdates((build) => {
+    stopWatching = null
+    foundNewer(build)
+  })
+}
+
+/** The settings' switch: looks from now on, or stops looking. */
+export function setWebUpdates(on: boolean): void {
+  updateSettings({ webUpdates: on })
+  if (on) watchForWebUpdates()
+  else {
+    stopWatching?.()
+    stopWatching = null
+  }
 }
 
 /** Remembers a newer build and shows it on the start screen, if that is open. */

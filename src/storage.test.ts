@@ -8,12 +8,16 @@ describe('settings from storage', () => {
       language: 'auto',
       checkUpdates: false,
       updatesAsked: false,
+      webUpdates: false,
       localNames: [],
       localSplit: false,
     })
-    expect(parseSettings({ language: 'fr', checkUpdates: 'yes', localSplit: 1 })).toMatchObject({
+    expect(
+      parseSettings({ language: 'fr', checkUpdates: 'yes', webUpdates: 1, localSplit: 1 }),
+    ).toMatchObject({
       language: 'auto',
       checkUpdates: false,
+      webUpdates: false,
       localSplit: false,
     })
   })

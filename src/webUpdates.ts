@@ -39,6 +39,26 @@ const fetchJson: FetchJson = async (url) => {
   return response.json()
 }
 
+/** What looking at the deployed build found. */
+export type WebUpdateCheck =
+  | { readonly kind: 'newer'; readonly build: WebBuild }
+  | { readonly kind: 'current' }
+  | { readonly kind: 'failed' }
+
+/** Looks at the deployed build: newer, the same, or failed offline or with a file not sound. */
+export async function lookForWebUpdate(
+  running: WebBuild = __BUILD__,
+  read: FetchJson = fetchJson,
+): Promise<WebUpdateCheck> {
+  try {
+    const deployed = parseWebBuild(await read(`./version.json?t=${Date.now()}`))
+    if (!deployed) return { kind: 'failed' }
+    return isNewer(deployed, running) ? { kind: 'newer', build: deployed } : { kind: 'current' }
+  } catch {
+    return { kind: 'failed' }
+  }
+}
+
 /**
  * The deployed build, if it is newer than the one running; null if not, and also offline or when
  * the file is missing or not sound.
@@ -47,12 +67,8 @@ export async function checkWebUpdate(
   running: WebBuild = __BUILD__,
   read: FetchJson = fetchJson,
 ): Promise<WebBuild | null> {
-  try {
-    const deployed = parseWebBuild(await read(`./version.json?t=${Date.now()}`))
-    return deployed && isNewer(deployed, running) ? deployed : null
-  } catch {
-    return null
-  }
+  const check = await lookForWebUpdate(running, read)
+  return check.kind === 'newer' ? check.build : null
 }
 
 /** How often an open page looks, and at least how long apart when it comes back to the front. */
