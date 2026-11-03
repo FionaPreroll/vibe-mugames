@@ -3,6 +3,7 @@ import { dame } from './dame'
 import { fourInARow } from './fourInARow'
 import { kaesekaestchen } from './kaesekaestchen'
 import { MAX_RIDERS, MIN_RIDERS } from './lichtrenner'
+import { MAX_LUDO, MIN_LUDO } from './ludo'
 import { MAX_SEATS, MIN_SEATS } from './miaumiau'
 import { muehle } from './muehle'
 import { reversi } from './reversi'
@@ -30,6 +31,7 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (game === 'seeschlacht') return { min: SEA_SEATS, max: SEA_SEATS }
   if (game === 'lichtrenner') return { min: MIN_RIDERS, max: MAX_RIDERS }
   if (game === 'airhockey') return { min: 2, max: 2 }
+  if (game === 'ludo') return { min: MIN_LUDO, max: MAX_LUDO }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
 

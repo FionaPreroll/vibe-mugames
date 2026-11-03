@@ -77,10 +77,16 @@ export const LIVE_GAME_IDS = ['lichtrenner', 'airhockey'] as const
 export type LiveGameId = (typeof LIVE_GAME_IDS)[number]
 
 /**
- * Every game, in the order the lobby shows them: the board games, the card game, the game of
- * hidden fleets, then the games in real time.
+ * Every game, in the order the lobby shows them: the board games, the game of dice, the card
+ * game, the game of hidden fleets, then the games in real time.
  */
-export const GAME_IDS = [...BOARD_GAME_IDS, 'miaumiau', 'seeschlacht', ...LIVE_GAME_IDS] as const
+export const GAME_IDS = [
+  ...BOARD_GAME_IDS,
+  'ludo',
+  'miaumiau',
+  'seeschlacht',
+  ...LIVE_GAME_IDS,
+] as const
 export type GameId = (typeof GAME_IDS)[number]
 
 export function isGameId(value: unknown): value is GameId {

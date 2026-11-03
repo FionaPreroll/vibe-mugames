@@ -633,6 +633,179 @@ textarea {
 
 .board.sternhalma .cell.goal-5.empty {
   box-shadow: 0 0 0 2px var(--seat-5) inset;
+/* Ludo: a cross of 11 by 11 squares, a corner for each player, home squares to the middle. */
+.board.ludo {
+  gap: 0.15rem;
+  padding: 0.4rem;
+  background: #e9d3a8;
+  max-width: min(100%, 28rem);
+  --seat: #fbf8f1;
+  --board-free: #fbf8f1;
+}
+
+.board.ludo .seat-0 {
+  --seat: var(--seat-0);
+}
+
+.board.ludo .seat-1 {
+  --seat: var(--seat-1);
+}
+
+.board.ludo .seat-2 {
+  --seat: var(--seat-2);
+}
+
+.board.ludo .seat-3 {
+  --seat: var(--seat-3);
+}
+
+.board.ludo .cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid #3b2410;
+  background: #fbf8f1;
+}
+
+.board.ludo .cell.home,
+.board.ludo .cell.start {
+  background: color-mix(in srgb, var(--seat) 55%, #fbf8f1);
+}
+
+.board.ludo .cell.yard {
+  background: color-mix(in srgb, var(--seat) 30%, #e9d3a8);
+  border-color: color-mix(in srgb, var(--seat) 60%, #3b2410);
+}
+
+.board.ludo .token {
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+  background: var(--seat);
+  border: 2px solid #1b1b1b;
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.5);
+}
+
+.board.ludo .cell.can .token {
+  outline: 3px dashed #1b1b1b;
+  outline-offset: 2px;
+}
+
+.board.ludo .cell.picked .token {
+  outline: 3px solid #1b1b1b;
+  outline-offset: 2px;
+}
+
+.board.ludo .cell.target {
+  background: var(--accent);
+  border-color: #1b1b1b;
+}
+
+.board.ludo .cell.target::after {
+  position: absolute;
+  inset: -0.25rem;
+  width: auto;
+  height: auto;
+  margin: 0;
+  border-radius: 50%;
+  background: none;
+  border: 3px solid var(--accent);
+}
+
+.board.ludo .cell.last {
+  box-shadow: none;
+  border-color: #6d4a25;
+  border-style: dotted;
+  border-width: 3px;
+}
+
+.board.ludo .cell.last.empty:not(.target)::after {
+  display: none;
+}
+
+.board.ludo .middle-mark {
+  aspect-ratio: 1;
+  border-radius: 0.3rem;
+}
+
+.die-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.die {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 3.6rem;
+  height: 3.6rem;
+  padding: 0.45rem;
+  border-radius: 0.6rem;
+  background: #fbf8f1;
+  border: 3px solid var(--line);
+}
+
+.die:disabled {
+  opacity: 1;
+}
+
+.die.seat-0 {
+  border-color: var(--seat-0);
+}
+
+.die.seat-1 {
+  border-color: var(--seat-1);
+}
+
+.die.seat-2 {
+  border-color: var(--seat-2);
+}
+
+.die.seat-3 {
+  border-color: var(--seat-3);
+}
+
+.die .pip {
+  width: 70%;
+  height: 70%;
+  margin: auto;
+  border-radius: 50%;
+  background: #1b1b1b;
+}
+
+.die.can {
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.die.fresh {
+  animation: roll 0.4s ease-out;
+}
+
+.roll-label {
+  font-weight: 600;
+}
+
+@keyframes roll {
+  0% {
+    transform: rotate(-30deg) scale(0.8);
+  }
+  60% {
+    transform: rotate(12deg) scale(1.08);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .die.fresh {
+    animation: none;
+  }
 }
 
 .codes {
@@ -1036,7 +1209,8 @@ textarea {
   color: #c62a2f;
 }
 
-.cards .card-help {
+.cards .card-help,
+.ludo-game .card-help {
   margin-top: 1rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--line);
@@ -1044,12 +1218,14 @@ textarea {
   background: var(--panel);
 }
 
-.cards .card-help summary {
+.cards .card-help summary,
+.ludo-game .card-help summary {
   cursor: pointer;
   color: var(--muted);
 }
 
-.cards .card-help ul {
+.cards .card-help ul,
+.ludo-game .card-help ul {
   list-style: none;
   padding: 0;
   margin: 0.5rem 0 0;
@@ -1059,7 +1235,8 @@ textarea {
   font-size: 0.9rem;
 }
 
-.cards .card-help li {
+.cards .card-help li,
+.ludo-game .card-help li {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -1290,6 +1467,20 @@ textarea {
   font-size: clamp(1rem, 8cqmin, 3rem);
 }
 
+.pane .board.ludo .cell {
+  border-width: 1px;
+}
+
+.pane .die-row {
+  margin: 0.25rem 0;
+}
+
+.pane .die {
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0.3rem;
+}
+
 .pane .board.dame .cell {
   font-size: clamp(0.7rem, 3cqmin, 1.5rem);
 }
@@ -1298,7 +1489,8 @@ textarea {
   margin: 0.25rem 0;
 }
 
-.pane .cards .card-help {
+.pane .cards .card-help,
+.pane .ludo-game .card-help {
   margin-top: 0.5rem;
 }
 

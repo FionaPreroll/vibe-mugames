@@ -10,6 +10,7 @@ import {
 } from './board'
 import { GAMES, seatRange } from './games'
 import * as licht from './lichtrenner'
+import * as ludo from './ludo'
 import * as miau from './miaumiau'
 import * as sea from './seeschlacht'
 
@@ -21,6 +22,9 @@ import * as sea from './seeschlacht'
  * With more players than a game has seats, the others watch, in a queue: after a game, the
  * winner stays and the others who played go to the back, after a draw all of them do. When
  * nobody waits, the next player in turn starts the next game.
+ *
+ * Ludo's die is rolled by the host too, with the same randomness as the cards: a player only
+ * asks for a roll.
  *
  * In Miau-Miau, the host alone knows every hand, and in Sea Battle every fleet: `state(id)` shows
  * each player only their own.
@@ -45,6 +49,8 @@ export interface TableState {
   readonly seats: readonly number[]
   /** Where a board game stands, with whose turn it is; null in the lobby and in other games. */
   readonly position: Position | null
+  /** Ludo, which hides nothing; null in every other game. */
+  readonly ludo: ludo.LudoState | null
   /** Miau-Miau as the player this state is for sees it; null in every other game. */
   readonly cards: miau.MiauView | null
   /** Sea Battle as the player this state is for sees it; null in every other game. */
@@ -75,13 +81,14 @@ export function playerToMove(state: TableState): number | null {
   if (state.game === null || state.outcome !== null) return null
   const turn =
     state.position?.turn ??
+    state.ludo?.turn ??
     state.cards?.turn ??
     (state.sea && (sea.nextToPlace(state.sea) ?? state.sea.turn))
   return turn === undefined || turn === null ? null : (state.seats[turn] ?? null)
 }
 
 export class Table {
-  /** `random` shuffles the cards: numbers from 0 up to, not including, 1. */
+  /** `random` shuffles the cards and rolls the die: numbers from 0 up to, not including, 1. */
   constructor(private readonly random: () => number = Math.random) {}
 
   private players: Player[] = []
@@ -90,6 +97,7 @@ export class Table {
   private game: GameId | null = null
   private seats: number[] = []
   private position: Position | null = null
+  private ludo: ludo.LudoState | null = null
   private cards: miau.MiauState | null = null
   private sea: sea.SeaState | null = null
   private race: licht.LichtState | null = null
@@ -220,6 +228,7 @@ export class Table {
     this.game = null
     this.seats = []
     this.position = null
+    this.ludo = null
     this.cards = null
     this.sea = null
     this.race = null
@@ -238,6 +247,7 @@ export class Table {
       game: this.game,
       seats: this.seats,
       position: this.position,
+      ludo: this.ludo,
       cards: this.cards && miau.view(this.cards, this.seats.indexOf(viewer)),
       sea: this.sea && sea.view(this.sea, this.seats.indexOf(viewer)),
       race: this.race && licht.view(this.race),
@@ -252,7 +262,7 @@ export class Table {
 
   /** The seat whose turn it is. */
   private turn(): number {
-    return this.position?.turn ?? this.cards?.turn ?? this.sea?.turn ?? -1
+    return this.position?.turn ?? this.ludo?.turn ?? this.cards?.turn ?? this.sea?.turn ?? -1
   }
 
   /** A move in a game of turns, by the seat whose turn it is: taken if the rules allow it. */
@@ -263,6 +273,14 @@ export class Table {
       if (position === null || !isLegal(rules, position, move)) return false
       this.position = rules.play(position, move)
       this.outcome = rules.outcome(this.position)
+      return true
+    }
+    if (game === 'ludo') {
+      const decoded = ludo.decode(move)
+      if (this.ludo === null || !decoded || !ludo.legal(this.ludo, seat, decoded)) return false
+      this.ludo = ludo.play(this.ludo, seat, decoded, this.random)
+      const winner = ludo.outcome(this.ludo)
+      this.outcome = winner === null ? null : { winner, line: [] }
       return true
     }
     const cards = this.cards
@@ -300,6 +318,7 @@ export class Table {
     if (this.game === null) return
     const game = this.game
     this.position = isBoardGame(game) ? GAMES[game].start(this.seats.length) : null
+    this.ludo = game === 'ludo' ? ludo.start(this.seats.length) : null
     this.cards = game === 'miaumiau' ? miau.deal(this.seats.length, this.random) : null
     this.sea = game === 'seeschlacht' ? sea.start() : null
     this.race = game === 'lichtrenner' ? licht.start(this.seats.length) : null

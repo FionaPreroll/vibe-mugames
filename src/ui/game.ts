@@ -1,5 +1,6 @@
 import { GAME_IDS, type GameId, isLiveGame, type Move } from '../core/board'
 import { handsOver, hasHiddenCards, seatRange } from '../core/games'
+import { encode as encodeLudo } from '../core/ludo'
 import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
 import { t } from '../i18n'
@@ -8,6 +9,7 @@ import { boardView, handText, hint, news, type Picker, seatName, symbol } from '
 import { cardsHint, cardsView } from './cards'
 import { h } from './dom'
 import type { LiveSlot } from './live'
+import { ludoHints, ludoView } from './ludo'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
 
 /**
@@ -120,7 +122,7 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
   }
   const name = (seatNo: number) => seatName(state, seatNo)
   const mine = state.seats.indexOf(viewer)
-  const turn = state.position?.turn ?? state.cards?.turn ?? 0
+  const turn = state.position?.turn ?? state.ludo?.turn ?? state.cards?.turn ?? 0
   const myTurn = state.outcome === null && mine >= 0 && turn === mine
   const taking = state.position?.phase === 'remove'
   const status = h('p', { class: 'status turn', role: 'status' } as Partial<HTMLParagraphElement>)
@@ -151,6 +153,22 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
   status.classList.toggle('mine', myTurn)
 
   const names = state.seats.map((_, i) => name(i))
+  if (state.ludo) {
+    const picked = myTurn ? picker.current(state) : []
+    const lines = ludoHints(state.ludo, mine, names, shared, picked.length > 0)
+    return [
+      status,
+      ...lines.map((line) => h('p', { class: 'hint muted' }, line)),
+      ludoView(state.ludo, {
+        // On a shared screen, the board does not turn round for each player.
+        seat: shared ? 0 : mine,
+        names,
+        picker,
+        picked,
+        onMove: myTurn ? (move) => options.move(game, state.moveNo, encodeLudo(move)) : null,
+      }),
+    ]
+  }
   const help = state.cards
     ? (cardsHint(state.cards, mine, state.last, names) ?? '')
     : news(state, mine, shared) || (myTurn ? hint(state, picker.current(state)) : '')

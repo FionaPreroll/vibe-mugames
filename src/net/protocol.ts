@@ -16,6 +16,7 @@ import {
 } from '../core/board'
 import { GAMES, seatRange } from '../core/games'
 import * as licht from '../core/lichtrenner'
+import * as ludo from '../core/ludo'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
 import * as sea from '../core/seeschlacht'
 import type { Player, TableState } from '../core/table'
@@ -68,11 +69,16 @@ export const parseEvent: Parse<Event> = (value) => {
 
 /**
  * A board game's move, a path of one or more cells of its board, no longer than its longest
- * move; or a move of Miau-Miau or Sea Battle, in numbers as their `encode` makes them.
+ * move; or a move of Ludo, Miau-Miau or Sea Battle, in numbers as their `encode` makes them.
  */
 function parseMove(value: unknown, game: GameId): Move | undefined {
   // Games in real time have no moves, only input.
   if (isLiveGame(game)) return undefined
+  if (game === 'ludo') {
+    const numbers = list(value, 1, (n) => (isWhole(n, 0, ludo.ROLL) ? n : undefined))
+    const move = numbers && ludo.decode(numbers)
+    return move ? ludo.encode(move) : undefined
+  }
   if (game === 'seeschlacht') {
     const numbers = list(value, sea.FLEET.length, (n) =>
       isWhole(n, 0, 2 * sea.SEA_CELLS - 1) ? n : undefined,
@@ -109,6 +115,9 @@ export const parseState: Parse<TableState> = (value) => {
       ? null
       : undefined
   if (position === undefined) return undefined
+  const ludoState =
+    game === 'ludo' ? parseLudo(value.ludo, seats.length) : value.ludo === null ? null : undefined
+  if (ludoState === undefined) return undefined
   const cards =
     game === 'miaumiau'
       ? parseCards(value.cards, seats.length)
@@ -144,6 +153,7 @@ export const parseState: Parse<TableState> = (value) => {
     game,
     seats,
     position,
+    ludo: ludoState,
     cards,
     sea: seaView,
     race,
@@ -154,6 +164,38 @@ export const parseState: Parse<TableState> = (value) => {
     outcome,
     scores,
   }
+}
+
+/**
+ * Ludo: four pieces for every seat, each on a step of its way, none sharing a square with
+ * another; the die, and the piece moved last.
+ */
+function parseLudo(value: unknown, seats: number): ludo.LudoState | undefined {
+  if (!isObject(value)) return undefined
+  const pieces = list(value.pieces, seats, (own) => {
+    const steps = list(own, ludo.PIECES, (n) => (ludo.isStep(n) ? n : undefined))
+    return steps?.length === ludo.PIECES ? steps : undefined
+  })
+  if (!pieces || pieces.length !== seats) return undefined
+  const { turn, phase, die, rolledBy, tries, stuck, winner } = value
+  const seat = (n: unknown) => isWhole(n, 0, seats - 1)
+  if (!seat(turn) || (phase !== 'roll' && phase !== 'move')) return undefined
+  if (!isWhole(die, 0, ludo.SIX) || !isWhole(rolledBy, -1, seats - 1)) return undefined
+  if (!isWhole(tries, 0, ludo.TRIES) || typeof stuck !== 'boolean') return undefined
+  if (winner !== null && !seat(winner)) return undefined
+  const moved = value.moved === null ? null : parseMoved(value.moved, seats)
+  if (moved === undefined) return undefined
+  const state = { pieces, turn, phase, die, rolledBy, tries, stuck, moved, winner } as const
+  return ludo.isPossible(state) ? state : undefined
+}
+
+function parseMoved(value: unknown, seats: number): ludo.LudoMoved | undefined {
+  if (!isObject(value)) return undefined
+  const { seat, piece, from, to, hit } = value
+  if (!isWhole(seat, 0, seats - 1) || !ludo.isPiece(piece)) return undefined
+  if (!ludo.isStep(from) || !ludo.isStep(to)) return undefined
+  if (hit !== null && !isWhole(hit, 0, seats - 1)) return undefined
+  return { seat, piece, from, to, hit }
 }
 
 /**
