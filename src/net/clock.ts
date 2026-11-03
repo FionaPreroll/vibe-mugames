@@ -28,12 +28,32 @@ const LEARN = 0.05
 /** An offset this far off, in seconds, is no jitter: the filter starts anew. */
 const RESET = 0.5
 
+/** How a filter is tuned; the defaults are what phones use (see docs/NETWORKING.md). */
+export interface HostClockOptions {
+  /** Process noise: how fast the offset may wander, as a variance per second (s²/s). */
+  readonly drift?: number
+  /** How much of the learned jitter each measurement makes, from 0 to 1. */
+  readonly learn?: number
+  /** A jitter to take as it is, as a variance (s²), instead of learning it. */
+  readonly fixedNoise?: number
+}
+
 export class HostClock {
   private offset = 0
   private variance = Number.POSITIVE_INFINITY
-  private noise = FIRST_NOISE
+  private noise: number
   private lastHost = Number.NEGATIVE_INFINITY
   private lastLocal = 0
+  private readonly drift: number
+  private readonly learn: number
+  private readonly fixed: boolean
+
+  constructor(options: HostClockOptions = {}) {
+    this.drift = options.drift ?? DRIFT
+    this.learn = options.learn ?? LEARN
+    this.fixed = options.fixedNoise !== undefined
+    this.noise = options.fixedNoise ?? FIRST_NOISE
+  }
 
   /** A state stamped `host` (seconds of the host's game) arrived at `local` (this phone's seconds). */
   observe(host: number, local: number): void {
@@ -45,12 +65,13 @@ export class HostClock {
       this.offset = measured
       this.variance = this.noise
     } else {
-      this.variance += DRIFT * Math.max(0, local - this.lastLocal)
+      this.variance += this.drift * Math.max(0, local - this.lastLocal)
       const innovation = measured - this.offset
-      this.noise = Math.min(
-        MAX_NOISE,
-        Math.max(MIN_NOISE, (1 - LEARN) * this.noise + LEARN * innovation * innovation),
-      )
+      if (!this.fixed)
+        this.noise = Math.min(
+          MAX_NOISE,
+          Math.max(MIN_NOISE, (1 - this.learn) * this.noise + this.learn * innovation * innovation),
+        )
       const gain = this.variance / (this.variance + this.noise)
       this.offset += gain * innovation
       this.variance *= 1 - gain

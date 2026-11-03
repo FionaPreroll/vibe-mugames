@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360" role="img" aria-labelledby="t d">
+<title id="t">How far the drawn puck is from an even drawing</title>
+<desc id="d">For each network and method: how far the drawn puck is from where the host had it at the steady lag, as RMS in percent of the rink’s width. Lower is closer.</desc>
+<style>
+  .surface { fill: #fcfcfb }
+  .title { fill: #0b0b0b; font: 600 15px system-ui, -apple-system, Segoe UI, Roboto, sans-serif }
+  .text { fill: #52514e; font: 12px system-ui, -apple-system, Segoe UI, Roboto, sans-serif }
+  .label { fill: #0b0b0b; font: 12px system-ui, -apple-system, Segoe UI, Roboto, sans-serif }
+  .grid { stroke: #e7e6e2; stroke-width: 1 }
+  .axis { stroke: #b9b8b2; stroke-width: 1 }
+  .s1 { stroke: #2a78d6; fill: #2a78d6 }
+  .s2 { stroke: #eb6834; fill: #eb6834 }
+  .s3 { stroke: #1baf7a; fill: #1baf7a }
+  .s4 { stroke: #eda100; fill: #eda100 }
+  .sreference { stroke: #8a8984; fill: #8a8984 }
+  @media (prefers-color-scheme: dark) {
+    .surface { fill: #1a1a19 }
+    .title, .label { fill: #f0efec }
+    .text { fill: #c3c2b7 }
+    .grid { stroke: #2f2e2b }
+    .axis { stroke: #57564f }
+    .s1 { stroke: #3987e5; fill: #3987e5 }
+    .s2 { stroke: #d95926; fill: #d95926 }
+    .s3 { stroke: #199e70; fill: #199e70 }
+    .s4 { stroke: #c98500; fill: #c98500 }
+    .sreference { stroke: #8f8e88; fill: #8f8e88 }
+  }
+  /* After the colours, so that a line's colour never fills it. */
+  .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round }
+</style>
+<rect class="surface" width="760" height="360" rx="8"/>
+<text class="title" x="64" y="26">How far the drawn puck is from an even drawing</text>
+<rect class="s1" x="64" y="42" width="12" height="12" rx="2"/>
+<text class="text" x="86" y="52">Unfiltered</text>
+<rect class="s2" x="160" y="42" width="12" height="12" rx="2"/>
+<text class="text" x="182" y="52">Kalman (default, q = 10⁻⁴)</text>
+<rect class="s3" x="361.6" y="42" width="12" height="12" rx="2"/>
+<text class="text" x="383.6" y="52">Kalman, q = 10⁻³</text>
+<rect class="s4" x="497.20000000000005" y="42" width="12" height="12" rx="2"/>
+<text class="text" x="519.2" y="52">Kalman, q = 10⁻⁵</text>
+<line class="grid" x1="64" y1="312.0" x2="720" y2="312.0"/>
+<text class="text" x="56" y="316.0" text-anchor="end">0</text>
+<line class="grid" x1="64" y1="224.6" x2="720" y2="224.6"/>
+<text class="text" x="56" y="228.6" text-anchor="end">1</text>
+<line class="grid" x1="64" y1="137.2" x2="720" y2="137.2"/>
+<text class="text" x="56" y="141.2" text-anchor="end">2</text>
+<path class="s1" d="M95.0,312.0 V295.9 Q95.0,291.9 99.0,291.9 H115.0 Q119.0,291.9 119.0,295.9 V312.0 Z"><title>Quiet Wi-Fi, Unfiltered: 0.23</title></path>
+<path class="s2" d="M121.0,312.0 V285.4 Q121.0,281.4 125.0,281.4 H141.0 Q145.0,281.4 145.0,285.4 V312.0 Z"><title>Quiet Wi-Fi, Kalman (default, q = 10⁻⁴): 0.35</title></path>
+<path class="s3" d="M147.0,312.0 V283.7 Q147.0,279.7 151.0,279.7 H167.0 Q171.0,279.7 171.0,283.7 V312.0 Z"><title>Quiet Wi-Fi, Kalman, q = 10⁻³: 0.37</title></path>
+<path class="s4" d="M173.0,312.0 V286.3 Q173.0,282.3 177.0,282.3 H193.0 Q197.0,282.3 197.0,286.3 V312.0 Z"><title>Quiet Wi-Fi, Kalman, q = 10⁻⁵: 0.34</title></path>
+<text class="text" x="146.0" y="330" text-anchor="middle">Quiet Wi-Fi</text>
+<path class="s1" d="M259.0,312.0 V80.0 Q259.0,76.0 263.0,76.0 H279.0 Q283.0,76.0 283.0,80.0 V312.0 Z"><title>Busy Wi-Fi, Unfiltered: 2.7</title></path>
+<path class="s2" d="M285.0,312.0 V263.6 Q285.0,259.6 289.0,259.6 H305.0 Q309.0,259.6 309.0,263.6 V312.0 Z"><title>Busy Wi-Fi, Kalman (default, q = 10⁻⁴): 0.60</title></path>
+<path class="s3" d="M311.0,312.0 V246.1 Q311.0,242.1 315.0,242.1 H331.0 Q335.0,242.1 335.0,246.1 V312.0 Z"><title>Busy Wi-Fi, Kalman, q = 10⁻³: 0.80</title></path>
+<path class="s4" d="M337.0,312.0 V268.8 Q337.0,264.8 341.0,264.8 H357.0 Q361.0,264.8 361.0,268.8 V312.0 Z"><title>Busy Wi-Fi, Kalman, q = 10⁻⁵: 0.54</title></path>
+<text class="text" x="310.0" y="330" text-anchor="middle">Busy Wi-Fi</text>
+<path class="s1" d="M423.0,312.0 V195.4 Q423.0,191.4 427.0,191.4 H443.0 Q447.0,191.4 447.0,195.4 V312.0 Z"><title>Bluetooth, Unfiltered: 1.4</title></path>
+<path class="s2" d="M449.0,312.0 V239.1 Q449.0,235.1 453.0,235.1 H469.0 Q473.0,235.1 473.0,239.1 V312.0 Z"><title>Bluetooth, Kalman (default, q = 10⁻⁴): 0.88</title></path>
+<path class="s3" d="M475.0,312.0 V231.2 Q475.0,227.2 479.0,227.2 H495.0 Q499.0,227.2 499.0,231.2 V312.0 Z"><title>Bluetooth, Kalman, q = 10⁻³: 0.97</title></path>
+<path class="s4" d="M501.0,312.0 V241.7 Q501.0,237.7 505.0,237.7 H521.0 Q525.0,237.7 525.0,241.7 V312.0 Z"><title>Bluetooth, Kalman, q = 10⁻⁵: 0.85</title></path>
+<text class="text" x="474.0" y="330" text-anchor="middle">Bluetooth</text>
+<path class="s1" d="M587.0,312.0 V226.8 Q587.0,222.8 591.0,222.8 H607.0 Q611.0,222.8 611.0,226.8 V312.0 Z"><title>Delay step, Unfiltered: 1.0</title></path>
+<path class="s2" d="M613.0,312.0 V277.5 Q613.0,273.5 617.0,273.5 H633.0 Q637.0,273.5 637.0,277.5 V312.0 Z"><title>Delay step, Kalman (default, q = 10⁻⁴): 0.44</title></path>
+<path class="s3" d="M639.0,312.0 V270.5 Q639.0,266.5 643.0,266.5 H659.0 Q663.0,266.5 663.0,270.5 V312.0 Z"><title>Delay step, Kalman, q = 10⁻³: 0.52</title></path>
+<path class="s4" d="M665.0,312.0 V262.7 Q665.0,258.7 669.0,258.7 H685.0 Q689.0,258.7 689.0,262.7 V312.0 Z"><title>Delay step, Kalman, q = 10⁻⁵: 0.61</title></path>
+<text class="text" x="638.0" y="330" text-anchor="middle">Delay step</text>
+<line class="axis" x1="64" y1="312" x2="720" y2="312"/>
+<text class="text" transform="translate(16 194) rotate(-90)" text-anchor="middle">puck error (% of rink width, RMS)</text>
+</svg>

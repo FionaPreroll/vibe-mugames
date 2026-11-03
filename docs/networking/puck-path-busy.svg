@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360" role="img" aria-labelledby="t d">
+<title id="t">Busy Wi-Fi: the puck along the rink, close up</title>
+<desc id="d">The puck’s place along the rink as a phone draws it, over half a second of busy Wi-Fi, without smoothing and with the default Kalman filter, against where the host had it at the steady lag.</desc>
+<style>
+  .surface { fill: #fcfcfb }
+  .title { fill: #0b0b0b; font: 600 15px system-ui, -apple-system, Segoe UI, Roboto, sans-serif }
+  .text { fill: #52514e; font: 12px system-ui, -apple-system, Segoe UI, Roboto, sans-serif }
+  .label { fill: #0b0b0b; font: 12px system-ui, -apple-system, Segoe UI, Roboto, sans-serif }
+  .grid { stroke: #e7e6e2; stroke-width: 1 }
+  .axis { stroke: #b9b8b2; stroke-width: 1 }
+  .s1 { stroke: #2a78d6; fill: #2a78d6 }
+  .s2 { stroke: #eb6834; fill: #eb6834 }
+  .s3 { stroke: #1baf7a; fill: #1baf7a }
+  .s4 { stroke: #eda100; fill: #eda100 }
+  .sreference { stroke: #8a8984; fill: #8a8984 }
+  @media (prefers-color-scheme: dark) {
+    .surface { fill: #1a1a19 }
+    .title, .label { fill: #f0efec }
+    .text { fill: #c3c2b7 }
+    .grid { stroke: #2f2e2b }
+    .axis { stroke: #57564f }
+    .s1 { stroke: #3987e5; fill: #3987e5 }
+    .s2 { stroke: #d95926; fill: #d95926 }
+    .s3 { stroke: #199e70; fill: #199e70 }
+    .s4 { stroke: #c98500; fill: #c98500 }
+    .sreference { stroke: #8f8e88; fill: #8f8e88 }
+  }
+  /* After the colours, so that a line's colour never fills it. */
+  .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round }
+</style>
+<rect class="surface" width="760" height="360" rx="8"/>
+<text class="title" x="64" y="26">Busy Wi-Fi: the puck along the rink, close up</text>
+<line class="line sreference" x1="64" y1="48" x2="80" y2="48"/>
+<text class="text" x="86" y="52">Host, at the steady lag</text>
+<line class="line s1" x1="245.79999999999998" y1="48" x2="261.79999999999995" y2="48"/>
+<text class="text" x="267.79999999999995" y="52">Unfiltered</text>
+<line class="line s2" x1="341.79999999999995" y1="48" x2="357.79999999999995" y2="48"/>
+<text class="text" x="363.79999999999995" y="52">Kalman (default, q = 10⁻⁴)</text>
+<line class="grid" x1="64" y1="272.7" x2="610" y2="272.7"/>
+<text class="text" x="56" y="276.7" text-anchor="end">2.4</text>
+<line class="grid" x1="64" y1="194.0" x2="610" y2="194.0"/>
+<text class="text" x="56" y="198.0" text-anchor="end">2.5</text>
+<line class="grid" x1="64" y1="115.3" x2="610" y2="115.3"/>
+<text class="text" x="56" y="119.3" text-anchor="end">2.6</text>
+<text class="text" x="158.1" y="330" text-anchor="middle">8.2</text>
+<text class="text" x="271.1" y="330" text-anchor="middle">8.3</text>
+<text class="text" x="384.1" y="330" text-anchor="middle">8.4</text>
+<text class="text" x="497.0" y="330" text-anchor="middle">8.5</text>
+<text class="text" x="610.0" y="330" text-anchor="middle">8.6</text>
+<line class="axis" x1="64" y1="312" x2="610" y2="312"/>
+<text class="text" x="337" y="350" text-anchor="middle">host time (s)</text>
+<text class="text" transform="translate(16 194) rotate(-90)" text-anchor="middle">puck along the rink (rink widths)</text>
+<polyline class="line sreference" points="64.0,106.8 82.8,112.8 101.7,118.8 120.5,124.8 139.3,130.7 158.1,136.7 177.0,142.6 195.8,148.6 214.6,154.5 233.4,160.4 252.3,166.3 271.1,172.1 289.9,178.0 308.8,183.8 327.6,189.7 346.4,195.5 365.2,201.3 384.1,207.0 402.9,212.8 421.7,218.6 440.6,224.3 459.4,230.0 478.2,235.7 497.0,241.4 515.9,247.1 534.7,252.8 553.5,258.4 572.3,264.1 591.2,269.7 610.0,275.3"/>
+<polyline class="line s1" points="64.0,107.8 82.8,113.8 101.7,112.3 120.5,118.3 139.3,121.2 158.1,133.7 177.0,139.6 195.8,145.6 214.6,151.6 233.4,170.0 252.3,175.9 271.1,181.7 289.9,145.7 308.8,151.6 327.6,192.9 346.4,198.7 365.2,204.6 384.1,210.4 402.9,203.7 421.7,209.5 440.6,214.4 459.4,220.1 478.2,226.3 497.0,241.3 515.9,247.0 534.7,260.8 553.5,250.0 572.3,255.7 591.2,261.4 610.0,273.7"/>
+<polyline class="line s2" points="64.0,106.7 82.8,112.7 101.7,118.0 120.5,123.9 139.3,128.9 158.1,134.8 177.0,140.7 195.8,146.7 214.6,152.7 233.4,159.7 252.3,165.5 271.1,171.4 289.9,177.7 308.8,183.5 327.6,189.7 346.4,195.5 365.2,201.3 384.1,207.1 402.9,211.9 421.7,217.7 440.6,222.5 459.4,228.2 478.2,233.2 497.0,239.1 515.9,244.8 534.7,251.4 553.5,257.0 572.3,262.7 591.2,268.3 610.0,273.9"/>
+<text class="label" x="618" y="277.7">Unfiltered</text>
+<text class="label" x="618" y="292.7">default</text>
+<text class="label" x="618" y="307.7">Host, at the steady lag</text>
+</svg>

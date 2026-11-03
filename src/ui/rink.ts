@@ -4,7 +4,6 @@ import {
   fromRink,
   GOAL_WIDTH,
   GOALS_TO_WIN,
-  glide,
   HALF,
   type HockeyView,
   LENGTH,
@@ -16,7 +15,7 @@ import {
 } from '../core/airhockey'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
-import { Eased, HostClock } from '../net/clock'
+import { arrivalPuck, RinkSmoother } from '../net/smooth'
 import { settings } from '../storage'
 import {
   banner,
@@ -33,10 +32,6 @@ import { h } from './dom'
 
 /** How fast keys move a mallet, in rink lengths a second. */
 const KEY_SPEED = 1.6
-/** The longest a phone draws the puck gliding on without word from the host. */
-const MAX_GLIDE = 0.15
-/** How far back of the newest state a smoothed timeline may be drawn, in seconds. */
-const MAX_BEHIND = 0.05
 
 type Point = { readonly x: number; readonly y: number }
 
@@ -137,9 +132,8 @@ export class RinkView implements LiveView {
   private readonly held = new Map<number, Set<number>>()
   private frame: Frame | null = null
   private last = 0
-  /** The host's clock, filtered, and the corrections of what it drew, for smoothing. */
-  private readonly clock = new HostClock()
-  private readonly eased = [new Eased(), new Eased(), new Eased()]
+  /** The host's clock, filtered, and what it draws by it, for smoothing (src/net/smooth.ts). */
+  private readonly smoother = new RinkSmoother()
   /** The mallets steered here, drawn where the host will have them, for smoothing. */
   private readonly ahead = new Map<number, Disc>()
 
@@ -203,27 +197,13 @@ export class RinkView implements LiveView {
   }
 
   update(state: TableState): void {
-    const before = this.state
     const now = performance.now()
     this.state = state
     this.since = now
     const rink = state.rink
     if (!rink) return
-    if (this.smooth()) {
-      this.clock.observe(rink.clock, now / 1000)
-      // What the new state changes of what was drawn fades in, for the same moment.
-      const old = before?.rink
-      if (old && before.round === state.round) {
-        const at = this.clock.now(now / 1000)
-        this.eased[2]?.corrected(this.glided(old, at), this.glided(rink, at))
-        for (const seat of [0, 1]) {
-          const was = old.mallets[seat]
-          const is = rink.mallets[seat]
-          if (was && is)
-            this.eased[seat]?.corrected(drift(was, at - old.clock), drift(is, at - rink.clock))
-        }
-      }
-    }
+    if (this.smooth() && state.round === this.round)
+      this.smoother.observe(rink, now / 1000, state.outcome !== null)
     // On a phone at the board, the player's rink fills the screen while the game is on.
     const arena = !this.options.local && this.mine(state) !== null && state.outcome === null
     this.element.classList.toggle('arena', arena)
@@ -235,7 +215,7 @@ export class RinkView implements LiveView {
       this.aims.clear()
       this.fingers.clear()
       this.ahead.clear()
-      for (const eased of this.eased) eased.reset()
+      this.smoother.reset()
       for (const [seat, id] of state.seats.entries()) {
         const mallet = rink.mallets[seat]
         if (mallet && this.options.steers.includes(id)) this.aims.set(seat, mallet)
@@ -392,12 +372,9 @@ export class RinkView implements LiveView {
       context.restore()
     }
 
-    const smooth = this.smooth() && this.clock.started()
-    const time = this.clock.now(now / 1000)
+    const smooth = this.smooth() && this.smoother.clock.started()
     for (const [seat, mallet] of rink.mallets.entries()) {
-      const at = frame.toScreen(
-        smooth ? this.mallet(seat, mallet, rink.clock, time, seconds) : mallet,
-      )
+      const at = frame.toScreen(smooth ? this.mallet(seat, mallet, now / 1000, seconds) : mallet)
       context.save()
       context.fillStyle = colour(seat)
       context.shadowColor = 'rgb(0 0 0 / 0.5)'
@@ -411,12 +388,10 @@ export class RinkView implements LiveView {
       context.arc(at.x, at.y, MALLET * k * 0.45, 0, 2 * Math.PI)
       context.fill()
     }
-    const moving = rink.pause === 0 && state.outcome === null
-    const glided = smooth
-      ? (this.eased[2]?.at(this.glided(rink, time), seconds) ?? rink.puck)
-      : moving
-        ? glide(rink.puck, Math.min(MAX_GLIDE, (now - this.since) / 1000))
-        : rink.puck
+    const over = state.outcome !== null
+    const glided =
+      (smooth ? this.smoother.puck(now / 1000, seconds) : null) ??
+      arrivalPuck(rink, over, (now - this.since) / 1000)
     const puck = frame.toScreen(glided)
     context.fillStyle = '#f1ece2'
     context.beginPath()
@@ -436,26 +411,18 @@ export class RinkView implements LiveView {
     }
   }
 
-  /** Where the puck is at the host's time `at`, gliding on from a state, while it moves. */
-  private glided(rink: HockeyView, at: number): Disc {
-    const moving = rink.pause === 0 && this.state?.outcome === null
-    return moving ? glide(rink.puck, clampSeconds(at - rink.clock)) : rink.puck
-  }
-
   /**
    * Where to draw a seat's mallet, smoothed: one steered here moves to its finger at once, as the
    * host will move it; the other glides on from the host's word, its corrections faded in.
    */
-  private mallet(seat: number, mallet: Disc, stamped: number, at: number, seconds: number): Disc {
+  private mallet(seat: number, mallet: Disc, local: number, seconds: number): Disc {
     const aim = this.aims.get(seat)
     if (aim) {
       const next = slide(seat, this.ahead.get(seat) ?? mallet, aim, seconds)
       this.ahead.set(seat, next)
       return next
     }
-    const glided = drift(mallet, at - stamped)
-    const shown = this.eased[seat]?.at(glided, seconds) ?? glided
-    return { ...mallet, ...clampMallet(seat, shown) }
+    return this.smoother.mallet(seat, local, seconds) ?? mallet
   }
 
   /** The keys of each seat steered here, for one device. */
@@ -471,15 +438,4 @@ export class RinkView implements LiveView {
 
 function round(value: number): number {
   return Math.round(value * 1000) / 1000
-}
-
-/** How long to glide on from a state: a little back of it at most, and not far ahead. */
-function clampSeconds(seconds: number): number {
-  return Math.max(-MAX_BEHIND, Math.min(MAX_GLIDE, seconds))
-}
-
-/** A mallet `seconds` on at its speed, as far as that goes. */
-function drift(mallet: Disc, seconds: number): Disc {
-  const s = clampSeconds(seconds)
-  return { ...mallet, x: mallet.x + mallet.vx * s, y: mallet.y + mallet.vy * s }
 }

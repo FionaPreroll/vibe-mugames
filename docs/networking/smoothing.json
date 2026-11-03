@@ -1,0 +1,138 @@
+{
+  "quiet": {
+    "arrival": {
+      "clockRoughness": 1.76,
+      "lagMean": 11.05,
+      "lagSpread": 1.75,
+      "puckRms": 0.23,
+      "puck95": 0.45,
+      "settle": null
+    },
+    "kalman": {
+      "clockRoughness": 0.74,
+      "lagMean": 11.24,
+      "lagSpread": 1.1,
+      "puckRms": 0.35,
+      "puck95": 0.51,
+      "settle": null
+    },
+    "quick": {
+      "clockRoughness": 1.5,
+      "lagMean": 11.27,
+      "lagSpread": 1.77,
+      "puckRms": 0.37,
+      "puck95": 0.65,
+      "settle": null
+    },
+    "steady": {
+      "clockRoughness": 0.29,
+      "lagMean": 11.2,
+      "lagSpread": 0.63,
+      "puckRms": 0.34,
+      "puck95": 0.46,
+      "settle": null
+    }
+  },
+  "busy": {
+    "arrival": {
+      "clockRoughness": 30.35,
+      "lagMean": 54.03,
+      "lagSpread": 30.77,
+      "puckRms": 2.7,
+      "puck95": 4.49,
+      "settle": null
+    },
+    "kalman": {
+      "clockRoughness": 1.16,
+      "lagMean": 48.05,
+      "lagSpread": 4.34,
+      "puckRms": 0.6,
+      "puck95": 0.98,
+      "settle": null
+    },
+    "quick": {
+      "clockRoughness": 3.24,
+      "lagMean": 47.58,
+      "lagSpread": 7.52,
+      "puckRms": 0.8,
+      "puck95": 1.51,
+      "settle": null
+    },
+    "steady": {
+      "clockRoughness": 0.38,
+      "lagMean": 48.13,
+      "lagSpread": 2.25,
+      "puckRms": 0.54,
+      "puck95": 0.67,
+      "settle": null
+    }
+  },
+  "bluetooth": {
+    "arrival": {
+      "clockRoughness": 12.91,
+      "lagMean": 60.26,
+      "lagSpread": 15.98,
+      "puckRms": 1.38,
+      "puck95": 2.7,
+      "settle": null
+    },
+    "kalman": {
+      "clockRoughness": 1.09,
+      "lagMean": 61.08,
+      "lagSpread": 3.96,
+      "puckRms": 0.88,
+      "puck95": 1.51,
+      "settle": null
+    },
+    "quick": {
+      "clockRoughness": 2.9,
+      "lagMean": 61.1,
+      "lagSpread": 6.66,
+      "puckRms": 0.97,
+      "puck95": 1.96,
+      "settle": null
+    },
+    "steady": {
+      "clockRoughness": 0.37,
+      "lagMean": 60.81,
+      "lagSpread": 2.26,
+      "puckRms": 0.85,
+      "puck95": 1.35,
+      "settle": null
+    }
+  },
+  "step": {
+    "arrival": {
+      "clockRoughness": 14.05,
+      "lagMean": 84.6,
+      "lagSpread": 13.1,
+      "puckRms": 1.02,
+      "puck95": 2.01,
+      "settle": null
+    },
+    "kalman": {
+      "clockRoughness": 1.07,
+      "lagMean": 84.7,
+      "lagSpread": 3.66,
+      "puckRms": 0.44,
+      "puck95": 0.81,
+      "settle": 2400
+    },
+    "quick": {
+      "clockRoughness": 2.94,
+      "lagMean": 85.28,
+      "lagSpread": 4.52,
+      "puckRms": 0.52,
+      "puck95": 1.12,
+      "settle": 550
+    },
+    "steady": {
+      "clockRoughness": 0.35,
+      "lagMean": 70.1,
+      "lagSpread": 22.46,
+      "puckRms": 0.61,
+      "puck95": 1.38,
+      "settle": null
+    }
+  }
+}
