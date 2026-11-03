@@ -2423,3 +2423,56 @@ button.link {
   grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
   width: min(100%, calc(var(--fit, 33rem) - 5rem));
 }
+
+/* Bluetooth: how the phones connect, the host's requests and the tables nearby. */
+.connections {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.connection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  text-align: left;
+}
+
+.connection strong {
+  font-size: 1.1rem;
+}
+
+.requests,
+.hosts {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.request-row {
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.requests .request {
+  font-weight: 600;
+}
+
+.requests .buttons {
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.hosts .host {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-size: 1.1rem;
+  text-align: left;
+}

@@ -43,6 +43,12 @@ export const NATIVE: readonly { name: string; license: string; url: string }[] =
     license: 'Apache-2.0',
     url: 'https://developer.android.com/jetpack/androidx',
   },
+  {
+    // Through @fionapreroll/p2p-nearby, for Bluetooth: Google's terms, not an open-source license.
+    name: 'Google Play services Nearby Connections',
+    license: 'Android Software Development Kit License',
+    url: 'https://developer.android.com/studio/terms',
+  },
 ]
 
 /**

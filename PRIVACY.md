@@ -27,7 +27,8 @@ None of this leaves your device by itself. Uninstalling the app deletes it, as d
 
 You play with phones you pair with yourself, and they exchange data directly, without a server in between:
 
-- **While pairing,** the codes on the screens carry what the phones need to connect: their addresses in the local network, and keys for the encrypted connection. Only phones that scan a code, or are given it as text, can use it. A code you copy goes wherever you paste it.
+- **While pairing by QR code,** the codes on the screens carry what the phones need to connect: their addresses in the local network, and keys for the encrypted connection. Only phones that scan a code, or are given it as text, can use it. A code you copy goes wherever you paste it.
+- **While pairing by Bluetooth,** in the app, your name is visible to phones nearby that look for or open tables in the Spielekiste, while the host's table is visible or you look for one, and both phones show a four-digit code to compare.
 - **At a table,** every phone sees every player's name, the moves, the games played and the scores. The host's phone receives your name, your moves and your token; the token never goes to other players. In games with something hidden, such as cards, fleets, dice or roles, the host's phone keeps them, and sends each phone only what its player may see.
 
 The connection is encrypted. A player who leaves keeps nothing but what they saw on their screen.
@@ -35,6 +36,8 @@ The connection is encrypted. A player who leaves keeps nothing but what they saw
 ## Permissions of the app
 
 - **Camera:** to scan the other phone's QR code. Pictures are read on the device, and neither stored nor sent. A photo taken instead with the phone's own camera app is read the same way.
+- **Nearby devices, Bluetooth and Wi-Fi:** to play over Bluetooth, through Google's Nearby Connections.
+- **Location:** Android requires it to find phones nearby over Bluetooth. The Spielekiste never reads where you are.
 - **Internet:** to connect phones over the local Wi-Fi or hotspot, and for updates.
 - **Network state:** to warn before an update would download over mobile data.
 - **Installing apps:** to install updates you agreed to. Android asks you before every installation.
@@ -42,6 +45,7 @@ The connection is encrypted. A player who leaves keeps nothing but what they saw
 ## Services of others
 
 - **GitHub** hosts the website and the app's releases. When you open the website, when it looks for a newer version of itself, and when the app looks for or downloads an update, GitHub receives your IP address and the usual details of a web request. Both look for updates only if you switched that on in the settings, or tap _Look for a new version now_. See the [GitHub privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+- **Google Play services,** in the app, provide Nearby Connections for playing over Bluetooth. Google may handle data for this under the [Google privacy policy](https://policies.google.com/privacy).
 - **Google Play,** if you install the app from there, handles the download and its updates under the [Google privacy policy](https://policies.google.com/privacy).
 - **Links** in the Spielekiste, such as to GitHub, open in your browser, under the policy of the site you open.
 

@@ -2,6 +2,7 @@ import { type GameId, isLiveGame } from '../core/board'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
 import { HostSeat, type Seat } from '../net/session'
+import { bluetoothHostDialog, chooseConnection } from './bluetooth'
 import { Picker } from './boards'
 import { codePanel } from './codes'
 import { failureText, h, show, toast } from './dom'
@@ -135,7 +136,11 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
           type: 'button',
           class: 'add',
           textContent: t('addPlayer'),
-          onclick: () => addPlayer(seat),
+          onclick: async () => {
+            const choice = await chooseConnection()
+            if (choice === 'bluetooth') bluetoothHostDialog(seat)
+            else if (choice === 'qr') addPlayer(seat)
+          },
         })
       : null,
   )

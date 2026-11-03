@@ -5,6 +5,7 @@ import { GuestSeat, HostSeat } from '../net/session'
 import { playerToken, settings, updateSettings } from '../storage'
 import { AppUpdater } from '../updates'
 import { aboutScreen } from './about'
+import { bluetoothJoinScreen, chooseConnection } from './bluetooth'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
 import { hero } from './hero'
@@ -96,7 +97,7 @@ export function homeScreen(): void {
             type: 'button',
             class: 'big',
             textContent: t('join'),
-            onclick: () => joinScreen(playerName()),
+            onclick: () => void startJoin(playerName()),
           }),
           h('button', {
             type: 'button',
@@ -123,6 +124,19 @@ export function homeScreen(): void {
     ),
     null,
   )
+}
+
+/** A player joins a table the way they choose: by QR code, or by Bluetooth in the app. */
+async function startJoin(name: string): Promise<void> {
+  const choice = await chooseConnection()
+  if (choice === 'bluetooth')
+    bluetoothJoinScreen(
+      name,
+      (seat) => tableScreen(seat, homeScreen),
+      homeScreen,
+      () => joinScreen(name),
+    )
+  else if (choice === 'qr') joinScreen(name)
 }
 
 /** A player scans the host's code, shows their own back, and sits down once let in. */
