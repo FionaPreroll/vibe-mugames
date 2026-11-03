@@ -113,6 +113,22 @@ describe('choosing who plays on this device', () => {
 })
 
 describe('the game chooser', () => {
+  it('shows the games chosen lately on top, newest first', () => {
+    localScreen(new LocalTable(['Ada', 'Bo']), false, () => {})
+    expect($$('.game-group.recent')).toHaveLength(0)
+    for (const game of ['Tic Tac Toe', 'Reversi']) {
+      button(game).click()
+      localScreen(new LocalTable(['Ada', 'Bo']), false, () => {})
+    }
+    const recent = $('.game-group.recent')
+    expect(recent.ariaLabel).toBe('Played lately')
+    expect($$('.game-choice', recent).map((choice) => choice.textContent)).toEqual([
+      'Reversi',
+      'Tic Tac Toe',
+    ])
+    expect(settings().recentGames).toEqual(['reversi', 'tictactoe'])
+  })
+
   it('groups the games by kind, each with how many play it', () => {
     localScreen(new LocalTable(['Ada', 'Bo']), false, () => {})
     const groups = $$('.game-group')

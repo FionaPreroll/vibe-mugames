@@ -13,6 +13,8 @@ describe('settings from storage', () => {
       localSplit: false,
       hockeyWhole: true,
       hockeySmooth: false,
+      vibrate: true,
+      recentGames: [],
     })
     expect(
       parseSettings({ language: 'fr', checkUpdates: 'yes', webUpdates: 1, localSplit: 1 }),
@@ -22,6 +24,20 @@ describe('settings from storage', () => {
       webUpdates: false,
       localSplit: false,
     })
+  })
+
+  it('buzzes unless told not to', () => {
+    expect(parseSettings({}).vibrate).toBe(true)
+    expect(parseSettings({ vibrate: 'no' }).vibrate).toBe(true)
+    expect(parseSettings({ vibrate: false }).vibrate).toBe(false)
+  })
+
+  it('keeps the games played lately that exist, each once, and at most three', () => {
+    expect(
+      parseSettings({ recentGames: ['ludo', 'chess', 'ludo', 7, 'muehle', 'dame', 'reversi'] })
+        .recentGames,
+    ).toEqual(['ludo', 'muehle', 'dame'])
+    expect(parseSettings({ recentGames: 'ludo' }).recentGames).toEqual([])
   })
 
   it('shows the whole rink unless told not to, and smooths only when told to', () => {

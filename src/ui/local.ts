@@ -3,7 +3,9 @@ import { handsOver } from '../core/games'
 import { playerToMove, type TableState } from '../core/table'
 import { t } from '../i18n'
 import { LocalTable, MAX_LOCAL, MAX_SPLIT, MIN_LOCAL } from '../local'
+import { keepScreenOn } from '../native'
 import { settings, updateSettings } from '../storage'
+import { fullscreenButton } from './attention'
 import { Picker } from './boards'
 import { h, show } from './dom'
 import {
@@ -183,6 +185,8 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
   /** Whether the game shown last was over: the next one starts with the device handed over. */
   let ended = false
   let gone = false
+  /** Nobody wants the screen to go dark in the middle of a game. */
+  const awake = keepScreenOn()
   /** What the screen shows now: a game in real time changes 60 times a second, its field too. */
   let shown = ''
   /** The game shown last, or null for the chooser. */
@@ -378,6 +382,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
 
   const end = () => {
     gone = true
+    awake()
     clearInterval(clock)
     for (const slot of slots) slot.stop()
   }
@@ -400,6 +405,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
         onclick: leave,
       }),
       h('h1', {}, t('local')),
+      fullscreenButton(),
     ),
     main,
     below,

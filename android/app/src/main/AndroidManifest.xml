@@ -42,6 +42,9 @@
     <!-- The scanner for the other phone's QR code, and with it real local addresses in the
          codes, which Android's WebView hides from pages without the camera. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- A short buzz when it is the player's turn (navigator.vibrate in the WebView), which
+         players can switch off in the settings. Android grants it without asking. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- In-app updates: @fionapreroll/app-updates brings its permissions (internet, network
          state, and handing an APK to Android's installer) in its own manifest, merged in here.
          A build for the Play Store, which forbids apps updating themselves, leaves it out. -->

@@ -12,7 +12,7 @@ export const APP_RELEASE =
   'https://github.com/FionaPreroll/vibe-mugames/releases/tag/android-latest'
 
 /**
- * The settings: how air hockey shows the rink and the network, and the updates. In the app, the
+ * The settings: a buzz on the player's turn, how air hockey shows the rink and the network, and the updates. In the app, the
  * app's own (see src/ui/updates.ts); on the website, its note about a newer build, and the way to
  * the Android app. Last, the debug report.
  */
@@ -33,6 +33,8 @@ export function settingsScreen(onBack: () => void): void {
         }),
         h('h1', {}, t('settings')),
       ),
+      h('h2', {}, t('tableSettings')),
+      tableSettings(),
       h('h2', {}, t('hockeySettings')),
       hockeySettings(),
       h('h2', {}, t('updatesTitle')),
@@ -52,6 +54,18 @@ export function settingsScreen(onBack: () => void): void {
       ),
     ),
     onBack,
+  )
+}
+
+/** The switch for a buzz on the player's turn, and a word on keeping the screen on. */
+function tableSettings(): HTMLElement {
+  const input = h('input', { type: 'checkbox', checked: settings().vibrate })
+  input.addEventListener('change', () => updateSettings({ vibrate: input.checked }))
+  return h(
+    'section',
+    { class: 'table-settings' },
+    h('label', { class: 'toggle' }, input, t('vibrateSetting')),
+    h('p', { class: 'muted' }, t('vibrateNote')),
   )
 }
 

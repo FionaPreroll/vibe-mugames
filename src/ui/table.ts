@@ -2,7 +2,9 @@ import { drawNetGraph, pingQuality, STALL_MS, worstLatest } from '@fionapreroll/
 import { type GameId, isLiveGame } from '../core/board'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
+import { keepScreenOn } from '../native'
 import { GuestSeat, HostSeat, type Seat } from '../net/session'
+import { fullscreenButton, TurnBuzz } from './attention'
 import { bluetoothHostDialog, chooseConnection } from './bluetooth'
 import { Picker } from './boards'
 import { codePanel } from './codes'
@@ -30,6 +32,9 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     stop: seat instanceof HostSeat ? () => seat.lobby() : undefined,
   })
   let gone = false
+  /** A phone whose screen goes dark stops answering, and drops out of the table. */
+  const awake = keepScreenOn()
+  const buzz = new TurnBuzz()
   /**
    * What the screen shows now: players' phones hear the same table ten times a second, and
    * 30 times in a game in real time, whose field draws itself.
@@ -95,6 +100,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
       ]),
     )
     main.replaceChildren(...(state.game === null ? lobby(state) : game(state)))
+    buzz.update(main)
     screen.classList.toggle('in-game', state.game !== null)
     // A new game, or back to the lobby: from the top, not where the list was scrolled to.
     if (state.game !== onTable) window.scrollTo?.(0, 0)
@@ -171,6 +177,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     }),
     h('h1', {}, t('title')),
     net,
+    fullscreenButton(),
     seat instanceof HostSeat
       ? h('button', {
           type: 'button',
@@ -189,7 +196,10 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     screen,
     // Android's back button leaves only a player's table: a host's would end the game.
     seat.isHost ? null : leave,
-    () => clearInterval(netTimer),
+    () => {
+      clearInterval(netTimer)
+      awake()
+    },
   )
   render()
 }

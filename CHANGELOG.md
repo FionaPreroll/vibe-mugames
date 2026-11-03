@@ -47,6 +47,10 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - The connection at a glance: at a table with other phones, the top line shows a small graph of the last half minute's ping and its newest value, green, yellow or red; on the host's phone, the worst of the players'. Tapping it opens _Connection details_: a graph of the last minute, and for each connection its ping, the pings lost, stalls, messages and data each way, and how it is carried: Wi-Fi or Bluetooth, the addresses and protocols on both ends, the round trip, packets, bytes, encryption and channels. Addresses stay hidden until you tap _Show addresses_.
 - A connection test for the host: _Test connections_ under _Connection details_ sends as much as the connections take for five seconds, beside the game, and shows for every player the ping under load and the kilobytes a second each way, with what was lost. Players see that a test runs, and their own result.
 - A debug report, to send when something does not work: _Create debug report_ in the settings, or _Debug report_ under _Connection details_. It says what device, browser and versions this is, the settings, how well the connections of the last table kept up second by second, the last connection test, and what happened recently, but no names, codes or addresses. Read it, then copy it, download it, or open an issue on GitHub with it. The privacy policy says what it holds.
+- The screen stays on while you sit at a table, in the app and in browsers that can, so that a phone no longer drops out of the game when its screen goes dark. The privacy policy says so.
+- A short buzz when it is your turn, on phones that can; _Buzz when it is my turn_ in the settings switches it off. The app asks Android for vibration, which needs no prompt, and the privacy policy says so.
+- A full-screen button (⛶) at the table and when playing on one device, in browsers that can, such as on a tablet or a laptop.
+- _Played lately_ on top of the game chooser: the three games chosen last on this device, also still in their own group. The privacy policy says the device keeps them.
 
 ### Changed
 

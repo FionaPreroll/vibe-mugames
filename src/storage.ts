@@ -1,11 +1,13 @@
 import { cleanName } from '@fionapreroll/p2p'
 import { type CameraChoice, parseCameraChoice } from '@fionapreroll/p2p/qr'
 import { isToken, randomToken } from '@fionapreroll/p2p/room'
+import { type GameId, isGameId } from './core/board'
 import type { Language } from './i18n'
 
 /**
  * What this phone remembers, in the browser's local storage: the player's name, the language,
- * whether the app and the website look for updates, the camera last used for scanning with its zoom and
+ * whether the app and the website look for updates, whether to buzz on the player's turn, the
+ * games chosen lately, the camera last used for scanning with its zoom and
  * brightness, who last played on this device, and the token with which a player gets their place back. Everything read is
  * checked.
  */
@@ -29,7 +31,14 @@ export interface Settings {
   readonly hockeyWhole: boolean
   /** Air hockey: smooth what the network shakes up (see src/net/clock.ts), or draw it as it comes. */
   readonly hockeySmooth: boolean
+  /** A buzz when it is the player's turn, on phones that can (see src/ui/attention.ts). */
+  readonly vibrate: boolean
+  /** The games this device chose last, newest first, which the chooser shows on top. */
+  readonly recentGames: readonly GameId[]
 }
+
+/** As many games as the chooser shows as played lately. */
+export const MAX_RECENT = 3
 
 /** As many names as play on one device at most (see src/local.ts). */
 const MAX_LOCAL_NAMES = 6
@@ -44,6 +53,8 @@ const DEFAULTS: Settings = {
   localSplit: false,
   hockeyWhole: true,
   hockeySmooth: false,
+  vibrate: true,
+  recentGames: [],
 }
 
 function read(key: string): unknown {
@@ -76,6 +87,8 @@ export function parseSettings(value: unknown): Settings {
     localSplit,
     hockeyWhole,
     hockeySmooth,
+    vibrate,
+    recentGames,
   } = value as Record<string, unknown>
   return {
     name: typeof name === 'string' ? cleanName(name, '') : '',
@@ -91,6 +104,10 @@ export function parseSettings(value: unknown): Settings {
     localSplit: localSplit === true,
     hockeyWhole: hockeyWhole !== false,
     hockeySmooth: hockeySmooth === true,
+    vibrate: vibrate !== false,
+    recentGames: Array.isArray(recentGames)
+      ? [...new Set(recentGames.filter(isGameId))].slice(0, MAX_RECENT)
+      : [],
   }
 }
 
@@ -102,6 +119,11 @@ export function updateSettings(change: Partial<Settings>): Settings {
   const next = parseSettings({ ...settings(), ...change })
   write('settings', next)
   return next
+}
+
+/** Remembers a game chosen on this device, as the newest of those played lately. */
+export function rememberGame(game: GameId): void {
+  updateSettings({ recentGames: [game, ...settings().recentGames.filter((g) => g !== game)] })
 }
 
 /** The camera that last scanned, and its zoom and brightness, checked by the library. */

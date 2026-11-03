@@ -15,6 +15,7 @@ The Spielekiste is made by FionaPreroll on GitHub. Write to fipreroll+app@gmail.
 The Spielekiste keeps these in your browser's storage, or in the app's own storage:
 
 - your name and language, and whether to look for updates: in the app, and whether it has asked you about that, and on the website;
+- whether to buzz when it is your turn, and the three games chosen last on this device, which the game chooser shows on top;
 - the names of the players who last played on this device, and whether they took turns or split the screen;
 - the camera you last scanned with, with its zoom and brightness;
 - a random token that lets a host recognise you when you sit down at their table again.
@@ -42,6 +43,9 @@ The connection is encrypted. A player who leaves keeps nothing but what they saw
 - **Internet:** to connect phones over the local Wi-Fi or hotspot, and for updates.
 - **Network state:** to warn before an update would download over mobile data.
 - **Installing apps:** to install updates you agreed to. Android asks you before every installation.
+- **Vibration:** for a short buzz when it is your turn, which you can switch off in the settings.
+
+While you sit at a table, the Spielekiste keeps the screen on, in the app and in browsers that can, as a phone whose screen goes dark drops out of the table. This needs no permission, and ends when you leave the table.
 
 ## Services of others
 

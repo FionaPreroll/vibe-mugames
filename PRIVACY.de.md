@@ -15,6 +15,7 @@ Die Spielekiste ist von FionaPreroll auf GitHub. Schreib an fipreroll+app@gmail.
 Die Spielekiste speichert im Speicher deines Browsers oder im eigenen Speicher der App:
 
 - deinen Namen und deine Sprache, und ob nach Updates gesucht wird: in der App, und ob sie dich das schon gefragt hat, und auf der Website;
+- ob das Handy vibriert, wenn du dran bist, und die drei Spiele, die auf diesem Gerät zuletzt gewählt wurden und die die Spieleauswahl oben zeigt;
 - die Namen der Spieler, die zuletzt an diesem Gerät gespielt haben, und ob sie abwechselnd oder auf geteiltem Bildschirm gespielt haben;
 - die Kamera, mit der du zuletzt gescannt hast, mit Zoom und Helligkeit;
 - ein zufälliges Token, an dem dich ein Gastgeber wiedererkennt, wenn du dich wieder an seinen Tisch setzt.
@@ -42,6 +43,9 @@ Die Verbindung ist verschlüsselt. Wer geht, behält nichts als das, was auf dem
 - **Internet:** um Handys über das lokale WLAN oder den Hotspot zu verbinden, und für Updates.
 - **Netzwerkstatus:** um zu warnen, bevor ein Update über mobile Daten geladen würde.
 - **Apps installieren:** um Updates zu installieren, denen du zugestimmt hast. Android fragt dich vor jeder Installation.
+- **Vibration:** für ein kurzes Vibrieren, wenn du dran bist, das du in den Einstellungen ausschalten kannst.
+
+Solange du an einem Tisch sitzt, hält die Spielekiste den Bildschirm an, in der App und in Browsern, die das können, denn ein Handy, dessen Bildschirm dunkel wird, fällt aus dem Tisch. Das braucht keine Berechtigung und endet, wenn du den Tisch verlässt.
 
 ## Dienste anderer
 

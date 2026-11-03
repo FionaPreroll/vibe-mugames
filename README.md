@@ -65,7 +65,7 @@ The games:
 
 To make a move of several steps, tap the piece, then where it goes, and every square a jump lands on.
 
-**Screens:** on a phone held upright, a game shows its board under whose turn it is. On a laptop, a tablet on its side or a phone on its side, the board stands on the left, as large as the screen is high, and whose turn it is, the help and the players on the right; a tablet held upright shows larger boards. The page does not stop two fingers from zooming in the browser, but the boards fit the screen by themselves, so that two players' fingers on one screen, a swipe in Light Racers or a mallet in Air Hockey are never taken for a zoom.
+**Screens:** on a phone held upright, a game shows its board under whose turn it is. On a laptop, a tablet on its side or a phone on its side, the board stands on the left, as large as the screen is high, and whose turn it is, the help and the players on the right; a tablet held upright shows larger boards. The page does not stop two fingers from zooming in the browser, but the boards fit the screen by themselves, so that two players' fingers on one screen, a swipe in Light Racers or a mallet in Air Hockey are never taken for a zoom. **⛶** gives the game the whole screen, where the browser can (not on iPhones, and not needed in the app). While a player sits at a table, the screen stays on, in the app (`KeepAwakePlugin.java`) and in browsers with a wake lock, as a phone that goes dark drops out; a short buzz says it is their turn, unless switched off in the settings. The chooser shows the three games chosen last on the device on top, under _Played lately_.
 
 English and German, as the browser's language says, or chosen on the start screen.
 
@@ -124,13 +124,13 @@ src/
   markdown.ts the little Markdown of the changelog and the privacy policy
   i18n.ts     every text players see, in English and German
   local.ts    the table on one device
-  storage.ts  name, language, the update switches, the camera last used, who last played on this device
-              and the player's token, in local storage
-  native.ts   the Android app's back button
+  storage.ts  name, language, the update switches, the buzz switch, the games chosen lately, the camera
+              last used, who last played on this device and the player's token, in local storage
+  native.ts   the Android app's back button, keeping the screen on, and the buzz on a turn
   bluetooth.ts the Spielekiste's Nearby service for @fionapreroll/p2p-nearby; ui/bluetooth.ts draws it
   updates.ts  the app's updates from its release; webUpdates.ts: the website's
 PRIVACY.md    the privacy policy, PRIVACY.de.md in German
-android/      the Android app's project (Capacitor)
+android/      the Android app's project (Capacitor), with KeepAwakePlugin, which keeps the screen on
 tools/        icons.ts: draws the icon, for the app and the website; licenses.ts and privacyPage.ts:
               licenses.json and privacy.html in every build; smoothing.ts and charts.ts: the benchmark
               of air hockey's smoothing, and its plots

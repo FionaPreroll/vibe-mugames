@@ -5,7 +5,7 @@ import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
 import { type TextKey, t } from '../i18n'
 import type { TableHost } from '../net/session'
-import { settings } from '../storage'
+import { rememberGame, settings } from '../storage'
 import { boardView, handText, hint, news, type Picker, seatName, symbol } from './boards'
 import { cardsHint, cardsView } from './cards'
 import { diceHint, diceStatus, diceView, revealText } from './dice'
@@ -79,7 +79,10 @@ export function gameChoices(
             type: 'button',
             class: 'game-choice',
             disabled: here < seatRange(id).min,
-            onclick: () => host.choose(id),
+            onclick: () => {
+              rememberGame(id)
+              host.choose(id)
+            },
           },
           ...content,
         )
@@ -95,18 +98,20 @@ export function gameChoices(
       rulesButton(id, true),
     )
   }
+  const section = (group: string, heading: TextKey, note: TextKey, games: readonly GameId[]) =>
+    h(
+      'section',
+      { class: `game-group ${group}`, ariaLabel: t(heading) } as Partial<HTMLElement>,
+      h('h3', {}, t(heading), h('small', { class: 'muted group-note' }, t(note))),
+      h('div', { class: 'games' }, ...games.map(card)),
+    )
+  // Whoever chooses finds the games chosen last on top, also in their own group below.
+  const recent = host ? settings().recentGames : []
   return h(
     'div',
     { class: 'game-groups' },
-    ...GAME_GROUPS.map(({ group, games }) => {
-      const [heading, note] = GROUP_TEXTS[group]
-      return h(
-        'section',
-        { class: `game-group ${group}`, ariaLabel: t(heading) } as Partial<HTMLElement>,
-        h('h3', {}, t(heading), h('small', { class: 'muted group-note' }, t(note))),
-        h('div', { class: 'games' }, ...games.map(card)),
-      )
-    }),
+    recent.length > 0 && section('recent', 'groupRecent', 'groupRecentNote', recent),
+    ...GAME_GROUPS.map(({ group, games }) => section(group, ...GROUP_TEXTS[group], games)),
   )
 }
 
