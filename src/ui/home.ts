@@ -7,6 +7,7 @@ import { AppUpdater } from '../updates'
 import { aboutScreen } from './about'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
+import { hero } from './hero'
 import { localSetup } from './local'
 import { appLink, settingsScreen } from './settings'
 import { tableScreen } from './table'
@@ -71,45 +72,54 @@ export function homeScreen(): void {
         }),
       ),
       webUpdateBanner(),
-      h('h1', {}, t('title')),
-      h('p', { class: 'tagline' }, t('tagline')),
-      h('label', {}, t('yourName'), name),
       h(
         'div',
-        { class: 'buttons column' },
-        h('button', {
-          type: 'button',
-          class: 'primary big',
-          textContent: t('host'),
-          onclick: () => tableScreen(new HostSeat(playerName()), homeScreen),
-        }),
-        h('button', {
-          type: 'button',
-          class: 'big',
-          textContent: t('join'),
-          onclick: () => joinScreen(playerName()),
-        }),
-        h('button', {
-          type: 'button',
-          class: 'big',
-          textContent: t('local'),
-          onclick: () => {
-            // The name typed here is the first player's; none typed, none made up.
-            const typed = name.value.trim()
-            if (typed) updateSettings({ name: typed })
-            localSetup(homeScreen)
-          },
-        }),
+        { class: 'intro' },
+        hero(),
+        h('h1', {}, t('title')),
+        h('p', { class: 'tagline' }, t('tagline')),
       ),
-      !isApp() && appLink(),
-      h('label', { class: 'language' }, t('language'), language),
-      h('button', {
-        type: 'button',
-        class: 'link about-link',
-        textContent: t('about'),
-        onclick: () => aboutScreen(homeScreen),
-      }),
-      build,
+      h(
+        'div',
+        { class: 'start' },
+        h('label', {}, t('yourName'), name),
+        h(
+          'div',
+          { class: 'buttons column' },
+          h('button', {
+            type: 'button',
+            class: 'primary big',
+            textContent: t('host'),
+            onclick: () => tableScreen(new HostSeat(playerName()), homeScreen),
+          }),
+          h('button', {
+            type: 'button',
+            class: 'big',
+            textContent: t('join'),
+            onclick: () => joinScreen(playerName()),
+          }),
+          h('button', {
+            type: 'button',
+            class: 'big',
+            textContent: t('local'),
+            onclick: () => {
+              // The name typed here is the first player's; none typed, none made up.
+              const typed = name.value.trim()
+              if (typed) updateSettings({ name: typed })
+              localSetup(homeScreen)
+            },
+          }),
+        ),
+        !isApp() && appLink(),
+        h('label', { class: 'language' }, t('language'), language),
+        h('button', {
+          type: 'button',
+          class: 'link about-link',
+          textContent: t('about'),
+          onclick: () => aboutScreen(homeScreen),
+        }),
+        build,
+      ),
     ),
     null,
   )

@@ -1,4 +1,11 @@
-import { type BoardGame, type BoardGameId, type GameId, isBoardGame } from './board'
+import {
+  BOARD_GAME_IDS,
+  type BoardGame,
+  type BoardGameId,
+  type GameId,
+  isBoardGame,
+  LIVE_GAME_IDS,
+} from './board'
 import { dame } from './dame'
 import { fourInARow } from './fourInARow'
 import { kaesekaestchen } from './kaesekaestchen'
@@ -23,6 +30,23 @@ export const GAMES: Record<BoardGameId, BoardGame> = {
   reversi,
   sternhalma,
 }
+
+/** The kinds of games, as the game chooser groups them. */
+export type GameGroup = 'tactics' | 'luck' | 'skill'
+
+/**
+ * The games of each kind, in the order the chooser shows them: games of tactics, with nothing
+ * left to chance; games of luck and bluff, with dice, cards or something hidden; and games of
+ * skill, in real time. Every game is in exactly one.
+ */
+export const GAME_GROUPS: readonly {
+  readonly group: GameGroup
+  readonly games: readonly GameId[]
+}[] = [
+  { group: 'tactics', games: BOARD_GAME_IDS },
+  { group: 'luck', games: ['ludo', 'miaumiau', 'seeschlacht', 'maexchen', 'werwolf'] },
+  { group: 'skill', games: LIVE_GAME_IDS },
+]
 
 /** How many players a game takes: the fewest it starts with, and the most who play. */
 export function seatRange(game: GameId): { readonly min: number; readonly max: number } {

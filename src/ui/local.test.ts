@@ -112,6 +112,34 @@ describe('choosing who plays on this device', () => {
   })
 })
 
+describe('the game chooser', () => {
+  it('groups the games by kind, each with how many play it', () => {
+    localScreen(new LocalTable(['Ada', 'Bo']), false, () => {})
+    const groups = $$('.game-group')
+    expect(groups.map((group) => group.ariaLabel)).toEqual(['Tactics', 'Luck and bluff', 'Skill'])
+    const skill = groups[2] ?? document
+    expect($$('.game-choice', skill).map((choice) => choice.textContent)).toEqual([
+      'Light Racers',
+      'Air Hockey',
+    ])
+    expect($$('.game-card')).toHaveLength(14)
+    const werewolf = $$('.game-card').find((card) => card.ariaLabel === 'Werewolf') ?? document
+    expect($('.seats-badge', werewolf).textContent).toBe('4–8')
+    expect($('.seats-badge', werewolf).title).toBe('4 to 8 players')
+    // Two at the table are too few for it.
+    expect($<HTMLButtonElement>('.game-choice', werewolf).disabled).toBe(true)
+  })
+
+  it('puts the board on a stage of its own, beside whose turn it is', () => {
+    localScreen(new LocalTable(['Ada', 'Bo']), false, () => {})
+    expect($$('.screen.in-game')).toHaveLength(0)
+    button('Nine Men’s Morris').click()
+    expect($$('.screen.in-game')).toHaveLength(1)
+    expect($$('.main > .stage > .board.muehle')).toHaveLength(1)
+    expect($$('.main > .status, .main > .hand')).toHaveLength(2)
+  })
+})
+
 describe('taking turns on one screen', () => {
   it('names whose turn it is, and plays Tic Tac Toe to a win and again', () => {
     localScreen(new LocalTable(['Ada', 'Bo']), false, () => {})

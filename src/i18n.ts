@@ -2,7 +2,15 @@
 
 const en = {
   title: 'Spielekiste',
-  tagline: 'Board games for phones side by side: no internet, no server, no accounts.',
+  tagline:
+    'Games for everyone at one table: on phones side by side, or together around one tablet or laptop. No internet, no server, no accounts.',
+  heroLabel: 'An open box of games: boards, cards, dice and pieces.',
+  groupTactics: 'Tactics',
+  groupTacticsNote: 'Think ahead: no luck, only moves.',
+  groupLuck: 'Luck and bluff',
+  groupLuckNote: 'Dice, cards and secrets.',
+  groupSkill: 'Skill',
+  groupSkillNote: 'In real time: everyone at once.',
   yourName: 'Your name',
   host: 'Open a table',
   join: 'Join a table',
@@ -543,7 +551,15 @@ type Texts = Record<keyof typeof en, string>
 
 const de: Texts = {
   title: 'Spielekiste',
-  tagline: 'Brettspiele für Handys nebeneinander: ohne Internet, ohne Server, ohne Konten.',
+  tagline:
+    'Spiele für alle an einem Tisch: auf Handys nebeneinander oder gemeinsam an einem Tablet oder Laptop. Ohne Internet, ohne Server, ohne Konten.',
+  heroLabel: 'Eine offene Kiste voller Spiele: Bretter, Karten, Würfel und Steine.',
+  groupTactics: 'Taktik',
+  groupTacticsNote: 'Vorausdenken: kein Glück, nur Züge.',
+  groupLuck: 'Glück und Bluff',
+  groupLuckNote: 'Würfel, Karten und Geheimnisse.',
+  groupSkill: 'Geschicklichkeit',
+  groupSkillNote: 'In Echtzeit: alle gleichzeitig.',
   yourName: 'Dein Name',
   host: 'Tisch eröffnen',
   join: 'An einen Tisch setzen',

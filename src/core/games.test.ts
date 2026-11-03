@@ -1,8 +1,8 @@
 import fc from 'fast-check'
 import { describe, expect, it } from 'vitest'
-import { type Board, type BoardGame, EMPTY, GAME_IDS, isLegal, plain } from './board'
+import { type Board, type BoardGame, EMPTY, GAME_IDS, isLegal, isLiveGame, plain } from './board'
 import { fourInARow } from './fourInARow'
-import { GAMES, hasHiddenCards } from './games'
+import { GAME_GROUPS, GAMES, hasHiddenCards } from './games'
 import { ticTacToe } from './tictactoe'
 
 /** Plays one-cell moves in turn, seat 0 first, and returns the board. */
@@ -120,5 +120,18 @@ describe('every game', () => {
 describe('hidden cards', () => {
   it('are in Miau-Miau only: board games show everything to everyone', () => {
     expect(GAME_IDS.filter(hasHiddenCards)).toEqual(['miaumiau'])
+  })
+})
+
+describe('the groups of the game chooser', () => {
+  it('hold every game exactly once', () => {
+    const grouped = GAME_GROUPS.flatMap((group) => group.games)
+    expect([...grouped].sort()).toEqual([...GAME_IDS].sort())
+  })
+
+  it('put the games in real time, and only those, under skill', () => {
+    for (const { group, games } of GAME_GROUPS) {
+      for (const game of games) expect(isLiveGame(game)).toBe(group === 'skill')
+    }
   })
 })

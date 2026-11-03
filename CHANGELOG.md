@@ -47,6 +47,10 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 - The Android app has an icon of its own instead of Capacitor's: an open games box with a card, a draughts piece and a pawn, on a dark blue board. Android 13 and newer can tint it to the wallpaper's colours, and the app starts on the same box and blue. The website's tab shows the same box.
 - Every build of the Android app is now signed with the same key, so a new one installs over the one before and keeps the app's settings. An app installed before this change has to be uninstalled once.
+- A new start screen: a large picture of the Spielekiste, an open box with boards, cards, dice and pieces, and a line that says it is for everyone at one table, on phones side by side or around one tablet or laptop. On a wide screen, the picture stands beside the buttons.
+- The game chooser sorts the games into _Tactics_, _Luck and bluff_ and _Skill_ (the games in real time), and each game says how many play it. On a laptop or tablet, the chooser uses the whole width.
+- On a laptop, a tablet on its side or a phone on its side, a game shows its board beside whose turn it is and the players, as large as the screen is high, so nothing needs scrolling. A tablet held upright shows larger boards too.
+- When a game starts, the screen begins at its top, also when the chooser was scrolled down.
 
 ### Fixed
 

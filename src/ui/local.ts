@@ -13,6 +13,7 @@ import {
   openCardsNotice,
   playerItems,
   seatMark,
+  staged,
   takeOverText,
 } from './game'
 import { LiveSlot } from './live'
@@ -184,6 +185,8 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
   let gone = false
   /** What the screen shows now: a game in real time changes 60 times a second, its field too. */
   let shown = ''
+  /** The game shown last, or null for the chooser. */
+  let onTable: GameId | null = null
   const send = (id: number, values: number[]) => local.input(id, values)
   // Games in real time: one field for everyone, or one in each part of a split screen.
   const sharedField = new LiveSlot({ steers: local.ids, send, local: true })
@@ -218,6 +221,10 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
     players.replaceChildren(...playerItems(overview, () => []))
     const playing = overview.game !== null
     screen.classList.toggle('playing', playing && split)
+    screen.classList.toggle('in-game', playing && !split)
+    // A new game, or back to the chooser: from the top, not where the list was scrolled to.
+    if (overview.game !== onTable) window.scrollTo?.(0, 0)
+    onTable = overview.game
     below.hidden = playing && split
     if (!playing || overview.outcome === null) {
       if (!playing || ended) holder = null
@@ -254,13 +261,15 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
         ...[
           gameTitle(game),
           openCardsNotice(game),
-          ...gameView(local.state(viewer), {
-            viewer,
-            picker,
-            move: move(viewer),
-            shared: true,
-            live: sharedField,
-          }),
+          ...staged(
+            gameView(local.state(viewer), {
+              viewer,
+              picker,
+              move: move(viewer),
+              shared: true,
+              live: sharedField,
+            }),
+          ),
           actions,
         ].filter((node): node is HTMLElement => node !== null),
       )
