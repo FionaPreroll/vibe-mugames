@@ -1,6 +1,7 @@
 import { linkPair } from '@fionapreroll/p2p/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { COUNTDOWN } from '../core/lichtrenner'
+import { MAEXCHEN } from '../core/maexchen'
 import { encode } from '../core/miaumiau'
 import * as sea from '../core/seeschlacht'
 import { parseEvent, parseState } from './protocol'
@@ -141,6 +142,46 @@ describe('a table over the network', () => {
     bo.move('seeschlacht', 4, [0])
     await later(200)
     expect(host.state().sea?.seas[0]).toEqual({ shots: [0], hits: [0], sunk: [] })
+    host.close()
+  })
+
+  it('plays Mäxchen and Werwolf between phones, each seeing only its own dice and role', async () => {
+    const host = new HostSeat('Ada')
+    const players = [await join(host, 'Bo'), await join(host, 'Cy'), await join(host, 'Di')]
+    const [bo, cy] = players as [GuestSeat, GuestSeat, GuestSeat]
+    expect(host.choose('maexchen')).toBe(true)
+    host.move('maexchen', 0, [1])
+    await later(200)
+    const rolled = host.state().dice?.dice
+    expect(rolled).not.toBeNull()
+    expect(bo.state()?.dice?.dice).toBeNull()
+    host.move('maexchen', 1, [MAEXCHEN])
+    await later(200)
+    expect(bo.state()?.dice?.claim).toBe(MAEXCHEN)
+    bo.move('maexchen', 2, [3])
+    await later(200)
+    expect(host.state().dice?.lives[1]).toBe(2)
+
+    host.lobby()
+    expect(host.choose('werwolf')).toBe(true)
+    await later(200)
+    const seats = [host, ...players]
+    const roles = seats.map((seat) => seat.state()?.village?.roles[seat.id])
+    expect(roles.toSorted()).toEqual(['seer', 'villager', 'villager', 'wolf'])
+    // Nobody but the wolf hears of any role but their own.
+    for (const seat of seats) {
+      const known = seat.state()?.village?.roles.filter((role) => role !== null)
+      expect(known).toHaveLength(1)
+    }
+    // Everyone chooses at night, with the move number they saw.
+    for (const seat of seats) {
+      const view = seat.state()?.village
+      const target = view?.alive.findIndex((_, i) => i !== seat.id && view.roles[i] !== 'wolf')
+      seat.move('werwolf', 0, [target ?? 0])
+    }
+    await later(200)
+    expect(cy.state()?.village?.phase).toBe('day')
+    expect(cy.state()?.village?.story).toHaveLength(1)
     host.close()
   })
 

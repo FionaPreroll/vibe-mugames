@@ -38,7 +38,7 @@ export interface SeaOptions {
   /** A screen everyone shares: players are named instead of "you". */
   readonly shared: boolean
   /** The viewer's own fleet is hidden, as others see the same screen, unless they ask to see it. */
-  readonly hideFleet: boolean
+  readonly hideOwn: boolean
 }
 
 /** What the game asks of everyone now, with whose turn it is, or how it ended. */
@@ -107,7 +107,7 @@ export function seaView(state: TableState, sea: SeaView, options: SeaOptions): H
     shoot: shooting,
     viewer: mine,
   })
-  const hiding = options.hideFleet && !options.picker.showFleet && state.outcome === null
+  const hiding = options.hideOwn && !options.picker.showOwn && state.outcome === null
   const own = seaPart(
     sea,
     mine,
@@ -115,7 +115,7 @@ export function seaView(state: TableState, sea: SeaView, options: SeaOptions): H
     'own',
     {
       hidden: hiding,
-      toggle: options.hideFleet && state.outcome === null ? fleetToggle(options.picker) : null,
+      toggle: options.hideOwn && state.outcome === null ? fleetToggle(options.picker) : null,
     },
   )
   return [seas(enemy, own)]
@@ -258,10 +258,10 @@ function fleetToggle(picker: Picker): HTMLElement {
   return h('button', {
     type: 'button',
     class: 'fleet-toggle',
-    textContent: t(picker.showFleet ? 'hideFleet' : 'showFleet'),
-    ariaPressed: String(picker.showFleet),
+    textContent: t(picker.showOwn ? 'hideFleet' : 'showFleet'),
+    ariaPressed: String(picker.showOwn),
     onclick: () => {
-      picker.showFleet = !picker.showFleet
+      picker.showOwn = !picker.showOwn
       picker.onChange()
     },
   })
@@ -275,7 +275,7 @@ function placement(options: SeaOptions): HTMLElement[] {
   const { picker } = options
   if (picker.fleet === null) picker.fleet = randomFleet(random)
   const fleet = picker.fleet
-  const hidden = options.hideFleet && !picker.showFleet
+  const hidden = options.hideOwn && !picker.showOwn
   const change = (next: Ship[] | null, ship: number, misfit = false) => {
     picker.fleet = next
     picker.ship = ship
@@ -344,6 +344,6 @@ function placement(options: SeaOptions): HTMLElement[] {
         },
       }),
     ),
-    options.hideFleet ? fleetToggle(picker) : null,
+    options.hideOwn ? fleetToggle(picker) : null,
   ].filter((node): node is HTMLElement => node !== null)
 }

@@ -11,8 +11,10 @@ import {
 import { GAMES, seatRange } from './games'
 import * as licht from './lichtrenner'
 import * as ludo from './ludo'
+import * as maex from './maexchen'
 import * as miau from './miaumiau'
 import * as sea from './seeschlacht'
+import * as wolf from './werwolf'
 
 /**
  * The table everyone sits at: who is there, which game is on, the board, whose turn it is, and
@@ -26,8 +28,8 @@ import * as sea from './seeschlacht'
  * Ludo's die is rolled by the host too, with the same randomness as the cards: a player only
  * asks for a roll.
  *
- * In Miau-Miau, the host alone knows every hand, and in Sea Battle every fleet: `state(id)` shows
- * each player only their own.
+ * In Miau-Miau, the host alone knows every hand, in Sea Battle every fleet, in Mäxchen the dice
+ * under the cup and in Werwolf every role: `state(id)` shows each player only their own.
  *
  * Games in real time (Lichtrenner, air hockey) have no moves in turn: each player at the board
  * says what they want many times a second (`input`), such as where to head, and the host runs
@@ -55,6 +57,10 @@ export interface TableState {
   readonly cards: miau.MiauView | null
   /** Sea Battle as the player this state is for sees it; null in every other game. */
   readonly sea: sea.SeaView | null
+  /** Mäxchen as the player this state is for sees it; null in every other game. */
+  readonly dice: maex.MaexView | null
+  /** Werwolf as the player this state is for sees it; null in every other game. */
+  readonly village: wolf.WolfView | null
   /** Lichtrenner as it stands; null in every other game. */
   readonly race: licht.LichtView | null
   /** Air hockey as it stands; null in every other game. */
@@ -75,7 +81,8 @@ export interface TableState {
 
 /**
  * The id of the player whose turn it is, or null in the lobby and once the game is over. While
- * the fleets of Sea Battle are placed, all at once, it is the first player who has not.
+ * the fleets of Sea Battle are placed, all at once, it is the first player who has not; in
+ * Werwolf, where everyone chooses at once, the first who has not chosen yet.
  */
 export function playerToMove(state: TableState): number | null {
   if (state.game === null || state.outcome !== null) return null
@@ -83,6 +90,8 @@ export function playerToMove(state: TableState): number | null {
     state.position?.turn ??
     state.ludo?.turn ??
     state.cards?.turn ??
+    state.dice?.turn ??
+    (state.village && (wolf.waiting(state.village)[0] ?? null)) ??
     (state.sea && (sea.nextToPlace(state.sea) ?? state.sea.turn))
   return turn === undefined || turn === null ? null : (state.seats[turn] ?? null)
 }
@@ -100,6 +109,10 @@ export class Table {
   private ludo: ludo.LudoState | null = null
   private cards: miau.MiauState | null = null
   private sea: sea.SeaState | null = null
+  private dice: maex.MaexState | null = null
+  private village: wolf.WolfState | null = null
+  /** The move number Werwolf's night or day began with: older moves were meant for another. */
+  private phaseFrom = 0
   private race: licht.LichtState | null = null
   private rink: hockey.HockeyState | null = null
   /** What each seat wants now in a game in real time, by seat: see `input`. */
@@ -149,11 +162,16 @@ export class Table {
     const taken =
       game === 'seeschlacht'
         ? this.seaMove(seat, moveNo, move)
-        : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
+        : game === 'werwolf'
+          ? this.wolfMove(seat, moveNo, move)
+          : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
     if (!taken) return false
     this.moveNo++
-    // A fleet placed stays hidden: only shots show as the last move.
-    if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
+    // A fleet placed stays hidden, and so does whom a player of Werwolf chose: only shots, and
+    // the moves of other games, show as the last move.
+    if (game === 'werwolf') {
+      if (this.village?.choices.every((choice) => choice === null)) this.phaseFrom = this.moveNo
+    } else if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
     this.score()
     return true
   }
@@ -231,6 +249,8 @@ export class Table {
     this.ludo = null
     this.cards = null
     this.sea = null
+    this.dice = null
+    this.village = null
     this.race = null
     this.rink = null
     this.last = null
@@ -238,8 +258,8 @@ export class Table {
   }
 
   /**
-   * The table as player `viewer` may see it: their own hand in Miau-Miau, and their own fleet in
-   * Sea Battle, nobody else's.
+   * The table as player `viewer` may see it: their own hand in Miau-Miau, their own fleet in
+   * Sea Battle, their own dice in Mäxchen and their own role in Werwolf, nobody else's.
    */
   state(viewer = -1): TableState {
     return {
@@ -250,6 +270,8 @@ export class Table {
       ludo: this.ludo,
       cards: this.cards && miau.view(this.cards, this.seats.indexOf(viewer)),
       sea: this.sea && sea.view(this.sea, this.seats.indexOf(viewer)),
+      dice: this.dice && maex.view(this.dice, this.seats.indexOf(viewer)),
+      village: this.village && wolf.view(this.village, this.seats.indexOf(viewer)),
       race: this.race && licht.view(this.race),
       rink: this.rink && hockey.view(this.rink),
       round: this.round,
@@ -262,7 +284,14 @@ export class Table {
 
   /** The seat whose turn it is. */
   private turn(): number {
-    return this.position?.turn ?? this.ludo?.turn ?? this.cards?.turn ?? this.sea?.turn ?? -1
+    return (
+      this.position?.turn ??
+      this.ludo?.turn ??
+      this.cards?.turn ??
+      this.dice?.turn ??
+      this.sea?.turn ??
+      -1
+    )
   }
 
   /** A move in a game of turns, by the seat whose turn it is: taken if the rules allow it. */
@@ -280,6 +309,15 @@ export class Table {
       if (this.ludo === null || !decoded || !ludo.legal(this.ludo, seat, decoded)) return false
       this.ludo = ludo.play(this.ludo, seat, decoded, this.random)
       const winner = ludo.outcome(this.ludo)
+      this.outcome = winner === null ? null : { winner, line: [] }
+      return true
+    }
+    if (game === 'maexchen') {
+      const dice = this.dice
+      const decoded = maex.decode(move)
+      if (dice === null || !decoded || !maex.legal(dice, seat, decoded)) return false
+      this.dice = maex.play(dice, seat, decoded, this.random)
+      const winner = maex.outcome(this.dice)
       this.outcome = winner === null ? null : { winner, line: [] }
       return true
     }
@@ -307,11 +345,32 @@ export class Table {
     return true
   }
 
-  /** A game that has just ended counts for its winner. */
+  /**
+   * A choice in Werwolf: everyone chooses at once, each once a night and once a day, so a
+   * choice may come with an older move number than the table's, but none from before the
+   * night or day began, which was meant for the one before.
+   */
+  private wolfMove(seat: number, moveNo: number, move: Move): boolean {
+    const game = this.village
+    const [target, ...rest] = move
+    if (game === null || target === undefined || rest.length > 0) return false
+    if (moveNo < this.phaseFrom || moveNo > this.moveNo) return false
+    if (!wolf.legal(game, seat, target)) return false
+    this.village = wolf.play(game, seat, target, this.random)
+    // The game counts for the winning team: `outcome` names its first seat.
+    const winners = wolf.winners(this.village)
+    this.outcome = winners[0] === undefined ? null : { winner: winners[0], line: [] }
+    return true
+  }
+
+  /** A game that has just ended counts for its winner, and in Werwolf for their whole team. */
   private score(): void {
     if (this.outcome === null || this.outcome === 'draw') return
-    const winner = this.seats[this.outcome.winner]
-    if (winner !== undefined) this.scores.set(winner, (this.scores.get(winner) ?? 0) + 1)
+    const seats = this.village ? wolf.winners(this.village) : [this.outcome.winner]
+    for (const seat of seats) {
+      const winner = this.seats[seat]
+      if (winner !== undefined) this.scores.set(winner, (this.scores.get(winner) ?? 0) + 1)
+    }
   }
 
   private begin(): void {
@@ -321,6 +380,9 @@ export class Table {
     this.ludo = game === 'ludo' ? ludo.start(this.seats.length) : null
     this.cards = game === 'miaumiau' ? miau.deal(this.seats.length, this.random) : null
     this.sea = game === 'seeschlacht' ? sea.start() : null
+    this.dice = game === 'maexchen' ? maex.start(this.seats.length) : null
+    this.village = game === 'werwolf' ? wolf.deal(this.seats.length, this.random) : null
+    this.phaseFrom = 0
     this.race = game === 'lichtrenner' ? licht.start(this.seats.length) : null
     this.rink = game === 'airhockey' ? hockey.start() : null
     this.wants = []

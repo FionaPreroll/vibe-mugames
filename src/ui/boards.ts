@@ -44,14 +44,14 @@ export class Picker {
   ship = -1
   /** Sea Battle: the ship picked last did not fit where it was asked to go. */
   misfit = false
-  /** Sea Battle: whether a fleet hidden on a split screen shows for now. */
-  showFleet = false
+  /** Sea Battle, Mäxchen, Werwolf: whether the fleet, dice or role hidden on a split screen shows. */
+  showOwn = false
   /** Called when the picked cells change, to draw the board again. */
   onChange: () => void = () => {}
 
   /** Everything picked that the screen shows: drawn again only when this or the table changes. */
   shown(state: TableState): unknown[] {
-    return [this.current(state), this.fleet, this.ship, this.misfit, this.showFleet]
+    return [this.current(state), this.fleet, this.ship, this.misfit, this.showOwn]
   }
 
   /** The cells picked for this move: none once the game or the move number has moved on. */

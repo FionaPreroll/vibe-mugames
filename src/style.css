@@ -1773,3 +1773,209 @@ textarea {
   /* biome-ignore lint/complexity/noImportantStyles: see above */
   display: none !important;
 }
+
+/* Mäxchen: lives, the cup, and the throws to say. */
+
+.lives,
+.village {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.main .lives li,
+.main .village li {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--panel);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.main .lives li.to-move {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.main .lives li.out,
+.main .village li.out {
+  opacity: 0.5;
+}
+
+.main .village li.out .name {
+  text-decoration: line-through;
+}
+
+.main .village li.won {
+  border-color: var(--seat-1);
+}
+
+.main .lives .hearts {
+  color: var(--seat-0);
+  letter-spacing: 0.1em;
+}
+
+.cup-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+}
+
+.cup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 7rem;
+  min-height: 5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem 1.5rem 0.6rem 0.6rem;
+  background: var(--wood);
+  color: #1b1b1b;
+}
+
+.cup .faces {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.cup.open {
+  background: #fbf8f1;
+}
+
+.cup .value {
+  font-weight: 700;
+}
+
+.said {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.claims {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.2rem, 1fr));
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+}
+
+.claims .claim {
+  padding: 0.5rem 0.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.claims .double {
+  border-color: var(--seat-1);
+}
+
+.claims .maexchen {
+  grid-column: span 2;
+  border-color: var(--seat-0);
+}
+
+.claims .true {
+  outline: 2px solid var(--accent);
+}
+
+.own-toggle {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.dice-help,
+.village-help,
+.story {
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--panel);
+  font-size: 0.9rem;
+}
+
+.main .dice-help summary,
+.main .village-help summary,
+.main .story summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.main .dice-help ul,
+.main .village-help ul {
+  padding-left: 1.1rem;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.main .dice-help .ladder {
+  list-style: none;
+  font-weight: 600;
+}
+
+/* Werwolf: the role, the news, the choices and the village. */
+
+.role {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--panel);
+}
+
+.role.hidden {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main .role p {
+  margin: 0.25rem 0 0;
+}
+
+.role-text {
+  flex: 1;
+}
+
+.role > .role-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.role-wolf {
+  border-color: var(--seat-0);
+}
+
+.news {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--wood);
+}
+
+.main .news p {
+  margin: 0.2rem 0;
+}
+
+.choices button.picked {
+  border-color: var(--seat-0);
+}
+
+.chosen {
+  font-weight: 600;
+}
+
+.main .story ol {
+  margin: 0.5rem 0 0;
+  padding-left: 1.3rem;
+}

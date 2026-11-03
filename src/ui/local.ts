@@ -6,14 +6,23 @@ import { LocalTable, MAX_LOCAL, MAX_SPLIT, MIN_LOCAL } from '../local'
 import { settings, updateSettings } from '../storage'
 import { Picker } from './boards'
 import { h, show } from './dom'
-import { gameChoices, gameView, nextButtons, openCardsNotice, playerItems, seatMark } from './game'
+import {
+  gameChoices,
+  gameView,
+  nextButtons,
+  openCardsNotice,
+  playerItems,
+  seatMark,
+  takeOverText,
+} from './game'
 import { LiveSlot } from './live'
 
 /**
  * Playing on one device: everyone takes turns on one screen, or the screen is split into a
  * part for each player, which they can turn round to face them. Games with hidden cards are
- * played with open cards there, and say so. Sea Battle's fleets stay hidden: taking turns, the
- * device is handed over between the players; on a split screen, each fleet shows only on asking.
+ * played with open cards there, and say so. Sea Battle's fleets, Mäxchen's dice and Werwolf's
+ * roles stay hidden: taking turns, the device is handed over between the players; on a split
+ * screen, each player's own shows only on asking.
  */
 
 /** Choosing who plays on this device, and how. */
@@ -289,7 +298,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
           viewer: id,
           picker: pickers.get(id) ?? new Picker(),
           move: move(id),
-          hideFleet: true,
+          hideOwn: true,
           live: fields.get(id),
         }),
       )
@@ -346,7 +355,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
           h('button', {
             type: 'button',
             class: 'primary big',
-            textContent: t('takeOver', { name }),
+            textContent: takeOverText(overview.game ?? 'seeschlacht', name),
             onclick: () => {
               holder = next
               render()

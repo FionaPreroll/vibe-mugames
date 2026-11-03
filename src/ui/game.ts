@@ -3,14 +3,16 @@ import { handsOver, hasHiddenCards, seatRange } from '../core/games'
 import { encode as encodeLudo } from '../core/ludo'
 import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
-import { t } from '../i18n'
+import { type TextKey, t } from '../i18n'
 import type { TableHost } from '../net/session'
 import { boardView, handText, hint, news, type Picker, seatName, symbol } from './boards'
 import { cardsHint, cardsView } from './cards'
+import { diceHint, diceStatus, diceView, revealText } from './dice'
 import { h } from './dom'
 import type { LiveSlot } from './live'
 import { ludoHints, ludoView } from './ludo'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
+import { villageStatus, villageToMove, villageView } from './village'
 
 /**
  * What every table shows, at phones side by side and on one device alike: the players with
@@ -81,8 +83,11 @@ export interface GameViewOptions {
    * board stays put for all of them.
    */
   readonly shared?: boolean
-  /** The viewer's own fleet in Sea Battle is hidden until they ask, as others see this screen. */
-  readonly hideFleet?: boolean
+  /**
+   * The viewer's own fleet in Sea Battle, dice in Mäxchen and role in Werwolf are hidden until
+   * they ask, as others see this screen.
+   */
+  readonly hideOwn?: boolean
   /** Where the field of a game in real time stays between redraws. */
   readonly live?: LiveSlot
 }
@@ -96,6 +101,49 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
   const game = state.game
   if (game === null) return []
   const { viewer, picker, shared = false } = options
+  const statusLine = (text: string, mine: boolean) =>
+    h(
+      'p',
+      {
+        class: `status turn${mine ? ' mine' : ''}`,
+        role: 'status',
+      } as Partial<HTMLParagraphElement>,
+      text,
+    )
+  const hints = (...lines: string[]) =>
+    lines.filter(Boolean).map((line) => h('p', { class: 'hint muted' }, line))
+  if (state.dice) {
+    const dice = state.dice
+    const mine = state.seats.indexOf(viewer)
+    const toMove = state.outcome === null && mine >= 0 && dice.turn === mine
+    const hidden = (options.hideOwn ?? false) && !picker.showOwn
+    return [
+      statusLine(diceStatus(state, dice, viewer, shared), toMove),
+      ...hints(revealText(state, dice.reveal, dice), diceHint(state, dice, viewer, hidden)),
+      ...diceView(state, dice, {
+        viewer,
+        picker,
+        move: toMove ? (move) => options.move(game, state.moveNo, move) : null,
+        shared,
+        hideOwn: options.hideOwn ?? false,
+      }),
+    ]
+  }
+  if (state.village) {
+    const village = state.village
+    const toMove = villageToMove(state, village, viewer)
+    const hidden = (options.hideOwn ?? false) && !picker.showOwn
+    return [
+      statusLine(villageStatus(state, village, viewer, hidden), toMove),
+      ...villageView(state, village, {
+        viewer,
+        picker,
+        move: toMove ? (move) => options.move(game, state.moveNo, move) : null,
+        shared,
+        hideOwn: options.hideOwn ?? false,
+      }),
+    ]
+  }
   if (state.sea) {
     const sea = state.sea
     const toMove = seaToMove(state, sea, viewer)
@@ -116,7 +164,7 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
         picker,
         move: toMove ? (move) => options.move(game, state.moveNo, move) : null,
         shared,
-        hideFleet: options.hideFleet ?? false,
+        hideOwn: options.hideOwn ?? false,
       }),
     ]
   }
@@ -229,16 +277,32 @@ export function nextButtons(host: TableHost): HTMLElement[] {
   ]
 }
 
+/** How each game handed over on one device says so: taking turns, and on a split screen. */
+const HAND_OVER_NOTICES: Partial<Record<GameId, readonly [TextKey, TextKey]>> = {
+  seeschlacht: ['handOverNotice', 'hiddenFleetNotice'],
+  maexchen: ['handOverDice', 'hiddenDiceNotice'],
+  werwolf: ['handOverRoles', 'hiddenRoleNotice'],
+}
+
+/** What a player taps once they hold the device, in a game handed over on one device. */
+export function takeOverText(game: GameId, name: string): string {
+  const key: TextKey =
+    game === 'maexchen' ? 'takeOverDice' : game === 'werwolf' ? 'takeOverRole' : 'takeOver'
+  return t(key, { name })
+}
+
 /**
  * The notice for a game that hides something, played on one device: that its cards are open, or
- * how Sea Battle keeps each fleet hidden there (`split` on a split screen). Null for other games.
+ * how Sea Battle, Mäxchen and Werwolf keep each player's own hidden there (`split` on a split
+ * screen). Null for other games.
  */
 export function openCardsNotice(game: GameId | null, split = false): HTMLElement | null {
   if (game === null) return null
+  const notices = HAND_OVER_NOTICES[game]
   const text = hasHiddenCards(game)
     ? t('openCards')
-    : handsOver(game)
-      ? t(split ? 'hiddenFleetNotice' : 'handOverNotice')
+    : handsOver(game) && notices
+      ? t(notices[split ? 1 : 0])
       : ''
   return text
     ? h('p', { class: 'notice', role: 'note' } as Partial<HTMLParagraphElement>, text)

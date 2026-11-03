@@ -4,12 +4,14 @@ import { fourInARow } from './fourInARow'
 import { kaesekaestchen } from './kaesekaestchen'
 import { MAX_RIDERS, MIN_RIDERS } from './lichtrenner'
 import { MAX_LUDO, MIN_LUDO } from './ludo'
+import { MAX_DICE_SEATS, MIN_DICE_SEATS } from './maexchen'
 import { MAX_SEATS, MIN_SEATS } from './miaumiau'
 import { muehle } from './muehle'
 import { reversi } from './reversi'
 import { SEA_SEATS } from './seeschlacht'
 import { sternhalma } from './sternhalma'
 import { ticTacToe } from './tictactoe'
+import { MAX_VILLAGE, MIN_VILLAGE } from './werwolf'
 
 /** Every board game in the Spielekiste. */
 export const GAMES: Record<BoardGameId, BoardGame> = {
@@ -32,6 +34,8 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (game === 'lichtrenner') return { min: MIN_RIDERS, max: MAX_RIDERS }
   if (game === 'airhockey') return { min: 2, max: 2 }
   if (game === 'ludo') return { min: MIN_LUDO, max: MAX_LUDO }
+  if (game === 'maexchen') return { min: MIN_DICE_SEATS, max: MAX_DICE_SEATS }
+  if (game === 'werwolf') return { min: MIN_VILLAGE, max: MAX_VILLAGE }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
 
@@ -47,13 +51,13 @@ export function hasHiddenCards(game: GameId): boolean {
 }
 
 /** Games in which each player's view is theirs alone, and the device hides it from the others. */
-const HANDED_OVER: ReadonlySet<GameId> = new Set<GameId>(['seeschlacht'])
+const HANDED_OVER: ReadonlySet<GameId> = new Set<GameId>(['seeschlacht', 'maexchen', 'werwolf'])
 
 /**
  * Whether a game is hidden on one device instead of played open, such as the fleets of Sea
- * Battle: taking turns on one screen, the device is handed over between the players, and shows
- * nothing of a player's own until they say they hold it; on a split screen, each part hides its
- * player's own until they ask to see it.
+ * Battle, the dice under Mäxchen's cup or the roles of Werwolf: taking turns on one screen, the
+ * device is handed over between the players, and shows nothing of a player's own until they say
+ * they hold it; on a split screen, each part hides its player's own until they ask to see it.
  */
 export function handsOver(game: GameId): boolean {
   return HANDED_OVER.has(game)

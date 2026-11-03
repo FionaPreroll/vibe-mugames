@@ -17,9 +17,11 @@ import {
 import { GAMES, seatRange } from '../core/games'
 import * as licht from '../core/lichtrenner'
 import * as ludo from '../core/ludo'
+import * as maex from '../core/maexchen'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
 import * as sea from '../core/seeschlacht'
 import type { Player, TableState } from '../core/table'
+import * as wolf from '../core/werwolf'
 
 /**
  * What phones of the Spielekiste say to each other, on top of `@fionapreroll/p2p`'s room: the
@@ -28,7 +30,7 @@ import type { Player, TableState } from '../core/table'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 7
+export const PROTOCOL = 8
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of
@@ -69,7 +71,8 @@ export const parseEvent: Parse<Event> = (value) => {
 
 /**
  * A board game's move, a path of one or more cells of its board, no longer than its longest
- * move; or a move of Ludo, Miau-Miau or Sea Battle, in numbers as their `encode` makes them.
+ * move; a move of Ludo, Miau-Miau, Sea Battle or Mäxchen, in numbers as their `encode` makes
+ * them; or the seat a player of Werwolf chooses.
  */
 function parseMove(value: unknown, game: GameId): Move | undefined {
   // Games in real time have no moves, only input.
@@ -78,6 +81,15 @@ function parseMove(value: unknown, game: GameId): Move | undefined {
     const numbers = list(value, 1, (n) => (isWhole(n, 0, ludo.ROLL) ? n : undefined))
     const move = numbers && ludo.decode(numbers)
     return move ? ludo.encode(move) : undefined
+  }
+  if (game === 'maexchen') {
+    const numbers = list(value, 1, (n) => (isWhole(n, 0, 66) ? n : undefined))
+    const move = numbers && maex.decode(numbers)
+    return move ? maex.encode(move) : undefined
+  }
+  if (game === 'werwolf') {
+    const seat = list(value, 1, (n) => (isWhole(n, 0, wolf.MAX_VILLAGE - 1) ? n : undefined))
+    return seat?.length === 1 ? seat : undefined
   }
   if (game === 'seeschlacht') {
     const numbers = list(value, sea.FLEET.length, (n) =>
@@ -128,6 +140,20 @@ export const parseState: Parse<TableState> = (value) => {
   const seaView =
     game === 'seeschlacht' ? parseSea(value.sea) : value.sea === null ? null : undefined
   if (seaView === undefined) return undefined
+  const dice =
+    game === 'maexchen'
+      ? parseDice(value.dice, seats.length)
+      : value.dice === null
+        ? null
+        : undefined
+  if (dice === undefined) return undefined
+  const village =
+    game === 'werwolf'
+      ? parseVillage(value.village, seats.length)
+      : value.village === null
+        ? null
+        : undefined
+  if (village === undefined) return undefined
   const race =
     game === 'lichtrenner'
       ? parseRace(value.race, seats.length)
@@ -139,7 +165,13 @@ export const parseState: Parse<TableState> = (value) => {
   if (rink === undefined) return undefined
   if (!isWhole(value.round, 0, MAX_ROUNDS)) return undefined
   if (!isWhole(value.moveNo, 0, MAX_MOVES)) return undefined
-  const last = value.last === null || !game ? null : parseMove(value.last, game)
+  // Werwolf never shows a last move: it would give away whom a player chose.
+  const last =
+    value.last === null || !game
+      ? null
+      : game === 'werwolf'
+        ? undefined
+        : parseMove(value.last, game)
   if (last === undefined) return undefined
   const outcome = parseOutcome(value.outcome, position?.board ?? [], seats.length)
   if (outcome === undefined) return undefined
@@ -156,6 +188,8 @@ export const parseState: Parse<TableState> = (value) => {
     ludo: ludoState,
     cards,
     sea: seaView,
+    dice,
+    village,
     race,
     rink,
     round: value.round,
@@ -248,6 +282,105 @@ function parseFleet(value: unknown, max: number): sea.Ship[] | undefined {
 }
 
 const MAX_ROUNDS = 1_000_000
+
+/** Mäxchen: lives for every seat, whose turn it is, what was said, and dice only if this seat's. */
+function parseDice(value: unknown, seats: number): maex.MaexView | undefined {
+  if (!isObject(value)) return undefined
+  const seat = (n: unknown) => isWhole(n, 0, seats - 1)
+  const lives = list(value.lives, seats, (n) => (isWhole(n, 0, maex.LIVES) ? n : undefined))
+  if (!lives || lives.length !== seats) return undefined
+  const { turn, phase, claim, claimer, winner } = value
+  if (!seat(turn) || (phase !== 'roll' && phase !== 'claim')) return undefined
+  if (typeof value.mine !== 'boolean') return undefined
+  const dice = value.dice === null ? null : parsePair(value.dice)
+  if (dice === undefined) return undefined
+  if (claim !== null && !maex.isThrow(claim)) return undefined
+  if ((claim === null) !== (claimer === null) || (claimer !== null && !seat(claimer))) {
+    return undefined
+  }
+  if (winner !== null && !seat(winner)) return undefined
+  const reveal = value.reveal === null ? null : parseReveal(value.reveal, seats)
+  if (reveal === undefined) return undefined
+  return {
+    lives,
+    turn: turn as number,
+    phase,
+    dice,
+    mine: value.mine,
+    claim: claim as number | null,
+    claimer: claimer as number | null,
+    reveal,
+    winner: winner as number | null,
+  }
+}
+
+function parsePair(value: unknown): maex.Dice | undefined {
+  const dice = list(value, 2, (n) => (maex.isDie(n) ? n : undefined))
+  const [a, b] = dice ?? []
+  return a === undefined || b === undefined ? undefined : [a, b]
+}
+
+function parseReveal(value: unknown, seats: number): maex.Reveal | undefined {
+  if (!isObject(value)) return undefined
+  const { claimer, doubter, claim, loser, lost } = value
+  if (![claimer, doubter, loser].every((n) => isWhole(n, 0, seats - 1))) return undefined
+  if (!maex.isThrow(claim) || !isWhole(lost, 1, 2)) return undefined
+  const dice = value.dice === null ? null : parsePair(value.dice)
+  if (dice === undefined) return undefined
+  return {
+    claimer: claimer as number,
+    doubter: doubter as number,
+    claim,
+    dice,
+    loser: loser as number,
+    lost,
+  }
+}
+
+/** Werwolf: the roles this seat knows, who is in, who has chosen, and the story so far. */
+function parseVillage(value: unknown, seats: number): wolf.WolfView | undefined {
+  if (!isObject(value)) return undefined
+  const isSeat = (n: unknown): n is number => isWhole(n, 0, seats - 1)
+  const roles = list(value.roles, seats, (role) =>
+    role === null ? null : wolf.ROLES.find((r) => r === role),
+  )
+  const flags = (v: unknown) => list(v, seats, (b) => (typeof b === 'boolean' ? b : undefined))
+  const alive = flags(value.alive)
+  const done = flags(value.done)
+  const choices = list(value.choices, seats, (n) => (n === null ? null : isSeat(n) ? n : undefined))
+  if (roles?.length !== seats || alive?.length !== seats || done?.length !== seats) return undefined
+  if (choices?.length !== seats) return undefined
+  const { phase, night, healed, winner } = value
+  if ((phase !== 'night' && phase !== 'day') || !isWhole(night, 1, MAX_MOVES)) return undefined
+  if (healed !== null && !isSeat(healed)) return undefined
+  if (winner !== null && winner !== 'wolves' && winner !== 'village') return undefined
+  const findings = list(value.findings, MAX_MOVES, (f) =>
+    isObject(f) && isSeat(f.seat) && typeof f.wolf === 'boolean'
+      ? { seat: f.seat, wolf: f.wolf }
+      : undefined,
+  )
+  const story = list(value.story, 2 * MAX_STORY, (event) => parseStory(event, seats))
+  if (!findings || !story) return undefined
+  return { roles, alive, phase, night, done, choices, healed, findings, story, winner }
+}
+
+/** The most nights a game of Werwolf lasts: one of eight players is out at least every other. */
+const MAX_STORY = 2 * wolf.MAX_VILLAGE
+
+function parseStory(value: unknown, seats: number): wolf.Story | undefined {
+  if (!isObject(value) || !isWhole(value.night, 1, MAX_MOVES)) return undefined
+  const seatOrNull = (n: unknown) => n === null || isWhole(n, 0, seats - 1)
+  if (value.kind === 'night') {
+    if (!seatOrNull(value.victim)) return undefined
+    return { kind: 'night', night: value.night, victim: value.victim as number | null }
+  }
+  if (value.kind !== 'vote' || !seatOrNull(value.out)) return undefined
+  const votes = list(value.votes, seats, (n) =>
+    n === null ? null : isWhole(n, 0, seats - 1) ? n : undefined,
+  )
+  if (votes?.length !== seats) return undefined
+  return { kind: 'vote', night: value.night, votes, out: value.out as number | null }
+}
 
 /** Lichtrenner: a rider for every seat, each with a path of straight walls on the grid. */
 function parseRace(value: unknown, seats: number): licht.LichtView | undefined {
