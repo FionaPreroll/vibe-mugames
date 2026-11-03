@@ -55,6 +55,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 ### Fixed
 
+- A Bluetooth player the host let in whose phone never connects no longer stays on _Connecting…_ in the host's list: after 30 seconds, the list says the other phone did not answer in time.
 - Pairing by copied text codes works even when sending a code over takes minutes: the joining phone now waits up to 10 minutes for the host, instead of giving up after 30 seconds.
 - Pairing says what is going on at every step: that a code was read, that the joining phone waits for the host, and why a connection failed, with **Try again** on both phones. **Copy** always says whether it worked, and a wrong code pasted earlier no longer leaves its message behind.
 
