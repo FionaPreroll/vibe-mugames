@@ -30,7 +30,7 @@ import * as wolf from '../core/werwolf'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 8
+export const PROTOCOL = 9
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of
@@ -416,7 +416,16 @@ function parseRink(value: unknown): hockey.HockeyView | undefined {
   const scored =
     value.scored === null ? null : isWhole(value.scored, 0, 1) ? value.scored : undefined
   if (scored === undefined) return undefined
-  return { puck, mallets: [m0, m1], goals: [g0, g1], pause: value.pause, scored }
+  // Up to a day of play: any game ends long before.
+  if (!inRange(value.clock, 0, 86_400)) return undefined
+  return {
+    puck,
+    mallets: [m0, m1],
+    goals: [g0, g1],
+    pause: value.pause,
+    scored,
+    clock: value.clock,
+  }
 }
 
 function parseDisc(value: unknown): hockey.Disc | undefined {

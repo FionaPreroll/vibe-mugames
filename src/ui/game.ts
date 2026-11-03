@@ -5,6 +5,7 @@ import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
 import { type TextKey, t } from '../i18n'
 import type { TableHost } from '../net/session'
+import { settings } from '../storage'
 import { boardView, handText, hint, news, type Picker, seatName, symbol } from './boards'
 import { cardsHint, cardsView } from './cards'
 import { diceHint, diceStatus, diceView, revealText } from './dice'
@@ -323,7 +324,7 @@ function liveStatus(state: TableState, mine: number, shared: boolean, local: boo
       : t('watchingAll', { names: state.seats.map((_, i) => name(i)).join(', ') })
   }
   if (state.game === 'lichtrenner') return t(local ? 'lichtHintLocal' : 'lichtHint')
-  return t(local ? 'hockeyHintLocal' : 'hockeyHint')
+  return t(local ? 'hockeyHintLocal' : settings().hockeyWhole ? 'hockeyHintWhole' : 'hockeyHint')
 }
 
 /** Rematch and another game, for whoever keeps the table, once a game is over. */

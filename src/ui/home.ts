@@ -21,6 +21,8 @@ export function homeScreen(): void {
     maxLength: 16,
     value: settings().name,
   })
+  // Kept as it is typed, so that it stays through a visit to the settings or another language.
+  name.addEventListener('input', () => updateSettings({ name: name.value }))
   const playerName = () => {
     const chosen = name.value.trim() || (currentLanguage() === 'de' ? 'Spieler' : 'Player')
     updateSettings({ name: chosen })

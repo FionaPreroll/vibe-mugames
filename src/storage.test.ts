@@ -11,6 +11,8 @@ describe('settings from storage', () => {
       webUpdates: false,
       localNames: [],
       localSplit: false,
+      hockeyWhole: true,
+      hockeySmooth: false,
     })
     expect(
       parseSettings({ language: 'fr', checkUpdates: 'yes', webUpdates: 1, localSplit: 1 }),
@@ -19,6 +21,17 @@ describe('settings from storage', () => {
       checkUpdates: false,
       webUpdates: false,
       localSplit: false,
+    })
+  })
+
+  it('shows the whole rink unless told not to, and smooths only when told to', () => {
+    expect(parseSettings({ hockeyWhole: false, hockeySmooth: true })).toMatchObject({
+      hockeyWhole: false,
+      hockeySmooth: true,
+    })
+    expect(parseSettings({ hockeyWhole: 'no', hockeySmooth: 'yes' })).toMatchObject({
+      hockeyWhole: true,
+      hockeySmooth: false,
     })
   })
 

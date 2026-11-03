@@ -25,6 +25,10 @@ export interface Settings {
   readonly localNames: readonly string[]
   /** Whether they last played on a split screen, or took turns on one. */
   readonly localSplit: boolean
+  /** Air hockey: a player sees the whole rink (true), or only their own half (false). */
+  readonly hockeyWhole: boolean
+  /** Air hockey: smooth what the network shakes up (see src/net/clock.ts), or draw it as it comes. */
+  readonly hockeySmooth: boolean
 }
 
 /** As many names as play on one device at most (see src/local.ts). */
@@ -38,6 +42,8 @@ const DEFAULTS: Settings = {
   webUpdates: false,
   localNames: [],
   localSplit: false,
+  hockeyWhole: true,
+  hockeySmooth: false,
 }
 
 function read(key: string): unknown {
@@ -60,8 +66,17 @@ function write(key: string, value: unknown): void {
 /** Settings from storage, checked: anything that does not fit falls back to the default. */
 export function parseSettings(value: unknown): Settings {
   if (typeof value !== 'object' || value === null) return DEFAULTS
-  const { name, language, checkUpdates, updatesAsked, webUpdates, localNames, localSplit } =
-    value as Record<string, unknown>
+  const {
+    name,
+    language,
+    checkUpdates,
+    updatesAsked,
+    webUpdates,
+    localNames,
+    localSplit,
+    hockeyWhole,
+    hockeySmooth,
+  } = value as Record<string, unknown>
   return {
     name: typeof name === 'string' ? cleanName(name, '') : '',
     language: language === 'en' || language === 'de' ? language : 'auto',
@@ -74,6 +89,8 @@ export function parseSettings(value: unknown): Settings {
           .map((local) => (typeof local === 'string' ? cleanName(local, '') : ''))
       : [],
     localSplit: localSplit === true,
+    hockeyWhole: hockeyWhole !== false,
+    hockeySmooth: hockeySmooth === true,
   }
 }
 

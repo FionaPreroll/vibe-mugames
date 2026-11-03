@@ -36,14 +36,26 @@ test('two phones race at Light Racers: Bo turns into the edge, Ada wins', async 
   await expect(ada.locator('.status.turn')).toHaveText('A draw.', { timeout: 10_000 })
 })
 
-test('two phones play air hockey, each phone one half of the rink', async ({ browser }) => {
-  const [ada, bo] = await table(browser)
+test('two phones play air hockey: the whole rink, or one half, smoothed', async ({ browser }) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  // Ada keeps the settings as they come: the whole rink, drawn as states arrive. Bo chooses
+  // his own half, for phones laid top edge to top edge, smoothed by the host's clock.
+  await bo.getByRole('button', { name: 'Settings' }).click()
+  await bo.getByLabel('Show the whole rink').uncheck()
+  await bo.getByLabel('Smooth out the network').check()
+  await bo.getByRole('button', { name: 'Back' }).click()
+  const errors: Error[] = []
+  for (const page of [ada, bo]) page.on('pageerror', (error) => errors.push(error))
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
   await ada.getByRole('button', { name: 'Air Hockey' }).click()
-  // Each player's half covers their screen, with the goals, their own first.
+  // Each player's rink covers their screen, with the goals, their own first.
   await expect(ada.locator('.live.rink.arena')).toBeVisible()
   await expect(bo.locator('.live.rink.arena')).toBeVisible()
   await expect(ada.locator('.rink-score')).toHaveText('Ada 0 : 0 Bo · First to 7 goals wins.')
   await expect(bo.locator('.rink-score')).toHaveText('Bo 0 : 0 Ada · First to 7 goals wins.')
+  await expect(ada.locator('.rink-help')).toContainText('Your goal is at the bottom')
   await expect(bo.locator('.rink-help')).toContainText('top edge to top edge')
 
   // After the countdown, Bo's finger sweeps his mallet up through the puck in the middle,
@@ -74,6 +86,7 @@ test('two phones play air hockey, each phone one half of the rink', async ({ bro
   await expect(ada.locator('.live')).toHaveCount(0)
   await expect(ada.locator('.status.turn')).toHaveText('Choose a game')
   await expect(bo.locator('.main')).toContainText('Ada chooses a game.')
+  expect(errors).toEqual([])
 })
 
 test('a third phone watches the whole rink and the race', async ({ browser }) => {

@@ -1,6 +1,6 @@
 import { t } from '../i18n'
 import { isApp } from '../native'
-import { settings } from '../storage'
+import { settings, updateSettings } from '../storage'
 import { lookForWebUpdate } from '../webUpdates'
 import { h, show } from './dom'
 import { appUpdateSettings } from './updates'
@@ -11,8 +11,9 @@ export const APP_RELEASE =
   'https://github.com/FionaPreroll/vibe-mugames/releases/tag/android-latest'
 
 /**
- * The settings: for now, the updates. In the app, the app's own (see src/ui/updates.ts); on the
- * website, its note about a newer build, and the way to the Android app.
+ * The settings: how air hockey shows the rink and the network, and the updates. In the app, the
+ * app's own (see src/ui/updates.ts); on the website, its note about a newer build, and the way to
+ * the Android app.
  */
 export function settingsScreen(onBack: () => void): void {
   show(
@@ -31,12 +32,34 @@ export function settingsScreen(onBack: () => void): void {
         }),
         h('h1', {}, t('settings')),
       ),
+      h('h2', {}, t('hockeySettings')),
+      hockeySettings(),
       h('h2', {}, t('updatesTitle')),
       isApp() ? appUpdateSettings() : webUpdateSettings(),
       !isApp() && h('h2', {}, t('appTitle')),
       !isApp() && appLink(),
     ),
     onBack,
+  )
+}
+
+/** Air hockey's switches: the whole rink or one's own half, and smoothing out the network. */
+export function hockeySettings(): HTMLElement {
+  const toggle = (checked: boolean, label: string, note: string, change: (on: boolean) => void) => {
+    const input = h('input', { type: 'checkbox', checked })
+    input.addEventListener('change', () => change(input.checked))
+    return [h('label', { class: 'toggle' }, input, label), h('p', { class: 'muted' }, note)]
+  }
+  const now = settings()
+  return h(
+    'section',
+    { class: 'hockey-settings' },
+    ...toggle(now.hockeyWhole, t('hockeyWholeSetting'), t('hockeyWholeNote'), (on) =>
+      updateSettings({ hockeyWhole: on }),
+    ),
+    ...toggle(now.hockeySmooth, t('hockeySmoothSetting'), t('hockeySmoothNote'), (on) =>
+      updateSettings({ hockeySmooth: on }),
+    ),
   )
 }
 

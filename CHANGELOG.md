@@ -43,9 +43,12 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - **About the Spielekiste,** at the bottom of the start screen: the version and build with its date, the contact address, the source code, what changed from version to version, and the open-source libraries inside with their licenses.
 - A privacy policy, in English and German, under _About the Spielekiste_ and on the website at [fionapreroll.github.io/vibe-mugames/privacy.html](https://fionapreroll.github.io/vibe-mugames/privacy.html): no accounts, no server, no advertising and no tracking, and what stays on your device and what other phones see.
 - Bluetooth in the Android app: when joining a table or adding a player, choose QR code or Bluetooth. Over Bluetooth, no Wi-Fi is needed: the host's table is visible to phones nearby, the player taps it, and the host lets them in after comparing the code both phones show. One table can mix both.
+- _Smooth out the network_ in the settings, for Air Hockey: the puck and the other mallet glide on at an even pace, however unevenly the host's word arrives, and your own mallet moves where your finger is, at once. Off at first: try it when the puck stutters.
 
 ### Changed
 
+- Air Hockey shows each player the whole rink from their end, with their goal at the bottom. Their own half alone, for two phones laid top edge to top edge, is a setting now: _Show the whole rink_.
+- Phones with this version and the version before cannot play together: update both.
 - The Android app has an icon of its own instead of Capacitor's: an open games box with a card, a draughts piece and a pawn, on a dark blue board. Android 13 and newer can tint it to the wallpaper's colours, and the app starts on the same box and blue. The website's tab shows the same box.
 - Every build of the Android app is now signed with the same key, so a new one installs over the one before and keeps the app's settings. An app installed before this change has to be uninstalled once.
 - A new start screen: a large picture of the Spielekiste, an open box with boards, cards, dice and pieces, and a line that says it is for everyone at one table, on phones side by side or around one tablet or laptop. On a wide screen, the picture stands beside the buttons.
@@ -55,6 +58,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 ### Fixed
 
+- A name typed on the start screen stays when you visit the settings or change the language, instead of being forgotten.
 - A Bluetooth player the host let in whose phone never connects no longer stays on _Connecting…_ in the host's list: after 30 seconds, the list says the other phone did not answer in time.
 - Pairing by copied text codes works even when sending a code over takes minutes: the joining phone now waits up to 10 minutes for the host, instead of giving up after 30 seconds.
 - Pairing says what is going on at every step: that a code was read, that the joining phone waits for the host, and why a connection failed, with **Try again** on both phones. **Copy** always says whether it worked, and a wrong code pasted earlier no longer leaves its message behind.

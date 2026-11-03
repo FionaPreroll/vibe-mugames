@@ -354,6 +354,14 @@ const en = {
   hockeyHint:
     'Lay both phones on the table, top edge to top edge: each screen is one half of the rink, with your goal at the bottom. Move your mallet with a finger.',
   hockeyHintLocal: 'Move your mallet with a finger on your half, or with your keys.',
+  hockeyHintWhole: 'Your goal is at the bottom. Move your mallet with a finger on your half.',
+  hockeySettings: 'Air hockey',
+  hockeyWholeSetting: 'Show the whole rink',
+  hockeyWholeNote:
+    'Off, each phone shows only its player’s half: lay both phones on the table, top edge to top edge, and the puck slides from one screen to the other.',
+  hockeySmoothSetting: 'Smooth out the network',
+  hockeySmoothNote:
+    'Draws the puck and the other mallet at an even pace, however unevenly the host’s word arrives, and your own mallet where your finger is, at once. Try it when the puck stutters.',
   hockeyFirstTo: 'First to {n} goals wins.',
   hockeyGoal: 'Goal for {name}!',
   hockeyScore: '{a} {goalsA} : {goalsB} {b}',
@@ -934,6 +942,14 @@ const de: Texts = {
     'Legt beide Handys auf den Tisch, oberer Rand an oberem Rand: Jeder Bildschirm ist eine Hälfte des Felds, mit deinem Tor unten. Bewege deinen Schläger mit dem Finger.',
   hockeyHintLocal:
     'Bewege deinen Schläger mit dem Finger auf deiner Hälfte, oder mit deinen Tasten.',
+  hockeyHintWhole: 'Dein Tor ist unten. Bewege deinen Schläger mit dem Finger auf deiner Hälfte.',
+  hockeySettings: 'Airhockey',
+  hockeyWholeSetting: 'Das ganze Feld zeigen',
+  hockeyWholeNote:
+    'Aus zeigt jedes Handy nur die Hälfte seines Spielers: Legt beide Handys auf den Tisch, oberer Rand an oberem Rand, und der Puck gleitet von einem Bildschirm auf den anderen.',
+  hockeySmoothSetting: 'Netzwerk glätten',
+  hockeySmoothNote:
+    'Zeichnet den Puck und den anderen Schläger gleichmäßig, wie ungleichmäßig die Nachrichten des Gastgebers auch ankommen, und deinen eigenen Schläger sofort dort, wo dein Finger ist. Probier es, wenn der Puck ruckelt.',
   hockeyFirstTo: 'Wer zuerst {n} Tore schießt, gewinnt.',
   hockeyGoal: 'Tor für {name}!',
   hockeyScore: '{a} {goalsA} : {goalsB} {b}',
