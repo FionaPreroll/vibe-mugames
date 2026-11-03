@@ -171,7 +171,7 @@ pnpm check
 
 Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of `@playwright/test`, so every page they open is measured. Coverage never fails a pull request (`codecov.yml`).
 
-**The libraries** are installed from the files on their releases, [`p2p-v0.5.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.5.0) and [`p2p-nearby-v0.2.1`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-nearby-v0.2.1), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
+**The libraries** are installed from the files on their releases, [`p2p-v0.6.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.6.0) and [`p2p-nearby-v0.3.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-nearby-v0.3.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
 
 **The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`, and run the Java tests with `./gradlew testDebugUnitTest`. Without the SDK, `UpdateRulesTest` compiles and runs with plain `javac` and JUnit. The update dialogs are tested in happy-dom against a fake `AppUpdaterPlugin` (`src/ui/updates.test.ts`).
 
