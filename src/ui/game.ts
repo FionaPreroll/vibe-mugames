@@ -1,17 +1,18 @@
-import { GAME_IDS, type GameId, isLiveGame, type Move } from '../core/board'
-import { handsOver, hasHiddenCards, seatRange } from '../core/games'
+import { type GameId, isLiveGame, type Move } from '../core/board'
+import { GAME_GROUPS, type GameGroup, handsOver, hasHiddenCards, seatRange } from '../core/games'
 import { encode as encodeLudo } from '../core/ludo'
 import { encode } from '../core/miaumiau'
 import type { Player, TableState } from '../core/table'
 import { type TextKey, t } from '../i18n'
 import type { TableHost } from '../net/session'
+import { settings } from '../storage'
 import { boardView, handText, hint, news, type Picker, seatName, symbol } from './boards'
 import { cardsHint, cardsView } from './cards'
 import { diceHint, diceStatus, diceView, revealText } from './dice'
 import { h } from './dom'
 import type { LiveSlot } from './live'
 import { ludoHints, ludoView } from './ludo'
-import { rulesButton, thumbnail } from './rules'
+import { playersText, rulesButton, thumbnail } from './rules'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
 import { villageStatus, villageToMove, villageView } from './village'
 
@@ -45,11 +46,18 @@ export function seatMark(state: TableState, place: number): HTMLElement {
   )
 }
 
+/** The heading and the note of each group of games in the chooser. */
+const GROUP_TEXTS: Record<GameGroup, readonly [TextKey, TextKey]> = {
+  tactics: ['groupTactics', 'groupTacticsNote'],
+  luck: ['groupLuck', 'groupLuckNote'],
+  skill: ['groupSkill', 'groupSkillNote'],
+}
+
 /**
- * The games to choose from, each with a thumbnail of its board and a button for its rules, for
- * whoever keeps the table; without `host`, the games only show, for players to read the rules
- * while they wait. `local` marks the games whose cards are open when everyone plays on one
- * device.
+ * The games to choose from, by kind, each with a thumbnail of its board, how many play it and a
+ * button for its rules, for whoever keeps the table; without `host`, the games only show, for
+ * players to read the rules while they wait. `local` marks the games whose cards are open when
+ * everyone plays on one device.
  */
 export function gameChoices(
   state: TableState,
@@ -57,39 +65,55 @@ export function gameChoices(
   local: boolean,
 ): HTMLElement {
   const here = state.players.filter((p) => !p.away).length
+  const card = (id: GameId) => {
+    const content = [
+      h('span', { class: 'game-name' }, t(id)),
+      local && hasHiddenCards(id)
+        ? h('span', { class: 'open-note muted' }, ` (${t('openCardsShort')})`)
+        : null,
+    ]
+    const choice = host
+      ? h(
+          'button',
+          {
+            type: 'button',
+            class: 'game-choice',
+            disabled: here < seatRange(id).min,
+            onclick: () => host.choose(id),
+          },
+          ...content,
+        )
+      : h('div', { class: 'game-choice' }, ...content)
+    // The thumbnail and the number of players lie over the choice, and let taps through to it:
+    // the choice's own text is only the game's name.
+    return h(
+      'div',
+      { class: 'game-card', role: 'group', ariaLabel: t(id) } as Partial<HTMLDivElement>,
+      choice,
+      thumbnail(id),
+      h('span', { class: 'seats-badge', title: playersText(id) }, seatsText(id)),
+      rulesButton(id, true),
+    )
+  }
   return h(
     'div',
-    { class: 'games' },
-    ...GAME_IDS.map((id) => {
-      const content = [
-        h('span', { class: 'game-name' }, t(id)),
-        local && hasHiddenCards(id)
-          ? h('span', { class: 'open-note muted' }, ` (${t('openCardsShort')})`)
-          : null,
-      ]
-      const choice = host
-        ? h(
-            'button',
-            {
-              type: 'button',
-              class: 'game-choice',
-              disabled: here < seatRange(id).min,
-              onclick: () => host.choose(id),
-            },
-            ...content,
-          )
-        : h('div', { class: 'game-choice' }, ...content)
-      // The thumbnail lies over the choice, and lets taps through to it: the choice's own text is
-      // only the game's name.
+    { class: 'game-groups' },
+    ...GAME_GROUPS.map(({ group, games }) => {
+      const [heading, note] = GROUP_TEXTS[group]
       return h(
-        'div',
-        { class: 'game-card', role: 'group', ariaLabel: t(id) } as Partial<HTMLDivElement>,
-        choice,
-        thumbnail(id),
-        rulesButton(id, true),
+        'section',
+        { class: `game-group ${group}`, ariaLabel: t(heading) } as Partial<HTMLElement>,
+        h('h3', {}, t(heading), h('small', { class: 'muted group-note' }, t(note))),
+        h('div', { class: 'games' }, ...games.map(card)),
       )
     }),
   )
+}
+
+/** How many play a game, in short: "2", "2–6". */
+function seatsText(game: GameId): string {
+  const { min, max } = seatRange(game)
+  return min === max ? String(min) : `${min}–${max}`
 }
 
 export interface GameViewOptions {
@@ -265,6 +289,24 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
 }
 
 /**
+ * Puts the board, the cards or the field of a game into its stage, between the lines about it
+ * (whose turn it is, what to do, the pieces in hand), so that a wide screen can show the stage
+ * beside everything else, as large as the screen is high.
+ */
+export function staged(nodes: readonly HTMLElement[]): HTMLElement[] {
+  const stage = h('div', { class: 'stage' })
+  const out: HTMLElement[] = []
+  for (const node of nodes) {
+    if (node.matches('p.status, p.hint, p.hand')) out.push(node)
+    else {
+      if (!stage.hasChildNodes()) out.push(stage)
+      stage.append(node)
+    }
+  }
+  return out
+}
+
+/**
  * What a game in real time says above its field: how it ended, who plays, or how to play.
  * What changes many times a second, such as the countdown or a goal, the field shows itself.
  */
@@ -282,7 +324,7 @@ function liveStatus(state: TableState, mine: number, shared: boolean, local: boo
       : t('watchingAll', { names: state.seats.map((_, i) => name(i)).join(', ') })
   }
   if (state.game === 'lichtrenner') return t(local ? 'lichtHintLocal' : 'lichtHint')
-  return t(local ? 'hockeyHintLocal' : 'hockeyHint')
+  return t(local ? 'hockeyHintLocal' : settings().hockeyWhole ? 'hockeyHintWhole' : 'hockeyHint')
 }
 
 /** Rematch and another game, for whoever keeps the table, once a game is over. */

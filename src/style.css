@@ -73,7 +73,8 @@ textarea {
   color: inherit;
 }
 
-button {
+button,
+a.button {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 0.6rem;
@@ -86,7 +87,8 @@ button:disabled {
   cursor: default;
 }
 
-button.primary {
+button.primary,
+a.button.primary {
   background: var(--accent);
   border-color: var(--accent);
   color: #0d1b24;
@@ -141,20 +143,174 @@ textarea {
   word-break: break-all;
 }
 
-.home .tagline {
-  color: var(--muted);
+button {
+  /* Quick taps on a board are taps, not a zoom; two fingers still zoom the page. */
+  touch-action: manipulation;
 }
 
-.home .build {
+/* The start screen: the box of games and what it is, then the name and the ways to play. */
+#app:has(.screen.home) {
+  max-width: 60rem;
+}
+
+.screen.home .top-bar {
+  margin-bottom: -2.5rem;
+}
+
+.screen.home .intro {
+  text-align: center;
+}
+
+.screen.home .hero {
+  display: block;
+  width: min(100%, 30rem);
+  margin: 0 auto 0.5rem;
+}
+
+.screen.home h1 {
+  font-size: 2rem;
+  letter-spacing: 0.01em;
+}
+
+.screen.home .tagline {
+  color: var(--muted);
+  margin: 0.5rem auto 1rem;
+  max-width: 30rem;
+  line-height: 1.45;
+}
+
+.screen.home .start {
+  max-width: 30rem;
+  margin: 0 auto;
+}
+
+/* With room beside it, the picture stands left of the ways to play. */
+@media (min-width: 46rem) and (orientation: landscape), (min-width: 60rem) {
+  .screen.home {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: center;
+    align-content: center;
+    gap: 0 2.5rem;
+    position: relative;
+    min-height: calc(100dvh - 4rem);
+  }
+
+  .screen.home > :not(.intro, .start) {
+    grid-column: 1 / -1;
+  }
+
+  .screen.home .top-bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+  }
+
+  .screen.home .hero {
+    width: 100%;
+  }
+}
+
+/* A phone on its side: a smaller picture, so the buttons fit beside it. */
+@media (orientation: landscape) and (max-height: 32rem) {
+  .screen.home {
+    min-height: 0;
+  }
+
+  /* Room for the settings button in the corner. */
+  .screen.home .start {
+    margin-right: 3rem;
+  }
+
+  .screen.home .hero {
+    max-height: 55dvh;
+  }
+
+  .screen.home h1 {
+    font-size: 1.6rem;
+  }
+}
+
+.screen.home .build {
   font-size: 0.8rem;
   text-align: center;
   margin-top: 2rem;
+}
+
+/* The game chooser: the games by kind, each kind under its heading. */
+#app:has(.game-groups) {
+  max-width: 78rem;
+}
+
+.game-group h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.1rem 0.6rem;
+  margin: 1.25rem 0 0.6rem;
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.game-group .group-note {
+  font-size: 0.85rem;
+  font-weight: normal;
+}
+
+.game-group h3::before {
+  content: "";
+  align-self: center;
+  width: 0.35rem;
+  height: 1.1rem;
+  border-radius: 0.2rem;
+  background: var(--group, var(--accent));
+}
+
+.game-group.tactics {
+  --group: var(--wood);
+}
+
+.game-group.luck {
+  --group: var(--seat-3);
+}
+
+.game-group.skill {
+  --group: var(--seat-0);
 }
 
 .games {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 0.75rem;
+}
+
+/* How many play a game, in a corner of its card. */
+.game-card .seats-badge {
+  position: absolute;
+  bottom: 0.55rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.game-card .seats-badge::before {
+  content: "";
+  flex: none;
+  width: 10.4px;
+  height: 11.2px;
+  background: currentColor;
+  /* A person: a head on shoulders. */
+  clip-path: path(
+    "M5.2 0a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM0 11.2c0-3 2.3-5 5.2-5s5.2 2 5.2 5z"
+  );
 }
 
 /* A game in the chooser: its thumbnail above its name, and a button for its rules in a corner. */
@@ -170,7 +326,7 @@ textarea {
   align-items: center;
   justify-content: flex-end;
   gap: 0.25rem;
-  padding: 7rem 0.75rem 1rem;
+  padding: 7rem 0.75rem 1.85rem;
   font-size: 1.1rem;
   text-align: center;
   background: linear-gradient(160deg, var(--panel), #1a2733);
@@ -1062,7 +1218,7 @@ textarea {
 }
 
 /* The start screen's top bar, with the settings at its right. */
-.home .top-bar {
+.screen.home .top-bar {
   display: flex;
   justify-content: flex-end;
 }
@@ -2090,12 +2246,12 @@ button.link {
   cursor: pointer;
 }
 
-.home .about-link {
+.screen.home .about-link {
   display: block;
   margin: 2rem auto 0;
 }
 
-.home .about-link + .build {
+.screen.home .about-link + .build {
   margin-top: 0.3rem;
 }
 
@@ -2173,4 +2329,266 @@ button.link {
   padding-left: 1.2rem;
   display: grid;
   gap: 0.35rem;
+}
+
+/*
+ * A game on a wide screen, a tablet or a phone on its side: the board, cards or field on the
+ * left, as large as the screen is high, and whose turn it is, the help and the players beside it.
+ */
+@media (orientation: landscape) and (min-width: 40rem) {
+  #app:has(.in-game) {
+    max-width: 82rem;
+  }
+
+  .screen.in-game:has(> .main > .stage) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 22rem);
+    grid-template-rows: repeat(14, auto) 1fr;
+    column-gap: 1.5rem;
+    align-items: start;
+  }
+
+  .screen.in-game:has(> .main > .stage) {
+    & > *,
+    & > .main > :not(.stage),
+    & > .below > * {
+      grid-column: 2;
+    }
+
+    & > .main,
+    & > .below {
+      display: contents;
+    }
+  }
+
+  .screen.in-game .stage {
+    --fit: min(calc(100dvh - 2.5rem), 40rem);
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: center;
+    min-width: 0;
+  }
+
+  .screen.in-game > .main > .status,
+  .screen.in-game > .main > .hint,
+  .screen.in-game > .main > .hand {
+    text-align: left;
+  }
+
+  .screen.in-game .stage .sea-part {
+    max-width: min(26rem, calc(var(--fit) - 4.5rem));
+  }
+
+  .screen.in-game .stage .sea-part.own {
+    max-width: min(20rem, calc(var(--fit) - 4.5rem));
+  }
+}
+
+/* A tablet held upright: larger boards, leaving room above and below them. */
+@media (orientation: portrait) and (min-width: 40rem) and (min-height: 50rem) {
+  #app:has(.in-game) {
+    max-width: 48rem;
+  }
+
+  .screen.in-game .stage {
+    --fit: min(calc(100dvh - 20rem), 44rem);
+  }
+}
+
+/* In the stage, boards grow to fit it. */
+.stage .board {
+  width: min(100%, var(--fit, 30rem));
+  max-width: none;
+}
+
+.stage .board.muehle,
+.stage .board.kaesekaestchen {
+  width: min(100%, var(--fit, 26rem));
+}
+
+.stage .board.tictactoe {
+  width: min(100%, var(--fit, 22rem), 30rem);
+  max-width: none;
+}
+
+.stage .board.fourinarow {
+  width: min(100%, calc(var(--fit, 30rem) * 7 / 6));
+  max-width: none;
+}
+
+.stage .board.sternhalma {
+  width: min(100%, calc(var(--fit, 28rem) * 0.87));
+  max-width: none;
+}
+
+.stage .board.ludo {
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  width: min(100%, calc(var(--fit, 33rem) - 5rem));
+}
+
+/* Bluetooth: how the phones connect, the host's requests and the tables nearby. */
+.connections {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.connection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  text-align: left;
+}
+
+.connection strong {
+  font-size: 1.1rem;
+}
+
+.requests,
+.hosts {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.request-row {
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.requests .request {
+  font-weight: 600;
+}
+
+.requests .buttons {
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.hosts .host {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+/* The connection at a glance, in the table's top line: a small graph of the ping, and its value. */
+button.net {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+button.net[hidden] {
+  display: none;
+}
+
+canvas.net-graph {
+  display: block;
+  width: 48px;
+  height: 22px;
+}
+
+canvas.net-graph.large {
+  width: 100%;
+  height: 9rem;
+}
+
+.net[data-quality="good"] .net-ping {
+  color: #6be06b;
+}
+
+.net[data-quality="fair"] .net-ping {
+  color: #ffcf3f;
+}
+
+.net[data-quality="poor"] .net-ping {
+  color: #ff5470;
+}
+
+.graph-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* The connection view of @fionapreroll/p2p/debug: every connection's numbers and details. */
+.connection-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.modal .connection-view h3 {
+  margin: 0.3rem 0 0;
+  font-size: 0.95rem;
+}
+
+dl.connection-stats {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 38%) 1fr;
+  gap: 0.15rem 0.7rem;
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+}
+
+dl.connection-stats dt {
+  color: var(--muted);
+}
+
+dl.connection-stats dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+dl.connection-stats dt.name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.modal .connection-transport summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.connection-view .address {
+  font-family: ui-monospace, monospace;
+}
+
+.connection-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* The debug report, to read before it is sent. */
+textarea.report {
+  width: 100%;
+  font-size: 0.7rem;
+  min-height: 14rem;
+}
+
+a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  text-decoration: none;
+}
+
+a.button.primary {
+  color: #0d1b24;
 }

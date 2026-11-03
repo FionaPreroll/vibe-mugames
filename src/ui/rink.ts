@@ -1,19 +1,22 @@
 import {
   clampMallet,
+  type Disc,
   fromRink,
   GOAL_WIDTH,
   GOALS_TO_WIN,
-  glide,
   HALF,
   type HockeyView,
   LENGTH,
   MALLET,
   PUCK,
+  slide,
   toRink,
   WIDTH,
 } from '../core/airhockey'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
+import { arrivalPuck, RinkSmoother } from '../net/smooth'
+import { settings } from '../storage'
 import {
   banner,
   colour,
@@ -29,8 +32,6 @@ import { h } from './dom'
 
 /** How fast keys move a mallet, in rink lengths a second. */
 const KEY_SPEED = 1.6
-/** The longest a phone draws the puck gliding on without word from the host. */
-const MAX_GLIDE = 0.15
 
 type Point = { readonly x: number; readonly y: number }
 
@@ -46,7 +47,7 @@ interface Frame {
  * Seat `seat`'s half alone, its goal at the bottom; `top` puts it against the top edge of the
  * screen, where the other phone's half meets it.
  */
-function halfFrame(seat: number, width: number, height: number, top: boolean): Frame {
+export function halfFrame(seat: number, width: number, height: number, top: boolean): Frame {
   const scale = Math.min(width / WIDTH, height / HALF)
   const left = (width - WIDTH * scale) / 2
   const above = top ? 0 : (height - HALF * scale) / 2
@@ -58,6 +59,22 @@ function halfFrame(seat: number, width: number, height: number, top: boolean): F
     },
     toRink: (point) =>
       toRink(seat, { x: (point.x - left) / scale, y: HALF - (point.y - above) / scale }),
+  }
+}
+
+/** The whole rink as seat `seat` sees it, from their end: their goal at the bottom. */
+export function playerFrame(seat: number, width: number, height: number): Frame {
+  const scale = Math.min(width / WIDTH, height / LENGTH)
+  const left = (width - WIDTH * scale) / 2
+  const top = (height - LENGTH * scale) / 2
+  return {
+    scale,
+    toScreen: (point) => {
+      const own = fromRink(seat, point)
+      return { x: left + own.x * scale, y: top + (LENGTH - own.y) * scale }
+    },
+    toRink: (point) =>
+      toRink(seat, { x: (point.x - left) / scale, y: LENGTH - (point.y - top) / scale }),
   }
 }
 
@@ -84,11 +101,17 @@ function wholeFrame(width: number, height: number): Frame {
 }
 
 /**
- * The air hockey rink. A player at the board of a phone sees only their own half, against the
- * top of the screen, so that two phones laid top edge to top edge make the whole rink; the
- * puck leaves one screen at the top and comes in at the top of the other. Everyone else, and a
- * screen everyone shares, sees the whole rink. A finger on a half moves its mallet there; on
- * one device, keys do too.
+ * The air hockey rink. A player at the board sees the whole rink from their end, their goal at
+ * the bottom; or, as the settings choose, only their own half, against the top of the screen,
+ * so that two phones laid top edge to top edge make the whole rink, and the puck leaves one
+ * screen at the top and comes in at the top of the other. Everyone else, and a screen everyone
+ * shares, sees the whole rink. A finger on a half moves its mallet there; on one device, keys do
+ * too.
+ *
+ * Smoothing, as the settings choose, draws the game by the host's clock as filtered here
+ * (src/net/clock.ts) instead of from when each state arrived: the puck and the other mallet
+ * glide on at an even pace, a correction fades in, and a mallet steered here is drawn moving to
+ * the finger at once, as the host will move it, instead of a round trip later.
  */
 export class RinkView implements LiveView {
   readonly element: HTMLElement
@@ -109,6 +132,10 @@ export class RinkView implements LiveView {
   private readonly held = new Map<number, Set<number>>()
   private frame: Frame | null = null
   private last = 0
+  /** The host's clock, filtered, and what it draws by it, for smoothing (src/net/smooth.ts). */
+  private readonly smoother = new RinkSmoother()
+  /** The mallets steered here, drawn where the host will have them, for smoothing. */
+  private readonly ahead = new Map<number, Disc>()
 
   constructor(
     private readonly viewer: number,
@@ -153,25 +180,42 @@ export class RinkView implements LiveView {
     this.painter.stop()
   }
 
-  /** The seat whose half this view shows alone, or null for the whole rink. */
-  private half(state: TableState): number | null {
+  /** The seat this view is drawn for, from its end, or null for a screen everyone looks at. */
+  private mine(state: TableState): number | null {
     const seat = state.seats.indexOf(this.viewer)
     return seat >= 0 && !this.shared ? seat : null
   }
 
+  /** The seat whose half this view shows alone, or null for the whole rink. */
+  private half(state: TableState): number | null {
+    return settings().hockeyWhole ? null : this.mine(state)
+  }
+
+  /** Whether to draw by the host's filtered clock: on a phone of its own, if chosen. */
+  private smooth(): boolean {
+    return !this.options.local && settings().hockeySmooth
+  }
+
   update(state: TableState): void {
+    const now = performance.now()
     this.state = state
-    this.since = performance.now()
+    this.since = now
     const rink = state.rink
     if (!rink) return
-    // On a phone at the board, the player's half fills the screen while the game is on.
-    const arena = !this.options.local && this.half(state) !== null && state.outcome === null
+    if (this.smooth() && state.round === this.round)
+      this.smoother.observe(rink, now / 1000, state.outcome !== null)
+    // On a phone at the board, the player's rink fills the screen while the game is on.
+    const arena = !this.options.local && this.mine(state) !== null && state.outcome === null
     this.element.classList.toggle('arena', arena)
     this.score.textContent = this.scoreText(state, rink)
+    if (!this.options.local)
+      this.help.textContent = t(settings().hockeyWhole ? 'hockeyHintWhole' : 'hockeyHint')
     if (state.round !== this.round) {
       this.round = state.round
       this.aims.clear()
       this.fingers.clear()
+      this.ahead.clear()
+      this.smoother.reset()
       for (const [seat, id] of state.seats.entries()) {
         const mallet = rink.mallets[seat]
         if (mallet && this.options.steers.includes(id)) this.aims.set(seat, mallet)
@@ -184,7 +228,7 @@ export class RinkView implements LiveView {
 
   /** The goals, the viewer's first, with a word of what to do. */
   private scoreText(state: TableState, rink: HockeyView): string {
-    const mine = this.half(state) ?? 0
+    const mine = this.mine(state) ?? 0
     const other = 1 - mine
     const name = (seat: number) =>
       state.players.find((p) => p.id === state.seats[seat])?.name ?? '?'
@@ -213,7 +257,7 @@ export class RinkView implements LiveView {
     const frame = this.frame
     if (!state || !frame) return
     const point = frame.toRink(pointOn(this.canvas, event))
-    const seat = this.half(state) ?? (point.y < HALF ? 0 : 1)
+    const seat = this.mine(state) ?? (point.y < HALF ? 0 : 1)
     if (!this.aims.has(seat)) return
     this.fingers.set(event.pointerId, seat)
     this.canvas.setPointerCapture?.(event.pointerId)
@@ -233,7 +277,7 @@ export class RinkView implements LiveView {
   private readonly key = (event: KeyboardEvent) => {
     if (typing(event)) return
     const state = this.state
-    const own = state && !this.options.local ? this.half(state) : null
+    const own = state && !this.options.local ? this.mine(state) : null
     const pressed = keyDirection(event.code, this.options.local ? null : own)
     if (!pressed || !this.aims.has(pressed.seat)) return
     event.preventDefault()
@@ -268,10 +312,13 @@ export class RinkView implements LiveView {
     const rink = state?.rink
     if (!state || !rink) return
     const half = this.half(state)
+    const mine = this.mine(state)
     const frame =
-      half === null
-        ? wholeFrame(width, height)
-        : halfFrame(half, width, height, this.element.classList.contains('arena'))
+      half !== null
+        ? halfFrame(half, width, height, this.element.classList.contains('arena'))
+        : mine !== null
+          ? playerFrame(mine, width, height)
+          : wholeFrame(width, height)
     this.frame = frame
     this.steer(seconds)
     const k = frame.scale
@@ -325,8 +372,9 @@ export class RinkView implements LiveView {
       context.restore()
     }
 
+    const smooth = this.smooth() && this.smoother.clock.started()
     for (const [seat, mallet] of rink.mallets.entries()) {
-      const at = frame.toScreen(mallet)
+      const at = frame.toScreen(smooth ? this.mallet(seat, mallet, now / 1000, seconds) : mallet)
       context.save()
       context.fillStyle = colour(seat)
       context.shadowColor = 'rgb(0 0 0 / 0.5)'
@@ -340,10 +388,10 @@ export class RinkView implements LiveView {
       context.arc(at.x, at.y, MALLET * k * 0.45, 0, 2 * Math.PI)
       context.fill()
     }
-    const moving = rink.pause === 0 && state.outcome === null
-    const glided = moving
-      ? glide(rink.puck, Math.min(MAX_GLIDE, (now - this.since) / 1000))
-      : rink.puck
+    const over = state.outcome !== null
+    const glided =
+      (smooth ? this.smoother.puck(now / 1000, seconds) : null) ??
+      arrivalPuck(rink, over, (now - this.since) / 1000)
     const puck = frame.toScreen(glided)
     context.fillStyle = '#f1ece2'
     context.beginPath()
@@ -361,6 +409,20 @@ export class RinkView implements LiveView {
     } else if (rink.pause > 0) {
       banner(context, String(Math.ceil(rink.pause)), centre.x, centre.y, k * 0.35)
     }
+  }
+
+  /**
+   * Where to draw a seat's mallet, smoothed: one steered here moves to its finger at once, as the
+   * host will move it; the other glides on from the host's word, its corrections faded in.
+   */
+  private mallet(seat: number, mallet: Disc, local: number, seconds: number): Disc {
+    const aim = this.aims.get(seat)
+    if (aim) {
+      const next = slide(seat, this.ahead.get(seat) ?? mallet, aim, seconds)
+      this.ahead.set(seat, next)
+      return next
+    }
+    return this.smoother.mallet(seat, local, seconds) ?? mallet
   }
 
   /** The keys of each seat steered here, for one device. */

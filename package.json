@@ -24,13 +24,16 @@
     "test:e2e:coverage": "COVERAGE=1 pnpm test:e2e",
     "check": "pnpm typecheck && pnpm lint && pnpm test",
     "android:sync": "pnpm build && cap sync android",
-    "icons": "node tools/icons.ts"
+    "icons": "node tools/icons.ts",
+    "bench:smoothing": "UPDATE_BENCHMARK=1 vitest run tools/smoothing.test.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
-    "@fionapreroll/p2p": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.5.0/fionapreroll-p2p-0.5.0.tgz"
+    "@fionapreroll/app-updates": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/app-updates-v0.1.0/fionapreroll-app-updates-0.1.0.tgz",
+    "@fionapreroll/p2p": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz",
+    "@fionapreroll/p2p-nearby": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.3.0/fionapreroll-p2p-nearby-0.3.0.tgz"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",

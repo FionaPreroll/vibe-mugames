@@ -53,6 +53,11 @@ export interface HockeyState {
   readonly pause: number
   /** The seat that scored last, while the puck waits after the goal; else null. */
   readonly scored: number | null
+  /**
+   * Seconds of play since the game began, by the host's ticks: the time of this state, so that
+   * phones can tell how long ago the host made it, whenever it arrives (see src/net/clock.ts).
+   */
+  readonly clock: number
 }
 
 export type HockeyView = HockeyState
@@ -72,6 +77,7 @@ export function start(): HockeyState {
     goals: [0, 0],
     pause: COUNTDOWN,
     scored: null,
+    clock: 0,
   }
 }
 
@@ -112,29 +118,39 @@ export function advance(
   if (outcome(state) !== null) return state
   let next = state
   // A long pause, such as a page in the background, does not run the game on for minutes.
-  let left = Math.min(Math.max(0, seconds), 2)
+  const run = Math.min(Math.max(0, seconds), 2)
+  let left = run
   while (left > 1e-9) {
     const dt = Math.min(SUBSTEP, left)
     next = substep(next, targets, dt)
     left -= dt
     if (outcome(next) !== null) break
   }
-  return next
+  return { ...next, clock: state.clock + run - Math.max(0, left) }
+}
+
+/**
+ * A mallet `dt` seconds on, sliding at most `MALLET_SPEED` towards `aim` (a point on the rink),
+ * within its seat's half: as the host moves it, and as a phone may draw its own mallet before
+ * the host's word comes back.
+ */
+export function slide(seat: number, mallet: Disc, aim: { x: number; y: number }, dt: number): Disc {
+  const goal = clampMallet(seat, aim)
+  const dx = goal.x - mallet.x
+  const dy = goal.y - mallet.y
+  const distance = Math.hypot(dx, dy)
+  const reach = MALLET_SPEED * dt
+  const share = distance > reach ? reach / distance : 1
+  const x = mallet.x + dx * share
+  const y = mallet.y + dy * share
+  return dt > 0 ? { x, y, vx: (x - mallet.x) / dt, vy: (y - mallet.y) / dt } : mallet
 }
 
 function substep(state: HockeyState, targets: readonly (Target | null)[], dt: number): HockeyState {
   const mallets = state.mallets.map((mallet, seat) => {
     const target = targets[seat]
     const aim = target && isTarget(target.x, target.y) ? toRink(seat, target) : mallet
-    const goal = clampMallet(seat, aim)
-    const dx = goal.x - mallet.x
-    const dy = goal.y - mallet.y
-    const distance = Math.hypot(dx, dy)
-    const reach = MALLET_SPEED * dt
-    const share = distance > reach ? reach / distance : 1
-    const x = mallet.x + dx * share
-    const y = mallet.y + dy * share
-    return { x, y, vx: (x - mallet.x) / dt, vy: (y - mallet.y) / dt }
+    return slide(seat, mallet, aim, dt)
   }) as unknown as [Disc, Disc]
 
   if (state.pause > 0) {
@@ -165,6 +181,7 @@ function substep(state: HockeyState, targets: readonly (Target | null)[], dt: nu
       goals,
       pause: AFTER_GOAL,
       scored: scorer,
+      clock: state.clock,
     }
   }
   return { ...state, puck, mallets }
@@ -240,6 +257,7 @@ export function view(state: HockeyState): HockeyView {
     goals: state.goals,
     pause: Math.round(state.pause * 10) / 10,
     scored: state.scored,
+    clock: Math.round(state.clock * 1000) / 1000,
   }
 }
 

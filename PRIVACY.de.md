@@ -19,7 +19,7 @@ Die Spielekiste speichert im Speicher deines Browsers oder im eigenen Speicher d
 - die Kamera, mit der du zuletzt gescannt hast, mit Zoom und Helligkeit;
 - ein zufälliges Token, an dem dich ein Gastgeber wiedererkennt, wenn du dich wieder an seinen Tisch setzt.
 
-Ein Tisch, seine Spiele und Punkte stehen nur im Arbeitsspeicher und sind weg, wenn du die Spielekiste schließt. In der App bleibt ein heruntergeladenes Update im Speicher der App, bis es installiert oder durch ein neueres ersetzt ist.
+Ein Tisch, seine Spiele und Punkte stehen nur im Arbeitsspeicher und sind weg, wenn du die Spielekiste schließt. Ebenso, für den Fehlerbericht, ein Protokoll dessen, was die Spielekiste seit ihrem Start getan hat, ohne Namen, Codes oder Adressen, und wie gut die Verbindungen am letzten Tisch mithielten. In der App bleibt ein heruntergeladenes Update im Speicher der App, bis es installiert oder durch ein neueres ersetzt ist.
 
 Nichts davon verlässt dein Gerät von selbst. Wenn du die App deinstallierst, ist es gelöscht, ebenso, wenn du den Speicher der App in Androids Einstellungen oder die Daten der Website in deinem Browser löschst.
 
@@ -27,14 +27,18 @@ Nichts davon verlässt dein Gerät von selbst. Wenn du die App deinstallierst, i
 
 Du spielst mit Handys, die du selbst koppelst, und sie tauschen Daten direkt aus, ohne Server dazwischen:
 
-- **Beim Koppeln** tragen die Codes auf den Bildschirmen, was die Handys zum Verbinden brauchen: ihre Adressen im lokalen Netz und Schlüssel für die verschlüsselte Verbindung. Nur Handys, die einen Code scannen oder als Text bekommen, können ihn nutzen. Ein Code, den du kopierst, geht dorthin, wo du ihn einfügst.
+- **Beim Koppeln per QR-Code** tragen die Codes auf den Bildschirmen, was die Handys zum Verbinden brauchen: ihre Adressen im lokalen Netz und Schlüssel für die verschlüsselte Verbindung. Nur Handys, die einen Code scannen oder als Text bekommen, können ihn nutzen. Ein Code, den du kopierst, geht dorthin, wo du ihn einfügst.
+- **Beim Koppeln per Bluetooth,** in der App, sehen Handys in der Nähe, die in der Spielekiste Tische suchen oder eröffnen, deinen Namen, solange der Tisch des Gastgebers sichtbar ist oder du einen suchst, und beide Handys zeigen einen vierstelligen Code zum Vergleichen.
 - **Am Tisch** sieht jedes Handy die Namen aller Spieler, die Züge, die gespielten Spiele und die Punkte. Das Handy des Gastgebers bekommt deinen Namen, deine Züge und dein Token; das Token geht nie an andere Spieler. In Spielen mit Verdecktem, etwa Karten, Flotten, Würfeln oder Rollen, behält das Handy des Gastgebers es und schickt jedem Handy nur, was sein Spieler sehen darf.
+- **Wie die Verbindung läuft:** Dein Handy und das des Gastgebers messen den Ping und die Daten zwischen ihnen, und das Handy des Gastgebers erfährt deinen Ping. Der Gastgeber kann die Verbindungen testen: Fünf Sekunden lang schicken sich die Handys Fülldaten, und das Handy des Gastgebers sagt jedem Spieler, wie seine Verbindung abschnitt. Unter _Verbindungsdetails_ sind die Adressen einer Verbindung verborgen, bis du auf _Adressen zeigen_ tippst, denn was auf einem Bildschirm steht, kann in einem Screenshot landen.
 
 Die Verbindung ist verschlüsselt. Wer geht, behält nichts als das, was auf dem eigenen Bildschirm zu sehen war.
 
 ## Berechtigungen der App
 
 - **Kamera:** um den QR-Code des anderen Handys zu scannen. Bilder werden auf dem Gerät gelesen und weder gespeichert noch verschickt. Ein Foto, das du stattdessen mit der Kamera-App des Handys machst, wird genauso gelesen.
+- **Geräte in der Nähe, Bluetooth und WLAN:** um über Bluetooth zu spielen, mit Googles Nearby Connections.
+- **Standort:** Android verlangt ihn, um Handys in der Nähe über Bluetooth zu finden. Die Spielekiste liest nie, wo du bist.
 - **Internet:** um Handys über das lokale WLAN oder den Hotspot zu verbinden, und für Updates.
 - **Netzwerkstatus:** um zu warnen, bevor ein Update über mobile Daten geladen würde.
 - **Apps installieren:** um Updates zu installieren, denen du zugestimmt hast. Android fragt dich vor jeder Installation.
@@ -42,8 +46,10 @@ Die Verbindung ist verschlüsselt. Wer geht, behält nichts als das, was auf dem
 ## Dienste anderer
 
 - **GitHub** stellt die Website und die Releases der App bereit. Wenn du die Website öffnest, wenn sie nach einer neueren Version von sich sucht und wenn die App nach einem Update sucht oder es lädt, bekommt GitHub deine IP-Adresse und die üblichen Angaben einer Web-Anfrage. Beide suchen nur nach Updates, wenn du das in den Einstellungen eingeschaltet hast oder auf _Jetzt nach einer neuen Version suchen_ tippst. Siehe die [Datenschutzerklärung von GitHub](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+- **Google Play-Dienste** stellen in der App Nearby Connections bereit, um über Bluetooth zu spielen. Google kann dafür Daten nach der [Datenschutzerklärung von Google](https://policies.google.com/privacy) verarbeiten.
 - **Google Play** übernimmt, wenn du die App von dort installierst, den Download und ihre Updates, unter der [Datenschutzerklärung von Google](https://policies.google.com/privacy).
 - **Links** in der Spielekiste, etwa zu GitHub, öffnen sich in deinem Browser, unter der Erklärung der Seite, die du öffnest.
+- **Ein Fehlerbericht** entsteht nur, wenn du in den Einstellungen auf _Fehlerbericht erstellen_ tippst oder unter _Verbindungsdetails_ auf _Fehlerbericht_, und wird dir zuerst zum Lesen gezeigt. Er sagt, welches Gerät, welcher Browser und welche Versionen das sind, die Einstellungen außer deinem Namen, wie gut die Verbindungen am letzten Tisch mithielten, welche Art Adresse jede nutzte, aber nicht die Adresse, und das Protokoll; keinen Namen, kein Token und keinen Code. Er verlässt dein Gerät nur, wenn du ihn kopierst, herunterlädst oder auf _Auf GitHub melden_ tippst, was damit ein neues Issue auf GitHub öffnet: Issues sind dort öffentlich, unter der Datenschutzerklärung von GitHub.
 
 ## Sicherheit
 

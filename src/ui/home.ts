@@ -5,8 +5,10 @@ import { GuestSeat, HostSeat } from '../net/session'
 import { playerToken, settings, updateSettings } from '../storage'
 import { appBuild } from '../updates'
 import { aboutScreen } from './about'
+import { bluetoothJoinScreen, chooseConnection } from './bluetooth'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
+import { hero } from './hero'
 import { localSetup } from './local'
 import { appLink, settingsScreen } from './settings'
 import { tableScreen } from './table'
@@ -19,6 +21,8 @@ export function homeScreen(): void {
     maxLength: 16,
     value: settings().name,
   })
+  // Kept as it is typed, so that it stays through a visit to the settings or another language.
+  name.addEventListener('input', () => updateSettings({ name: name.value }))
   const playerName = () => {
     const chosen = name.value.trim() || (currentLanguage() === 'de' ? 'Spieler' : 'Player')
     updateSettings({ name: chosen })
@@ -71,48 +75,70 @@ export function homeScreen(): void {
         }),
       ),
       webUpdateBanner(),
-      h('h1', {}, t('title')),
-      h('p', { class: 'tagline' }, t('tagline')),
-      h('label', {}, t('yourName'), name),
       h(
         'div',
-        { class: 'buttons column' },
-        h('button', {
-          type: 'button',
-          class: 'primary big',
-          textContent: t('host'),
-          onclick: () => tableScreen(new HostSeat(playerName()), homeScreen),
-        }),
-        h('button', {
-          type: 'button',
-          class: 'big',
-          textContent: t('join'),
-          onclick: () => joinScreen(playerName()),
-        }),
-        h('button', {
-          type: 'button',
-          class: 'big',
-          textContent: t('local'),
-          onclick: () => {
-            // The name typed here is the first player's; none typed, none made up.
-            const typed = name.value.trim()
-            if (typed) updateSettings({ name: typed })
-            localSetup(homeScreen)
-          },
-        }),
+        { class: 'intro' },
+        hero(),
+        h('h1', {}, t('title')),
+        h('p', { class: 'tagline' }, t('tagline')),
       ),
-      !isApp() && appLink(),
-      h('label', { class: 'language' }, t('language'), language),
-      h('button', {
-        type: 'button',
-        class: 'link about-link',
-        textContent: t('about'),
-        onclick: () => aboutScreen(homeScreen),
-      }),
-      build,
+      h(
+        'div',
+        { class: 'start' },
+        h('label', {}, t('yourName'), name),
+        h(
+          'div',
+          { class: 'buttons column' },
+          h('button', {
+            type: 'button',
+            class: 'primary big',
+            textContent: t('host'),
+            onclick: () => tableScreen(new HostSeat(playerName()), homeScreen),
+          }),
+          h('button', {
+            type: 'button',
+            class: 'big',
+            textContent: t('join'),
+            onclick: () => void startJoin(playerName()),
+          }),
+          h('button', {
+            type: 'button',
+            class: 'big',
+            textContent: t('local'),
+            onclick: () => {
+              // The name typed here is the first player's; none typed, none made up.
+              const typed = name.value.trim()
+              if (typed) updateSettings({ name: typed })
+              localSetup(homeScreen)
+            },
+          }),
+        ),
+        !isApp() && appLink(),
+        h('label', { class: 'language' }, t('language'), language),
+        h('button', {
+          type: 'button',
+          class: 'link about-link',
+          textContent: t('about'),
+          onclick: () => aboutScreen(homeScreen),
+        }),
+        build,
+      ),
     ),
     null,
   )
+}
+
+/** A player joins a table the way they choose: by QR code, or by Bluetooth in the app. */
+async function startJoin(name: string): Promise<void> {
+  const choice = await chooseConnection()
+  if (choice === 'bluetooth')
+    bluetoothJoinScreen(
+      name,
+      (seat) => tableScreen(seat, homeScreen),
+      homeScreen,
+      () => joinScreen(name),
+    )
+  else if (choice === 'qr') joinScreen(name)
 }
 
 /** A player scans the host's code, shows their own back, and sits down once let in. */

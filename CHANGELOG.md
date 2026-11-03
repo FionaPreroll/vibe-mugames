@@ -42,14 +42,28 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - The game chooser shows a small picture of each game's board.
 - **About the Spielekiste,** at the bottom of the start screen: the version and build with its date, the contact address, the source code, what changed from version to version, and the open-source libraries inside with their licenses.
 - A privacy policy, in English and German, under _About the Spielekiste_ and on the website at [fionapreroll.github.io/vibe-mugames/privacy.html](https://fionapreroll.github.io/vibe-mugames/privacy.html): no accounts, no server, no advertising and no tracking, and what stays on your device and what other phones see.
+- Bluetooth in the Android app: when joining a table or adding a player, choose QR code or Bluetooth. Over Bluetooth, no Wi-Fi is needed: the host's table is visible to phones nearby, the player taps it, and the host lets them in after comparing the code both phones show. One table can mix both.
+- _Smooth out the network_ in the settings, for Air Hockey: the puck and the other mallet glide on at an even pace, however unevenly the host's word arrives, and your own mallet moves where your finger is, at once. Off at first: try it when the puck stutters.
+- The connection at a glance: at a table with other phones, the top line shows a small graph of the last half minute's ping and its newest value, green, yellow or red; on the host's phone, the worst of the players'. Tapping it opens _Connection details_: a graph of the last minute, and for each connection its ping, the pings lost, stalls, messages and data each way, and how it is carried: Wi-Fi or Bluetooth, the addresses and protocols on both ends, the round trip, packets, bytes, encryption and channels. Addresses stay hidden until you tap _Show addresses_.
+- A connection test for the host: _Test connections_ under _Connection details_ sends as much as the connections take for five seconds, beside the game, and shows for every player the ping under load and the kilobytes a second each way, with what was lost. Players see that a test runs, and their own result.
+- A debug report, to send when something does not work: _Create debug report_ in the settings, or _Debug report_ under _Connection details_. It says what device, browser and versions this is, the settings, how well the connections of the last table kept up second by second, the last connection test, and what happened recently, but no names, codes or addresses. Read it, then copy it, download it, or open an issue on GitHub with it. The privacy policy says what it holds.
 
 ### Changed
 
+- Air Hockey shows each player the whole rink from their end, with their goal at the bottom. Their own half alone, for two phones laid top edge to top edge, is a setting now: _Show the whole rink_.
+- Phones with this version and the version before cannot play together: update both.
 - The Android app has an icon of its own instead of Capacitor's: an open games box with a card, a draughts piece and a pawn, on a dark blue board. Android 13 and newer can tint it to the wallpaper's colours, and the app starts on the same box and blue. The website's tab shows the same box.
 - Every build of the Android app is now signed with the same key, so a new one installs over the one before and keeps the app's settings. An app installed before this change has to be uninstalled once.
+- A new start screen: a large picture of the Spielekiste, an open box with boards, cards, dice and pieces, and a line that says it is for everyone at one table, on phones side by side or around one tablet or laptop. On a wide screen, the picture stands beside the buttons.
+- The game chooser sorts the games into _Tactics_, _Luck and bluff_ and _Skill_ (the games in real time), and each game says how many play it. On a laptop or tablet, the chooser uses the whole width.
+- On a laptop, a tablet on its side or a phone on its side, a game shows its board beside whose turn it is and the players, as large as the screen is high, so nothing needs scrolling. A tablet held upright shows larger boards too.
+- When a game starts, the screen begins at its top, also when the chooser was scrolled down.
 
 ### Fixed
 
+- A name typed on the start screen stays when you visit the settings or change the language, instead of being forgotten.
+- A Bluetooth player the host let in whose phone never connects no longer stays on _Connecting…_ in the host's list: after 30 seconds, the list says the other phone did not answer in time.
+- Over a weak Wi-Fi, a player's phone no longer goes back to an older table for a moment when the host's messages arrive out of order.
 - Pairing by copied text codes works even when sending a code over takes minutes: the joining phone now waits up to 10 minutes for the host, instead of giving up after 30 seconds.
 - Pairing says what is going on at every step: that a code was read, that the joining phone waits for the host, and why a connection failed, with **Try again** on both phones. **Copy** always says whether it worked, and a wrong code pasted earlier no longer leaves its message behind.
 

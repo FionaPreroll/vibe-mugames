@@ -1,5 +1,6 @@
 import './style.css'
 import { setLanguage } from './i18n'
+import { captureErrors, log } from './log'
 import { onBackButton } from './native'
 import { settings } from './storage'
 import { handleBack } from './ui/dom'
@@ -7,6 +8,8 @@ import { homeScreen } from './ui/home'
 import { offerUpdates } from './ui/updates'
 import { watchForWebUpdates } from './ui/webUpdates'
 
+captureErrors()
+log('app', `started ${__BUILD__.version} (${__BUILD__.commit})`)
 setLanguage(settings().language)
 onBackButton(handleBack)
 homeScreen()

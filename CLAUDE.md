@@ -25,7 +25,7 @@ The README describes the Spielekiste, its layout and its conventions. These rule
 
 ## The library
 
-- `@fionapreroll/p2p` and `@fionapreroll/app-updates` (the app's updates) come from the files on their releases in `FionaPreroll/vibe-p2pgame` (see the README). They are developed there, not here: what a game needs from them goes into that repository, with a new version.
+- `@fionapreroll/p2p`, `@fionapreroll/p2p-nearby` (Bluetooth) and `@fionapreroll/app-updates` (the app's updates) come from the files on their releases in `FionaPreroll/vibe-p2pgame` (see the README). `src/ui/bluetooth.ts` only draws `p2p-nearby`'s flow (`NearbyHosting`, `NearbySearch`): what any game would do over Bluetooth belongs in the library. They are developed there, not here: what a game needs from them goes into that repository, with a new version.
 - Use the newest version of the library: when it gets a new one, move `package.json` to it in a branch of its own.
 
 ## Code
