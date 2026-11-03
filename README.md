@@ -154,7 +154,7 @@ pnpm dev
 pnpm check
 ```
 
-`pnpm check` runs the type check, Biome and the unit tests: the rules, the table, and whole games between a host and players over the library's connections in memory (`src/net/session.test.ts`). `pnpm test:e2e` builds the app and plays in Chromium over real WebRTC. On phones, `pnpm dev:phone` serves over HTTPS with a self-signed certificate, as phones open the camera only on HTTPS pages.
+`pnpm check` runs the type check, Biome and the unit tests: the rules, the table, and whole games between a host and players over the library's connections in memory (`src/net/session.test.ts`), and a hostile phone at the table (`src/net/table.fuzz.test.ts`, with [fast-check](https://fast-check.dev/)): watching or holding a seat, it sends moves for any game and number, out of turn and against the rules, aimed from the table as it is, and anything else, while honest players play; the host takes only legal moves from the player whose turn it is, and every phone keeps a table it can read. Attacks on the connection itself, over Wi-Fi and Bluetooth, are fuzzed in the library. `pnpm test:e2e` builds the app and plays in Chromium over real WebRTC. On phones, `pnpm dev:phone` serves over HTTPS with a self-signed certificate, as phones open the camera only on HTTPS pages.
 
 **Coverage** comes from two kinds of tests, which CI uploads to [Codecov](https://codecov.io/gh/FionaPreroll/vibe-mugames) separately, each with its flag, and Codecov puts together:
 
