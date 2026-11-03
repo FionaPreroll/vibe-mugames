@@ -285,3 +285,37 @@ test('two phones play Sea Battle to the end, each seeing only its own fleet', as
   await expect(bo.locator('.sea.target .ship')).toHaveCount(17)
   expect(await ships(bo, 'target')).toEqual(adaFleet)
 })
+
+test('two phones play Ludo: the host rolls for each, and both see the die and the pieces', async ({
+  browser,
+}) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await ada.getByRole('button', { name: 'Ludo' }).click()
+  await expect(ada.locator('.status.turn')).toHaveText('Your turn')
+  await expect(bo.locator('.status.turn')).toHaveText('Ada’s turn')
+  await expect(ada.locator('.hint')).toHaveText(
+    'Roll a six to bring a piece out: you have three tries.',
+  )
+  // Each phone has its own corner at the bottom left, and only Ada may roll.
+  await expect(bo.locator('.die')).toBeDisabled()
+  await ada.getByRole('button', { name: 'Roll the die' }).click()
+  await expect(bo.locator('.hint').first()).toContainText('Ada rolled a')
+
+  // Roll and move, on whichever phone may, until a piece is out on the track of both.
+  const onTrack = (page: Page) => page.locator('.board .cell.track .token')
+  for (let i = 0; i < 300 && (await onTrack(bo).count()) === 0; i++) {
+    for (const page of [ada, bo]) {
+      if (await page.locator('.die.can').count()) await page.locator('.die.can').click()
+      else if (await page.locator('.cell.can').count()) {
+        await page.locator('.cell.can').first().click()
+        await page.locator('.cell.target').click()
+      }
+    }
+    await ada.waitForTimeout(150)
+  }
+  await expect(onTrack(bo)).toHaveCount(await onTrack(ada).count())
+  await expect(onTrack(bo).first()).toBeVisible()
+})

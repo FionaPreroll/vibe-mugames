@@ -242,3 +242,26 @@ test('two take turns at Sea Battle, handing the device over between them', async
   await expect(status).toHaveText('Bo, your turn')
   await expect(page.locator('.hint').first()).toHaveText('Ada hit water.')
 })
+
+test('two take turns at Ludo on one screen, rolling until a piece comes out', async ({
+  browser,
+}) => {
+  const page = await phone(browser, 'Ada')
+  await startLocal(page, ['Ada', 'Bo'], false)
+  await page.getByRole('button', { name: 'Ludo' }).click()
+  const status = page.locator('.status.turn')
+  await expect(status).toHaveText('Ada, your turn')
+  await expect(page.locator('.notice')).toHaveCount(0)
+  const track = page.locator('.board .cell.track .token')
+  for (let i = 0; i < 300 && (await track.count()) === 0; i++) {
+    if (await page.locator('.die.can').count()) await page.locator('.die.can').click()
+    else {
+      await page.locator('.cell.can').first().click()
+      await expect(page.locator('.cell.target')).toHaveCount(1)
+      await page.locator('.cell.target').click()
+    }
+  }
+  await expect(track).toHaveCount(1)
+  // Only a six brings a piece out, and a six rolls again.
+  await expect(page.locator('.hint')).toContainText(['A six: roll again.'])
+})
