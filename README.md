@@ -6,6 +6,73 @@
 
 Games for everyone at one table: board games, card and dice games, party games and games of skill, on phones side by side, in the browser and as an Android app, or together around one laptop or tablet. The phones connect directly to each other by QR code, over Wi-Fi or a hotspot one of them opens: no internet, no server, no accounts. The connection comes from [`@fionapreroll/p2p`](https://github.com/FionaPreroll/vibe-p2pgame/tree/main/packages/p2p), the library behind [Spark Hunt](https://github.com/FionaPreroll/vibe-p2pgame).
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="25%"><img src="docs/screenshots/home.png" alt="The start screen: a box of games, your name, Open a table, Join a table and Play on this device"></td>
+    <td width="25%"><img src="docs/screenshots/muehle.png" alt="Nine Men's Morris on a phone, with pieces being placed"></td>
+    <td width="25%"><img src="docs/screenshots/ludo.png" alt="Ludo for four on a phone, with the die"></td>
+    <td width="25%"><img src="docs/screenshots/maexchen.png" alt="Mäxchen: the dice under the cup, and what to say"></td>
+  </tr>
+  <tr>
+    <td>The start screen</td>
+    <td>Nine Men's Morris</td>
+    <td>Ludo, for up to four</td>
+    <td>Mäxchen: only the roller sees the dice</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/dame.png" alt="Draughts on a phone: a piece must take"></td>
+    <td><img src="docs/screenshots/reversi.png" alt="Reversi, with the squares where a piece may go marked"></td>
+    <td><img src="docs/screenshots/seeschlacht.png" alt="Sea Battle: the other player's sea, and your own fleet below"></td>
+    <td><img src="docs/screenshots/werwolf.png" alt="Werewolf: your own role, and whom to choose tonight"></td>
+  </tr>
+  <tr>
+    <td>Draughts</td>
+    <td>Reversi</td>
+    <td>Sea Battle, handed over between players</td>
+    <td>Werewolf, handed round one device</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/pairing.png" alt="Add player: the QR code the new player scans"></td>
+    <td><img src="docs/screenshots/connection.png" alt="Connection details: the ping of the last minute, and the connection's numbers"></td>
+    <td><img src="docs/screenshots/rules.png" alt="The rules of Nine Men's Morris, a step at a time with drawings"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Pairing by QR code</td>
+    <td>Connection details</td>
+    <td>The rules, with drawings</td>
+    <td></td>
+  </tr>
+</table>
+
+On a laptop or a tablet, the game chooser, and games on one device, taking turns or on a split screen:
+
+<table>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/chooser.png" alt="The game chooser: Tactics, Luck and bluff, and Skill, each game with its picture and number of players"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/miaumiau-split.png" alt="Miau-Miau for four on a split screen, each part with its own hand"></td>
+    <td width="50%"><img src="docs/screenshots/sternhalma.png" alt="Chinese Checkers for six, the board on the left and the players on the right"></td>
+  </tr>
+  <tr>
+    <td>Miau-Miau for four on a split screen</td>
+    <td>Chinese Checkers for six</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/lichtrenner.png" alt="Light Racers for four on a split screen, each rider leaving a wall of light"></td>
+    <td><img src="docs/screenshots/airhockey.png" alt="Air Hockey for two on a split screen, each player's goal at the bottom of their part"></td>
+  </tr>
+  <tr>
+    <td>Light Racers, in real time</td>
+    <td>Air Hockey, in real time</td>
+  </tr>
+</table>
+
+The pictures are taken by `pnpm screenshots` and the _Screenshots_ workflow (see [Development](#development)).
+
 ## Playing
 
 Play in the browser at **[fionapreroll.github.io/vibe-mugames](https://fionapreroll.github.io/vibe-mugames/)**, or in the Android app (below). One phone opens a table; everyone else sits down at it:
@@ -152,6 +219,7 @@ tests/e2e/    Playwright: phones in separate browser profiles pair through the t
 3. If it needs more than a board of cells, such as dice or hidden cards, extend the table and the protocol, and raise `PROTOCOL` in `src/net/protocol.ts`. Miau-Miau shows how: its own state on the table, a view per player sent through `stateFor`, its seat range in `seatRange` (`src/core/games.ts`), and a parser for its view. A game that hides something from some players also goes into `hasHiddenCards` there, so that on one device it says it is played open, or, like Sea Battle, into `handsOver`, if one device can keep it hidden by being handed over.
 4. Give it a guide in `src/ui/rules/` (`GUIDES` in `index.ts`; the type check fails without one): a thumbnail for the game chooser and its rules, a step at a time, each a text in `src/i18n.ts` (`rules<Game>1`, …) with a drawing made with the helpers in `src/ui/rules/draw.ts`, as small inline SVG.
 5. A game in real time goes into `LIVE_GAME_IDS` (`src/core/board.ts`): its rules run by time and by what each seat wants (`Table.input` and `Table.tick`), and its field is a canvas made by `LiveSlot` (`src/ui/live.ts`), as Lichtrenner and air hockey show.
+6. Give it a screenshot: a test in `tests/screenshots/screenshots.spec.ts`, then `pnpm screenshots`, and the picture in the gallery at the top of this README.
 
 ## Development
 
@@ -182,17 +250,20 @@ Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of
 
 **The libraries** are installed from the files on their releases, [`p2p-v0.6.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.6.0) , [`p2p-nearby-v0.3.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-nearby-v0.3.0) and [`app-updates-v0.1.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/app-updates-v0.1.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
 
+**Screenshots:** the pictures in this README live in `docs/screenshots/`. `tests/screenshots/screenshots.spec.ts` takes them: it plays each game in Chromium, on a phone (412 by 915) or a laptop (1280 by 800), with the luck seeded and the clock fixed, so the same code gives the same pictures. `pnpm screenshots` writes only the pictures that look different from those there (more than 1 % of their pixels), so fonts and antialiasing alone change nothing; `pnpm screenshots --update-snapshots=all` writes them all. The pairing code is a sample, as a real one holds new keys every time, and the connection's numbers are those of the moment. To take them anew on GitHub, run the **Screenshots** workflow by hand (_Actions_ → _Screenshots_ → _Run workflow_): it opens a pull request against `main`, from the branch `feature/update_screenshots`, with the pictures that changed, for review. It runs with Inter as the system font (`tools/screenshots/fonts.conf`), as they were first taken. GitHub runs no other workflows on a pull request a workflow opened, so CI does not check it; it changes nothing but pictures. The repository has to allow it once: _Settings_ → _Actions_ → _General_ → _Workflow permissions_ → _Allow GitHub Actions to create and approve pull requests_.
+
 **The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`. The update plugin's Java and its tests live with the library; here, `src/ui/updates.test.ts` plays the Spielekiste's dialogs in happy-dom against the library's `FakeUpdater`.
 
 **The icon**, an open games box with a card, a draughts piece and a pawn, is drawn in `tools/icons.ts`. `pnpm icons` writes everything made from it: the app's adaptive icon as vector drawables in `android/app/src/main/res/drawable/` (a background of squares, the box, and a one-colour layer for themed icons), its PNGs for Android 7 in `mipmap-*/`, and the website's `public/icon.svg`. The app's start screen shows the same box on the same dark blue.
 
 ### Workflows
 
-| Workflow      | Runs on                            | Does                                                                                                                                 |
-| ------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `ci.yml`      | Pull requests and pushes to `main` | Type check, Biome, unit tests, build, browser tests; coverage of the unit and browser tests to Codecov                               |
-| `deploy.yml`  | Pushes to `main`, by hand          | Publishes the website on GitHub Pages                                                                                                |
-| `android.yml` | Pull requests and pushes to `main` | Builds the APK; from `main`, replaces the APK and its `version.json` in the release _Spielekiste for Android_ (tag `android-latest`) |
+| Workflow          | Runs on                            | Does                                                                                                                                 |
+| ----------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `ci.yml`          | Pull requests and pushes to `main` | Type check, Biome, unit tests, build, browser tests; coverage of the unit and browser tests to Codecov                               |
+| `deploy.yml`      | Pushes to `main`, by hand          | Publishes the website on GitHub Pages                                                                                                |
+| `android.yml`     | Pull requests and pushes to `main` | Builds the APK; from `main`, replaces the APK and its `version.json` in the release _Spielekiste for Android_ (tag `android-latest`) |
+| `screenshots.yml` | By hand                            | Takes the README's screenshots anew and opens a pull request against `main` with those that changed                                  |
 
 ### Branches and pull requests
 

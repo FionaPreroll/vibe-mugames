@@ -1,0 +1,60 @@
+name: Screenshots
+
+# Takes the README's screenshots anew (docs/screenshots, from tests/screenshots) and opens a
+# pull request against main with those that changed, for review. Runs only by hand.
+on:
+  workflow_dispatch:
+    inputs:
+      all:
+        description: Take every screenshot anew, even those that look the same as before
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: screenshots
+  cancel-in-progress: false
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      # The same fonts as where the screenshots were first taken, so text looks the same:
+      # Inter for the system font, and colour emoji.
+      - name: Fonts
+        run: |
+          sudo apt-get install -y --no-install-recommends fonts-inter fonts-noto-color-emoji
+          sudo cp tools/screenshots/fonts.conf /etc/fonts/conf.d/56-prefer-inter.conf
+          fc-cache -f
+      - run: pnpm screenshots ${{ inputs.all && '--update-snapshots=all' || '' }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshots-report
+          path: test-results
+          retention-days: 7
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: feature/update_screenshots
+          base: main
+          add-paths: docs/screenshots
+          commit-message: Take the README's screenshots anew
+          title: Take the README's screenshots anew
+          body: |
+            The screenshots in `docs/screenshots`, taken anew by the **Screenshots** workflow
+            ([run ${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})) from `main`.
+            Only the pictures that changed are in it. Look through them in **Files changed**, then merge, or close it to keep the old ones.
+          delete-branch: true
