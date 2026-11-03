@@ -152,17 +152,7 @@ button {
 }
 
 .screen.home .top-bar {
-  display: flex;
-  justify-content: flex-end;
   margin-bottom: -2.5rem;
-}
-
-.screen.home .app-link {
-  text-align: center;
-}
-
-.screen.home .app-link a {
-  color: var(--accent);
 }
 
 .screen.home .intro {
@@ -261,7 +251,7 @@ button {
   font-size: 1.1rem;
 }
 
-.game-group h3 small {
+.game-group .group-note {
   font-size: 0.85rem;
   font-weight: normal;
 }
@@ -1226,7 +1216,7 @@ button {
 }
 
 /* The start screen's top bar, with the settings at its right. */
-.home .top-bar {
+.screen.home .top-bar {
   display: flex;
   justify-content: flex-end;
 }

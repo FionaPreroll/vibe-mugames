@@ -102,7 +102,7 @@ export function gameChoices(
       return h(
         'section',
         { class: `game-group ${group}`, ariaLabel: t(heading) } as Partial<HTMLElement>,
-        h('h3', {}, t(heading), h('small', { class: 'muted' }, t(note))),
+        h('h3', {}, t(heading), h('small', { class: 'muted group-note' }, t(note))),
         h('div', { class: 'games' }, ...games.map(card)),
       )
     }),
