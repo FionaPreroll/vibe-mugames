@@ -36,6 +36,8 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - Reversi, for two: place a piece so that it encloses a line of the other's pieces, which turn to your colour. A player who cannot move passes; once neither can, more pieces win. The board marks where you can place a piece, and says when a player had to pass.
 - Chinese Checkers (_Sternhalma_), for two to six on a star of 121 holes: bring all ten pieces into the triangle across, by steps and by jumps over any pieces, as many in a row as you like. Pick a piece and tap where it goes, however many jumps away. Each phone turns the star so that its own pieces start at the bottom, and each player's goal is ringed in their colour.
 - Ludo, for two to four players, with four pieces each: roll the die, and move a piece that many squares round the board and into your home squares. A six brings a piece out of your corner and rolls again, landing on another player's piece sends it back to its corner, and with no piece out you get three tries for a six. The first with all four pieces home wins. Tap a piece to see where it goes, then tap there; hints say what was rolled and what to do, and _How Ludo goes_ explains the rules. Each phone shows its own corner at the bottom left; it also plays on one device, taking turns or on a split screen.
+- Rules for every game, with drawings: the **?** on each game in the chooser, or **Rules** beside the game's name while it is played, explains the game a step at a time, in English and German. Players can read them while the host chooses a game.
+- The game chooser shows a small picture of each game's board.
 
 ### Changed
 

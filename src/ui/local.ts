@@ -16,6 +16,7 @@ import {
   takeOverText,
 } from './game'
 import { LiveSlot } from './live'
+import { gameTitle } from './rules'
 
 /**
  * Playing on one device: everyone takes turns on one screen, or the screen is split into a
@@ -241,7 +242,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
       const next = playerToMove(overview)
       if (handsOver(game) && next !== null && next !== holder) {
         main.replaceChildren(
-          ...[h('h2', {}, t(game)), openCardsNotice(game), ...handOver(overview, next)].filter(
+          ...[gameTitle(game), openCardsNotice(game), ...handOver(overview, next)].filter(
             (node): node is HTMLElement => node !== null,
           ),
         )
@@ -251,7 +252,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
       const picker = pickers.get(viewer) ?? new Picker()
       main.replaceChildren(
         ...[
-          h('h2', {}, t(game)),
+          gameTitle(game),
           openCardsNotice(game),
           ...gameView(local.state(viewer), {
             viewer,
@@ -304,7 +305,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
       )
     })
     main.replaceChildren(
-      h('div', { class: 'split-bar' }, h('h2', {}, t(game)), openCardsNotice(game, true), actions),
+      h('div', { class: 'split-bar' }, gameTitle(game), openCardsNotice(game, true), actions),
       h('div', { class: `panes panes-${panes.length}` }, ...panes),
     )
   }

@@ -23,7 +23,7 @@ const FACE_MARKS: readonly TextKey[] = ['jackMark', 'queenMark', 'kingMark', 'ac
 export const suitSymbol = (suit: number): string => SUIT_SYMBOLS[suit] ?? '?'
 
 /** The rank as a card shows it in its corner: 7, 10, or the face's letter. */
-function rankMark(card: Card): string {
+export function rankMark(card: Card): string {
   const rank = rankOf(card)
   return rank < JACK ? String(rank + 2) : t(FACE_MARKS[rank - JACK] as TextKey)
 }
@@ -36,7 +36,7 @@ export function cardName(card: Card): string {
 }
 
 /** The mark a card that does something carries, as the card help explains it; '' for others. */
-function specialMark(rank: number): string {
+export function specialMark(rank: number): string {
   return rank === SEVEN ? '+2' : rank === EIGHT ? '»' : rank === JACK ? '★' : ''
 }
 

@@ -59,6 +59,8 @@ The games:
 
 **Chinese Checkers:** a star of 121 holes, for two to six, each with ten pieces in a triangle of the star, across from another player's or from an empty one. A move is a step to a free neighbouring hole, or jumps, each over one neighbouring piece, anyone's, to the free hole behind it, as many in a row as the player likes; nothing is taken. The first to fill the triangle across with their pieces wins; a piece of another player that never left its own triangle there does not spoil it. A player who cannot move passes, and thirty rounds in which no piece reaches its triangle are a draw. Tap a piece, then where it goes: the board finds the way there. Each phone turns the star so that its own triangle is at the bottom, and rings each player's goal in their colour.
 
+**Rules:** each game in the chooser shows a picture of its board, and its **?** opens its rules, a step at a time with drawings; in a game, **Rules** beside its name does the same. Players can read them while the host chooses.
+
 To make a move of several steps, tap the piece, then where it goes, and every square a jump lands on.
 
 English and German, as the browser's language says, or chosen on the start screen.
@@ -94,7 +96,8 @@ src/
               table shows), boards.ts, ludo.ts (Ludo's board and die), cards.ts, sea.ts (Sea
               Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), live.ts, canvas.ts, race.ts
               and rink.ts (the fields of the games in real time), codes.ts (QR codes and text
-              codes), updates.ts and webUpdates.ts (the update dialogs and notes)
+              codes), rules/ (each game's thumbnail and rules with drawings), updates.ts and
+              webUpdates.ts (the update dialogs and notes)
   i18n.ts     every text players see, in English and German
   local.ts    the table on one device
   storage.ts  name, language, the update switch, the camera last used, who last played on this device
@@ -115,7 +118,8 @@ tests/e2e/    Playwright: phones in separate browser profiles pair through the t
 1. Write its rules as a `BoardGame` in `src/core`, with tests beside them, and add its id to `GAME_IDS` and `GAMES`.
 2. Give it a name in `src/i18n.ts`, in English and German, and a board in `src/ui/boards.ts`. Moves of several cells are picked there one cell at a time from the rules' `moves()`, so a board only needs to draw its cells.
 3. If it needs more than a board of cells, such as dice or hidden cards, extend the table and the protocol, and raise `PROTOCOL` in `src/net/protocol.ts`. Miau-Miau shows how: its own state on the table, a view per player sent through `stateFor`, its seat range in `seatRange` (`src/core/games.ts`), and a parser for its view. A game that hides something from some players also goes into `hasHiddenCards` there, so that on one device it says it is played open, or, like Sea Battle, into `handsOver`, if one device can keep it hidden by being handed over.
-4. A game in real time goes into `LIVE_GAME_IDS` (`src/core/board.ts`): its rules run by time and by what each seat wants (`Table.input` and `Table.tick`), and its field is a canvas made by `LiveSlot` (`src/ui/live.ts`), as Lichtrenner and air hockey show.
+4. Give it a guide in `src/ui/rules/` (`GUIDES` in `index.ts`; the type check fails without one): a thumbnail for the game chooser and its rules, a step at a time, each a text in `src/i18n.ts` (`rules<Game>1`, …) with a drawing made with the helpers in `src/ui/rules/draw.ts`, as small inline SVG.
+5. A game in real time goes into `LIVE_GAME_IDS` (`src/core/board.ts`): its rules run by time and by what each seat wants (`Table.input` and `Table.tick`), and its field is a canvas made by `LiveSlot` (`src/ui/live.ts`), as Lichtrenner and air hockey show.
 
 ## Development
 

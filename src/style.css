@@ -157,10 +157,97 @@ textarea {
   gap: 0.75rem;
 }
 
+/* A game in the chooser: its thumbnail above its name, and a button for its rules in a corner. */
+.game-card {
+  position: relative;
+  display: flex;
+}
+
 .game-choice {
-  padding: 1.5rem 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  padding: 7rem 0.75rem 1rem;
   font-size: 1.1rem;
+  text-align: center;
   background: linear-gradient(160deg, var(--panel), #1a2733);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+}
+
+.game-card .thumbnail {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: calc(100% - 1.5rem);
+  height: 5.5rem;
+  pointer-events: none;
+}
+
+.game-card:has(.game-choice:disabled) .thumbnail {
+  opacity: 0.45;
+}
+
+.game-card .rules-button {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+  border-radius: 50%;
+  background: rgb(29 43 58 / 0.85);
+}
+
+/* A game's name over its table, with the button for its rules beside it. */
+.game-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.game-title h2 {
+  flex: 1;
+}
+
+.game-title .rules-button {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* The rules of a game: each step with its drawing. */
+.rule-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: step;
+}
+
+.rule-steps .rule {
+  counter-increment: step;
+  margin: 0 0 1.25rem;
+}
+
+.rule-steps .figure {
+  display: block;
+  width: 100%;
+  max-width: 18rem;
+  max-height: 12rem;
+  margin: 0 auto 0.5rem;
+}
+
+.rule-steps p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.rule-steps p::before {
+  content: counter(step) ". ";
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .status {

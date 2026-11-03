@@ -11,6 +11,7 @@ import { diceHint, diceStatus, diceView, revealText } from './dice'
 import { h } from './dom'
 import type { LiveSlot } from './live'
 import { ludoHints, ludoView } from './ludo'
+import { rulesButton, thumbnail } from './rules'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
 import { villageStatus, villageToMove, villageView } from './village'
 
@@ -45,29 +46,49 @@ export function seatMark(state: TableState, place: number): HTMLElement {
 }
 
 /**
- * The games to choose from, for whoever keeps the table. `local` marks the games whose cards
- * are open when everyone plays on one device.
+ * The games to choose from, each with a thumbnail of its board and a button for its rules, for
+ * whoever keeps the table; without `host`, the games only show, for players to read the rules
+ * while they wait. `local` marks the games whose cards are open when everyone plays on one
+ * device.
  */
-export function gameChoices(state: TableState, host: TableHost, local: boolean): HTMLElement {
+export function gameChoices(
+  state: TableState,
+  host: TableHost | null,
+  local: boolean,
+): HTMLElement {
   const here = state.players.filter((p) => !p.away).length
   return h(
     'div',
     { class: 'games' },
-    ...GAME_IDS.map((id) =>
-      h(
-        'button',
-        {
-          type: 'button',
-          class: 'game-choice',
-          disabled: here < seatRange(id).min,
-          onclick: () => host.choose(id),
-        },
-        h('span', {}, t(id)),
+    ...GAME_IDS.map((id) => {
+      const content = [
+        h('span', { class: 'game-name' }, t(id)),
         local && hasHiddenCards(id)
           ? h('span', { class: 'open-note muted' }, ` (${t('openCardsShort')})`)
           : null,
-      ),
-    ),
+      ]
+      const choice = host
+        ? h(
+            'button',
+            {
+              type: 'button',
+              class: 'game-choice',
+              disabled: here < seatRange(id).min,
+              onclick: () => host.choose(id),
+            },
+            ...content,
+          )
+        : h('div', { class: 'game-choice' }, ...content)
+      // The thumbnail lies over the choice, and lets taps through to it: the choice's own text is
+      // only the game's name.
+      return h(
+        'div',
+        { class: 'game-card', role: 'group', ariaLabel: t(id) } as Partial<HTMLDivElement>,
+        choice,
+        thumbnail(id),
+        rulesButton(id, true),
+      )
+    }),
   )
 }
 

@@ -224,6 +224,113 @@ const en = {
   takeOverRole: 'I am {name}: show my role',
   lichtrenner: 'Light Racers',
   airhockey: 'Air Hockey',
+  rules: 'Rules',
+  rulesOf: 'Rules of {game}',
+  playersExactly: '{n} players',
+  playersFromTo: '{min} to {max} players',
+  rulesTictactoe1:
+    'Two players take turns putting their mark in a free square: one plays ✕, the other ◯.',
+  rulesTictactoe2: 'Three of your marks in a row, across, down or diagonally, win the game.',
+  rulesTictactoe3:
+    'A full board without three in a row is a draw. The players take turns in starting.',
+  rulesFourinarow1:
+    'Take turns dropping a disc into a column of the upright board: it falls down to the lowest free hole.',
+  rulesFourinarow2:
+    'Four of your discs in a row, across, down or diagonally, win. A full board without four in a row is a draw.',
+  rulesMuehle1:
+    'Each player has nine pieces. First, you take turns placing them, one a turn, on any free point.',
+  rulesMuehle2:
+    'Once all are placed, a turn moves one of your pieces along a line to the free point next to it.',
+  rulesMuehle3:
+    'Three of your pieces in a row on one line make a mill. Then take one of the other player’s pieces off the board: one that is not in a mill, if there is any.',
+  rulesMuehle4: 'With only three pieces left, your pieces may jump to any free point.',
+  rulesMuehle5:
+    'A player with fewer than three pieces, or none that can move, loses. Fifty moves without a mill are a draw.',
+  rulesDame1:
+    'Each player starts with twelve pieces on the dark squares. A piece steps diagonally forward to a free dark square.',
+  rulesDame2:
+    'Take a piece of the other player by jumping over it to the free square behind it, forward or backward. If you can jump again from there, jump on: every piece jumped over leaves the board.',
+  rulesDame3: 'Taking is a must: if you can take a piece, you have to, but you choose which way.',
+  rulesDame4:
+    'A piece that ends its move on the far row is crowned ♛. A crowned piece moves and takes along a diagonal as far as it likes, forward and backward.',
+  rulesDame5:
+    'A player who cannot move loses. Fifty moves of crowned pieces without taking are a draw.',
+  rulesMiaumiau1:
+    'Everyone gets five cards. On your turn, play a card of the same suit or the same rank as the top card of the pile.',
+  rulesMiaumiau2:
+    'If you cannot or do not want to play, draw a card from the stock. If it fits, you may play it at once; otherwise the turn moves on.',
+  rulesMiaumiau3:
+    'A seven makes the next player draw two cards, unless they answer with a seven: then the player after them draws four, and so on.',
+  rulesMiaumiau4:
+    'An eight makes the next player miss their turn. With two players, you play again.',
+  rulesMiaumiau5:
+    'A jack goes on any card, and you wish for a suit: the next card must have that suit, or be a jack.',
+  rulesMiaumiau6:
+    'The first to play their last card wins. Up to four players play with 32 cards, seven to ace; five and six with all 52.',
+  rulesSeeschlacht1:
+    'Each player hides a fleet on a sea of 10 by 10: one ship of five squares, one of four, two of three and one of two, across or down. Ships may not touch, not even at a corner.',
+  rulesSeeschlacht2:
+    'Then take turns shooting at a square of the other player’s sea. A hit lets you shoot again; a shot into the water passes the turn.',
+  rulesSeeschlacht3:
+    'A ship is sunk once every square of it is hit. As ships never touch, the squares around it are water.',
+  rulesSeeschlacht4: 'Whoever sinks the whole fleet of the other player first wins.',
+  rulesLichtrenner1:
+    'A game in real time: every rider races on by itself and leaves a wall of light behind.',
+  rulesLichtrenner2:
+    'Turn left or right by swiping on the field, with ⟲ and ⟳, or with the arrow keys. A rider cannot turn straight back.',
+  rulesLichtrenner3:
+    'Riding into a wall, the edge or another rider puts a rider out. The last one riding wins; riders who crash at the same moment as the last others make a draw.',
+  rulesAirhockey1:
+    'A game in real time, for two. Lay both phones on the table, top edge to top edge: each screen is its player’s half of the rink, with their own goal at the bottom.',
+  rulesAirhockey2:
+    'Your mallet follows your finger. Hit the puck, off the sides if you like, into the other player’s goal.',
+  rulesAirhockey3:
+    'A goal is a point, and the player who let it in gets the puck. The first to seven goals wins.',
+  rulesKaesekaestchen1:
+    'In turn, draw a line between two neighbouring dots, across or down. A line that closes no box passes the turn.',
+  rulesKaesekaestchen2: 'Draw the fourth side of a box, and the box is yours: then you draw again.',
+  rulesKaesekaestchen3: 'Once every line is drawn, whoever holds more of the 25 boxes wins.',
+  rulesReversi1:
+    'Reversi starts with two pieces each, crosswise in the middle of the board. Red places first.',
+  rulesReversi2:
+    'Place a piece so that it encloses a line of the other player’s pieces between it and one of your own: all the pieces enclosed turn to your colour.',
+  rulesReversi3:
+    'Lines count across, down and diagonally, and one piece may enclose several lines at once: they all turn.',
+  rulesReversi4:
+    'If you cannot enclose anything, you pass. Once neither player can, whoever has more pieces on the board wins.',
+  rulesSternhalma1:
+    'Each player starts with ten pieces in a triangle of the star, and brings them all into the triangle across, ringed in their colour.',
+  rulesSternhalma2:
+    'A move is a step to a free hole next to the piece, or jumps over a neighbouring piece, anyone’s, to the free hole straight behind it, as many jumps in a row as you like. Nothing is taken.',
+  rulesSternhalma3:
+    'The first to fill the triangle across with their pieces wins. A player who cannot move passes; thirty rounds in which no piece reaches its triangle are a draw.',
+  rulesLudo1:
+    'Each player has four pieces in their corner. On your turn, roll the die and move one of your pieces that many squares on round the board.',
+  rulesLudo2: 'A six brings a piece out of your corner onto your start square, and you roll again.',
+  rulesLudo3:
+    'Land on another player’s piece, and it goes back to its corner. Two of your own pieces never share a square.',
+  rulesLudo4:
+    'With no piece out on the track, you get three tries to roll a six. If no piece can move, the turn passes on.',
+  rulesLudo5:
+    'After a round of the board, a piece goes into your home squares, by the exact number. The first with all four pieces home wins.',
+  rulesMaexchen1:
+    'In turn, roll the two dice under the cup and look at them alone. The higher die is read first: a five and a three are 53.',
+  rulesMaexchen2:
+    'Say what the dice show, the truth or a bluff, but always more than the player before you said.',
+  rulesMaexchen3:
+    'From the lowest up: 31, 32, 41 and so on to 65; then the doubles, 11 to 66; and highest of all 21, the Mäxchen.',
+  rulesMaexchen4:
+    'The next player believes it and rolls in turn, or doubts it and lifts the cup. If the dice show less than was said, the one who said it loses a life; otherwise the one who doubted does.',
+  rulesMaexchen5:
+    'Told “Mäxchen”, you may give up one life without looking, or doubt it: if it is the Mäxchen, doubting costs two lives. Everyone has three lives; the last with a life left wins.',
+  rulesWerwolf1:
+    'For four to eight. Everyone gets a role in secret, on their own phone: a werewolf, the seer, the healer or a villager. The werewolves know each other.',
+  rulesWerwolf2:
+    'At night, everyone taps someone in secret. The werewolves choose a villager to take, the seer learns whether a player is a werewolf, and the healer protects a player, not the same one two nights in a row.',
+  rulesWerwolf3:
+    'In the morning, the village learns who was taken. By day, talk, then everyone votes: whoever gets the most votes is banished, and their role shown. A tie banishes nobody.',
+  rulesWerwolf4:
+    'The village wins once every werewolf is out; the werewolves win once they are as many as the others.',
   lichtHint:
     'Turn before you hit a wall: swipe on the field, or tap ⟲ and ⟳. The last one riding wins.',
   lichtHintLocal:
@@ -635,6 +742,117 @@ const de: Texts = {
   takeOverRole: 'Ich bin {name}: meine Rolle zeigen',
   lichtrenner: 'Lichtrenner',
   airhockey: 'Airhockey',
+  rules: 'Regeln',
+  rulesOf: 'Regeln: {game}',
+  playersExactly: '{n} Spieler',
+  playersFromTo: '{min} bis {max} Spieler',
+  rulesTictactoe1:
+    'Zwei Spieler setzen abwechselnd ihr Zeichen in ein freies Feld: einer spielt ✕, der andere ◯.',
+  rulesTictactoe2:
+    'Drei deiner Zeichen in einer Reihe, waagrecht, senkrecht oder schräg, gewinnen.',
+  rulesTictactoe3:
+    'Ist das Brett voll und hat niemand drei in einer Reihe, ist es unentschieden. Wer anfängt, wechselt sich ab.',
+  rulesFourinarow1:
+    'Werft abwechselnd eine Scheibe in eine Spalte des stehenden Bretts: Sie fällt bis ins unterste freie Loch.',
+  rulesFourinarow2:
+    'Vier deiner Scheiben in einer Reihe, waagrecht, senkrecht oder schräg, gewinnen. Ist das Brett ohne vier in einer Reihe voll, ist es unentschieden.',
+  rulesMuehle1:
+    'Jeder Spieler hat neun Steine. Zuerst setzt ihr sie abwechselnd, einen pro Zug, auf einen freien Punkt.',
+  rulesMuehle2:
+    'Sind alle gesetzt, zieht ein Zug einen deiner Steine entlang einer Linie auf den freien Punkt daneben.',
+  rulesMuehle3:
+    'Drei deiner Steine in einer Reihe auf einer Linie sind eine Mühle. Dann nimmst du einen Stein des anderen vom Brett: einen, der in keiner Mühle steht, wenn es einen gibt.',
+  rulesMuehle4: 'Hast du nur noch drei Steine, dürfen sie auf jeden freien Punkt springen.',
+  rulesMuehle5:
+    'Wer weniger als drei Steine hat oder keinen ziehen kann, verliert. Fünfzig Züge ohne Mühle sind unentschieden.',
+  rulesDame1:
+    'Jeder Spieler beginnt mit zwölf Steinen auf den dunklen Feldern. Ein Stein zieht schräg nach vorn auf ein freies dunkles Feld.',
+  rulesDame2:
+    'Du schlägst einen Stein des anderen, indem du über ihn auf das freie Feld dahinter springst, vorwärts oder rückwärts. Kannst du von dort weiter springen, springst du weiter: Jeder übersprungene Stein verlässt das Brett.',
+  rulesDame3:
+    'Schlagen ist Pflicht: Kannst du einen Stein schlagen, musst du es, aber du wählst, auf welchem Weg.',
+  rulesDame4:
+    'Ein Stein, der seinen Zug in der hintersten Reihe beendet, wird zur Dame ♛. Eine Dame zieht und schlägt entlang einer Schrägen beliebig weit, vorwärts und rückwärts.',
+  rulesDame5:
+    'Wer nicht mehr ziehen kann, verliert. Fünfzig Züge mit Damen ohne Schlagen sind unentschieden.',
+  rulesMiaumiau1:
+    'Jeder bekommt fünf Karten. Bist du dran, legst du eine Karte mit derselben Farbe oder demselben Wert wie die oberste Karte des Stapels.',
+  rulesMiaumiau2:
+    'Kannst oder willst du nicht legen, ziehst du eine Karte vom Talon. Passt sie, darfst du sie gleich legen; sonst ist der Nächste dran.',
+  rulesMiaumiau3:
+    'Eine Sieben lässt den nächsten Spieler zwei Karten ziehen, außer er antwortet mit einer Sieben: Dann zieht der Spieler danach vier, und so weiter.',
+  rulesMiaumiau4:
+    'Eine Acht lässt den nächsten Spieler aussetzen. Zu zweit bist du gleich noch einmal dran.',
+  rulesMiaumiau5:
+    'Ein Bube passt auf jede Karte, und du wünschst dir eine Farbe: Die nächste Karte muss diese Farbe haben oder wieder ein Bube sein.',
+  rulesMiaumiau6:
+    'Wer zuerst seine letzte Karte legt, gewinnt. Bis zu vier Spieler spielen mit 32 Karten, Sieben bis Ass; fünf und sechs mit allen 52.',
+  rulesSeeschlacht1:
+    'Jeder Spieler versteckt eine Flotte auf einem Meer von 10 mal 10: ein Schiff aus fünf Feldern, eines aus vier, zwei aus drei und eines aus zwei, waagrecht oder senkrecht. Schiffe dürfen sich nicht berühren, auch nicht an einer Ecke.',
+  rulesSeeschlacht2:
+    'Dann schießt ihr abwechselnd auf ein Feld im Meer des anderen. Ein Treffer lässt dich noch einmal schießen; ein Schuss ins Wasser gibt den Zug weiter.',
+  rulesSeeschlacht3:
+    'Ein Schiff ist versenkt, sobald jedes seiner Felder getroffen ist. Da sich Schiffe nie berühren, sind die Felder darum herum Wasser.',
+  rulesSeeschlacht4: 'Wer zuerst die ganze Flotte des anderen versenkt, gewinnt.',
+  rulesLichtrenner1:
+    'Ein Spiel in Echtzeit: Jeder Renner fährt von selbst immer weiter und zieht eine Wand aus Licht hinter sich her.',
+  rulesLichtrenner2:
+    'Biege nach links oder rechts ab, indem du über das Feld wischst, mit ⟲ und ⟳ oder mit den Pfeiltasten. Umdrehen geht nicht.',
+  rulesLichtrenner3:
+    'Wer in eine Wand, gegen den Rand oder in einen anderen Renner fährt, scheidet aus. Wer als Letzter fährt, gewinnt; krachen die Letzten im selben Moment, ist es unentschieden.',
+  rulesAirhockey1:
+    'Ein Spiel in Echtzeit, zu zweit. Legt beide Handys auf den Tisch, Oberkante an Oberkante: Jeder Bildschirm ist die Hälfte seines Spielers, mit dem eigenen Tor unten.',
+  rulesAirhockey2:
+    'Dein Schläger folgt deinem Finger. Schlag den Puck, gern auch über die Banden, ins Tor des anderen.',
+  rulesAirhockey3:
+    'Ein Tor ist ein Punkt, und wer es kassiert hat, bekommt den Puck. Wer zuerst sieben Tore schießt, gewinnt.',
+  rulesKaesekaestchen1:
+    'Zieht abwechselnd einen Strich zwischen zwei benachbarten Punkten, waagrecht oder senkrecht. Ein Strich, der kein Kästchen schließt, gibt den Zug weiter.',
+  rulesKaesekaestchen2:
+    'Ziehst du die vierte Seite eines Kästchens, gehört es dir: Dann ziehst du gleich noch einen Strich.',
+  rulesKaesekaestchen3: 'Sind alle Striche gezogen, gewinnt, wer mehr der 25 Kästchen hat.',
+  rulesReversi1:
+    'Reversi beginnt mit je zwei Steinen über Kreuz in der Mitte des Bretts. Rot setzt zuerst.',
+  rulesReversi2:
+    'Setze einen Stein so, dass er eine Reihe von Steinen des anderen zwischen sich und einem deiner Steine einschließt: Alle eingeschlossenen Steine wechseln zu deiner Farbe.',
+  rulesReversi3:
+    'Reihen zählen waagrecht, senkrecht und schräg, und ein Stein kann mehrere Reihen auf einmal einschließen: Sie wechseln alle.',
+  rulesReversi4:
+    'Kannst du nichts einschließen, setzt du aus. Kann keiner mehr, gewinnt, wer mehr Steine auf dem Brett hat.',
+  rulesSternhalma1:
+    'Jeder Spieler beginnt mit zehn Steinen in einer Spitze des Sterns und bringt sie alle in die gegenüberliegende Spitze, die in seiner Farbe umringt ist.',
+  rulesSternhalma2:
+    'Ein Zug ist ein Schritt in ein freies Loch neben dem Stein, oder Sprünge über einen benachbarten Stein, egal wessen, in das freie Loch direkt dahinter, so viele hintereinander, wie du willst. Geschlagen wird nichts.',
+  rulesSternhalma3:
+    'Wer zuerst die gegenüberliegende Spitze mit seinen Steinen füllt, gewinnt. Wer nicht ziehen kann, setzt aus; dreißig Runden, in denen kein Stein seine Spitze erreicht, sind unentschieden.',
+  rulesLudo1:
+    'Jeder Spieler hat vier Steine in seiner Ecke. Bist du dran, würfelst du und ziehst einen deiner Steine so viele Felder weiter, rund um das Brett.',
+  rulesLudo2:
+    'Eine Sechs bringt einen Stein aus deiner Ecke auf dein Startfeld, und du würfelst noch einmal.',
+  rulesLudo3:
+    'Kommst du auf das Feld eines Steins eines anderen, muss er zurück in seine Ecke. Zwei eigene Steine stehen nie auf einem Feld.',
+  rulesLudo4:
+    'Hast du keinen Stein draußen, hast du drei Versuche für eine Sechs. Kann kein Stein ziehen, ist der Nächste dran.',
+  rulesLudo5:
+    'Nach einer Runde um das Brett kommt ein Stein in deine Zielfelder, mit genau passender Zahl. Wer zuerst alle vier Steine im Ziel hat, gewinnt.',
+  rulesMaexchen1:
+    'Reihum würfelst du mit den zwei Würfeln unter dem Becher und schaust allein nach. Der höhere Würfel zählt zuerst: eine Fünf und eine Drei sind 53.',
+  rulesMaexchen2:
+    'Sag an, was die Würfel zeigen, die Wahrheit oder geblufft, aber immer mehr als der Spieler vor dir.',
+  rulesMaexchen3:
+    'Vom niedrigsten an: 31, 32, 41 und so weiter bis 65; dann die Pasche, 11 bis 66; und am höchsten 21, das Mäxchen.',
+  rulesMaexchen4:
+    'Der Nächste glaubt es und würfelt selbst, oder er zweifelt und hebt den Becher. Zeigen die Würfel weniger als angesagt, verliert der Ansager ein Leben; sonst der Zweifler.',
+  rulesMaexchen5:
+    'Wird dir „Mäxchen“ angesagt, kannst du ohne Nachschauen ein Leben abgeben oder zweifeln: Ist es das Mäxchen, kostet Zweifeln zwei Leben. Jeder hat drei Leben; wer als Letzter noch eines hat, gewinnt.',
+  rulesWerwolf1:
+    'Für vier bis acht. Jeder bekommt geheim eine Rolle auf seinem eigenen Handy: Werwolf, Seherin, Heiler oder Dorfbewohner. Die Werwölfe kennen sich.',
+  rulesWerwolf2:
+    'Nachts tippt jeder geheim jemanden an. Die Werwölfe wählen einen Dorfbewohner, den sie holen, die Seherin erfährt, ob ein Spieler ein Werwolf ist, und der Heiler schützt einen Spieler, nicht zwei Nächte hintereinander denselben.',
+  rulesWerwolf3:
+    'Am Morgen erfährt das Dorf, wen es getroffen hat. Tagsüber wird geredet, dann stimmen alle ab: Wer die meisten Stimmen bekommt, wird verbannt, und seine Rolle gezeigt. Bei Gleichstand wird niemand verbannt.',
+  rulesWerwolf4:
+    'Das Dorf gewinnt, sobald alle Werwölfe draußen sind; die Werwölfe gewinnen, sobald sie so viele sind wie die anderen.',
   lichtHint:
     'Biege ab, bevor du gegen eine Wand fährst: wische über das Feld, oder tippe auf ⟲ und ⟳. Wer als Letzter fährt, gewinnt.',
   lichtHintLocal:

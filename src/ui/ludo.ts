@@ -24,7 +24,7 @@ const SIZE = 11
 type Spot = readonly [x: number, y: number]
 
 /** The track's squares, from corner 0's start square on, round the board clockwise. */
-const TRACK_SPOTS: readonly Spot[] = (() => {
+export const TRACK_SPOTS: readonly Spot[] = (() => {
   const spots: Spot[] = []
   // A quarter of the track, from corner 0's start square up to corner 1's; the rest turns it.
   const quarter: Spot[] = [
@@ -44,12 +44,12 @@ const TRACK_SPOTS: readonly Spot[] = (() => {
 })()
 
 /** Each corner's home squares, from the track to the middle. */
-const HOME_SPOTS: readonly (readonly Spot[])[] = [0, 1, 2, 3].map((corner) =>
+export const HOME_SPOTS: readonly (readonly Spot[])[] = [0, 1, 2, 3].map((corner) =>
   [1, 2, 3, 4].map((x) => rotate([x, 5], corner)),
 )
 
 /** Each corner's places for the pieces waiting there. */
-const CORNER_SPOTS: readonly (readonly Spot[])[] = [0, 1, 2, 3].map((corner) =>
+export const CORNER_SPOTS: readonly (readonly Spot[])[] = [0, 1, 2, 3].map((corner) =>
   (
     [
       [0, 0],

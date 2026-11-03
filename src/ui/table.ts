@@ -7,6 +7,7 @@ import { codePanel } from './codes'
 import { failureText, h, show, toast } from './dom'
 import { gameChoices, gameView, nextButtons, playerItems } from './game'
 import { LiveSlot } from './live'
+import { gameTitle } from './rules'
 
 /**
  * The table, on every phone: who sits at it, the lobby or the game on it, and what comes next.
@@ -60,7 +61,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     if (!(seat instanceof HostSeat)) {
       const host = state.players.find((p) => p.id === 0)?.name ?? '?'
       status.textContent = t('hostChooses', { host })
-      return [status]
+      return [status, gameChoices(state, null, false)]
     }
     const here = state.players.filter((p) => !p.away).length
     status.textContent = here < 2 ? t('needPlayers') : t('chooseGame')
@@ -85,7 +86,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
       )
     } else actions.replaceChildren()
     return [
-      h('h2', {}, t(state.game)),
+      gameTitle(state.game),
       ...gameView(state, {
         viewer: seat.id,
         picker,

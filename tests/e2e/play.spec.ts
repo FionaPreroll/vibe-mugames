@@ -33,6 +33,13 @@ test('two phones play Tic Tac Toe, and again with the other one starting', async
   await expect(ada.locator('.toast')).toHaveText('Bo joined.')
   await expect(bo.locator('.players')).toContainText('Ada')
   await expect(bo.locator('.main')).toContainText('Ada chooses a game.')
+  // While the host chooses, the others can read the rules.
+  await bo
+    .getByRole('group', { name: 'Four in a Row' })
+    .getByRole('button', { name: 'Rules' })
+    .click()
+  await expect(bo.getByRole('dialog', { name: 'Rules of Four in a Row' })).toBeVisible()
+  await bo.getByRole('button', { name: 'Close' }).click()
 
   await ada.getByRole('button', { name: 'Tic Tac Toe' }).click()
   await expect(ada.locator('.status.turn')).toHaveText('Your turn')

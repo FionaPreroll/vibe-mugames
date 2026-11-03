@@ -59,6 +59,32 @@ test('two players take turns on one screen at Tic Tac Toe, and play again', asyn
   await expect(page.getByRole('button', { name: 'Open a table' })).toBeVisible()
 })
 
+test('every game shows a thumbnail, and its rules with drawings, in the chooser and in the game', async ({
+  browser,
+}) => {
+  const page = await phone(browser, 'Ada')
+  await startLocal(page, ['Ada', 'Bo'], false)
+  const games = page.locator('.game-card')
+  await expect(games).toHaveCount(14)
+  await expect(page.locator('.game-card svg.thumbnail')).toHaveCount(14)
+
+  await page.getByRole('group', { name: 'Draughts' }).getByRole('button', { name: 'Rules' }).click()
+  const rules = page.getByRole('dialog', { name: 'Rules of Draughts' })
+  await expect(rules).toBeVisible()
+  await expect(rules.locator('.rule-steps li')).toHaveCount(5)
+  await expect(rules.locator('.rule-steps svg')).toHaveCount(3)
+  await rules.getByRole('button', { name: 'Close' }).click()
+  await expect(rules).toHaveCount(0)
+  // Reading the rules chose nothing.
+  await expect(page.locator('.status.turn')).toHaveText('Choose a game')
+
+  await page.getByRole('button', { name: 'Sea Battle' }).click()
+  await page.getByRole('button', { name: 'Rules' }).click()
+  await expect(page.getByRole('dialog', { name: 'Rules of Sea Battle' })).toContainText(
+    'Ships may not touch',
+  )
+})
+
 test('three take turns at Miau-Miau with open cards, each seeing their hand on their turn', async ({
   browser,
 }) => {
