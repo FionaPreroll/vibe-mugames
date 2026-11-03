@@ -58,6 +58,8 @@ export default defineConfig(({ mode }) => {
     ],
     test: {
       include: ['src/**/*.test.ts', 'tools/**/*.test.ts'],
+      // Through Vite, so that tests' mocks of @capacitor/core reach the library's native side too.
+      server: { deps: { inline: ['@fionapreroll/app-updates'] } },
       coverage: {
         provider: 'v8',
         // Every source file, so files without tests count as uncovered instead of missing.

@@ -1,14 +1,9 @@
 package io.github.fionapreroll.spielekiste;
 
-import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 
-public class MainActivity extends BridgeActivity {
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        // The app's own plugin, for updates from its GitHub release (see AppUpdaterPlugin).
-        registerPlugin(AppUpdaterPlugin.class);
-        super.onCreate(savedInstanceState);
-    }
-}
+/**
+ * The app's only screen, Capacitor's WebView with the Spielekiste. Its plugins come with their
+ * packages, which Capacitor registers: updates from @fionapreroll/app-updates.
+ */
+public class MainActivity extends BridgeActivity {}

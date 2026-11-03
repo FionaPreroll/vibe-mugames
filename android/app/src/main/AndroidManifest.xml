@@ -37,15 +37,12 @@
 
     <!-- Permissions -->
 
-    <!-- WebRTC between phones on the same Wi-Fi or hotspot, and in-app updates from the
-         Spielekiste's GitHub release, if the player wants them. -->
+    <!-- WebRTC between phones on the same Wi-Fi or hotspot. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Whether an update would download over mobile data, to warn before (AppUpdaterPlugin). -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- The scanner for the other phone's QR code, and with it real local addresses in the
          codes, which Android's WebView hides from pages without the camera. -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- In-app updates: hands a new APK from the Spielekiste's release to Android's installer,
-         which asks the player. -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- In-app updates: @fionapreroll/app-updates brings its permissions (internet, network
+         state, and handing an APK to Android's installer) in its own manifest, merged in here.
+         A build for the Play Store, which forbids apps updating themselves, leaves it out. -->
 </manifest>

@@ -2,7 +2,7 @@ import changelog from '../../CHANGELOG.md?raw'
 import { t } from '../i18n'
 import { type Block, type Inline, parseMarkdown } from '../markdown'
 import { isApp } from '../native'
-import { AppUpdater } from '../updates'
+import { appBuild } from '../updates'
 import { h, show } from './dom'
 import { blockNode, inlineNode, link } from './markdownView'
 import { privacyScreen } from './privacy'
@@ -60,7 +60,7 @@ export function aboutScreen(onBack: () => void): void {
   const build = h('p', { class: 'muted about-build' }, t('aboutBuild', web))
   // In the app, its own build number too, as its updates count by it.
   if (isApp()) {
-    void AppUpdater.info()
+    void appBuild()
       .then(({ build: number }) => {
         build.textContent = t('aboutAppBuild', { ...web, build: number })
       })

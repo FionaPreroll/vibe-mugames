@@ -3,7 +3,7 @@ import { currentLanguage, type Language, setLanguage, t } from '../i18n'
 import { isApp } from '../native'
 import { GuestSeat, HostSeat } from '../net/session'
 import { playerToken, settings, updateSettings } from '../storage'
-import { AppUpdater } from '../updates'
+import { appBuild } from '../updates'
 import { aboutScreen } from './about'
 import { codePanel } from './codes'
 import { failureText, h, show } from './dom'
@@ -47,7 +47,7 @@ export function homeScreen(): void {
   const build = h('p', { class: 'muted build' }, t('build', web))
   // In the app, its own build number too, as its updates count by it.
   if (isApp()) {
-    void AppUpdater.info()
+    void appBuild()
       .then(({ build: number }) => {
         build.textContent = t('appBuild', { ...web, build: number })
       })
