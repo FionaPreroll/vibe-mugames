@@ -73,7 +73,8 @@ textarea {
   color: inherit;
 }
 
-button {
+button,
+a.button {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 0.6rem;
@@ -86,7 +87,8 @@ button:disabled {
   cursor: default;
 }
 
-button.primary {
+button.primary,
+a.button.primary {
   background: var(--accent);
   border-color: var(--accent);
   color: #0d1b24;
@@ -2475,4 +2477,118 @@ button.link {
   padding: 0.9rem 1rem;
   font-size: 1.1rem;
   text-align: left;
+}
+
+/* The connection at a glance, in the table's top line: a small graph of the ping, and its value. */
+button.net {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+button.net[hidden] {
+  display: none;
+}
+
+canvas.net-graph {
+  display: block;
+  width: 48px;
+  height: 22px;
+}
+
+canvas.net-graph.large {
+  width: 100%;
+  height: 9rem;
+}
+
+.net[data-quality="good"] .net-ping {
+  color: #6be06b;
+}
+
+.net[data-quality="fair"] .net-ping {
+  color: #ffcf3f;
+}
+
+.net[data-quality="poor"] .net-ping {
+  color: #ff5470;
+}
+
+.graph-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* The connection view of @fionapreroll/p2p/debug: every connection's numbers and details. */
+.connection-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.modal .connection-view h3 {
+  margin: 0.3rem 0 0;
+  font-size: 0.95rem;
+}
+
+dl.connection-stats {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 38%) 1fr;
+  gap: 0.15rem 0.7rem;
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+}
+
+dl.connection-stats dt {
+  color: var(--muted);
+}
+
+dl.connection-stats dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+dl.connection-stats dt.name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.modal .connection-transport summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.connection-view .address {
+  font-family: ui-monospace, monospace;
+}
+
+.connection-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* The debug report, to read before it is sent. */
+textarea.report {
+  width: 100%;
+  font-size: 0.7rem;
+  min-height: 14rem;
+}
+
+a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  text-decoration: none;
+}
+
+a.button.primary {
+  color: #0d1b24;
 }

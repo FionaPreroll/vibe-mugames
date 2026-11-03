@@ -3,6 +3,7 @@ import { isApp } from '../native'
 import { settings, updateSettings } from '../storage'
 import { lookForWebUpdate } from '../webUpdates'
 import { h, show } from './dom'
+import { reportDialog } from './report'
 import { appUpdateSettings } from './updates'
 import { foundNewer, setWebUpdates } from './webUpdates'
 
@@ -13,7 +14,7 @@ export const APP_RELEASE =
 /**
  * The settings: how air hockey shows the rink and the network, and the updates. In the app, the
  * app's own (see src/ui/updates.ts); on the website, its note about a newer build, and the way to
- * the Android app.
+ * the Android app. Last, the debug report.
  */
 export function settingsScreen(onBack: () => void): void {
   show(
@@ -38,6 +39,17 @@ export function settingsScreen(onBack: () => void): void {
       isApp() ? appUpdateSettings() : webUpdateSettings(),
       !isApp() && h('h2', {}, t('appTitle')),
       !isApp() && appLink(),
+      h('h2', {}, t('debugTitle')),
+      h('p', { class: 'muted' }, t('debugNote')),
+      h(
+        'div',
+        { class: 'buttons' },
+        h('button', {
+          type: 'button',
+          textContent: t('debugCreate'),
+          onclick: () => void reportDialog(),
+        }),
+      ),
     ),
     onBack,
   )

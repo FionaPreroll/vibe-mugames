@@ -1,8 +1,18 @@
-import { type Connection, opened } from '@fionapreroll/p2p'
-import { GuestRoom, HOST_ID, HostRoom, type Pairing } from '@fionapreroll/p2p/room'
+import { type Connection, type ConnectionDetails, opened } from '@fionapreroll/p2p'
+import type { NetLog } from '@fionapreroll/p2p/debug'
+import {
+  type ConnectionTest,
+  type ConnectionTestRun,
+  GuestRoom,
+  HOST_ID,
+  HostRoom,
+  type Pairing,
+} from '@fionapreroll/p2p/room'
 import type { GameId, Move } from '../core/board'
 import { Table, type TableState } from '../core/table'
+import { log } from '../log'
 import { random } from '../random'
+import { type NetSource, rememberNet } from './netlog'
 import { type Event, type Input, PROTOCOL, parseEvent, parseInput, parseState } from './protocol'
 
 /**
@@ -16,7 +26,7 @@ const BOARD_TICKS = 3
  * One phone's seat at the table, as the screens use it, for the host and for players alike:
  * the host decides on its own phone, players send their moves to the host.
  */
-export interface Seat {
+export interface Seat extends NetSource {
   /** This phone's player id. */
   readonly id: number
   readonly isHost: boolean
@@ -66,14 +76,19 @@ export class HostSeat implements Seat, TableHost {
       parseInput,
       parseEvent,
       tickMs: TICK_MS,
+      netNote: (line) => log('net', line),
     })
+    rememberNet(this)
+    log('table', 'opened a table')
     this.table.join(HOST_ID, name)
     this.room.onJoin = (player, rejoined) => {
+      log('table', `player ${player.id} ${rejoined ? 'came back' : 'joined'}`)
       this.table.join(player.id, player.name)
       this.onJoin(player.name, rejoined)
       this.onChange()
     }
     this.room.onLeave = (player) => {
+      log('table', `player ${player.id} left`)
       this.table.leave(player.id)
       this.onChange()
     }
@@ -104,8 +119,34 @@ export class HostSeat implements Seat, TableHost {
     this.table.input(HOST_ID, values)
   }
 
+  get net(): NetLog {
+    return this.room.net
+  }
+
+  peers(): number[] {
+    return this.room.players().map((p) => p.id)
+  }
+
+  details(peer: number): Promise<ConnectionDetails | null> {
+    return this.room.details(peer)
+  }
+
+  /** Tests every player's connection for five seconds, beside the game. */
+  async testConnections(): Promise<ConnectionTestRun> {
+    log('net', 'connection test started')
+    const run = await this.room.testConnections()
+    const answered = run.players.filter((p) => p.result).length
+    log('net', `connection test over: ${answered} of ${run.players.length} answered`)
+    return run
+  }
+
+  lastTest(): ConnectionTestRun | null {
+    return this.room.lastTest()
+  }
+
   choose(game: GameId): boolean {
     const started = this.table.choose(game)
+    if (started) log('table', `started ${game}`)
     if (started) this.onChange()
     return started
   }
@@ -125,6 +166,7 @@ export class HostSeat implements Seat, TableHost {
   }
 
   close(): void {
+    log('table', 'closed the table')
     this.room.close(true)
   }
 }
@@ -140,10 +182,21 @@ export class GuestSeat implements Seat {
   readonly isHost = false
   onChange: () => void = () => {}
   onLost: (ended: boolean) => void = () => {}
+  /** The host started a connection test, which runs for a few seconds beside the game. */
+  onTestStart: () => void = () => {}
 
   private constructor(private readonly room: GuestRoom<Input, TableState, Event>) {
+    rememberNet(this)
+    log('table', `joined as player ${room.id}`)
     room.onState = () => this.onChange()
-    room.onLost = (ended) => this.onLost(ended)
+    room.onLost = (ended) => {
+      log('table', ended ? 'the host closed the table' : 'lost the host')
+      this.onLost(ended)
+    }
+    room.onTestStart = () => {
+      log('net', 'the host tests the connection')
+      this.onTestStart()
+    }
   }
 
   /**
@@ -158,6 +211,7 @@ export class GuestSeat implements Seat {
       version: PROTOCOL,
       parseState,
       parseEvent,
+      netNote: (line) => log('net', line),
     })
     return new GuestSeat(room)
   }
@@ -169,6 +223,22 @@ export class GuestSeat implements Seat {
   /** The host's name. */
   get host(): string {
     return this.room.host
+  }
+
+  get net(): NetLog {
+    return this.room.net
+  }
+
+  peers(): number[] {
+    return [HOST_ID]
+  }
+
+  details(): Promise<ConnectionDetails | null> {
+    return this.room.details()
+  }
+
+  lastTest(): ConnectionTest | null {
+    return this.room.lastTest()
   }
 
   state(): TableState | null {
@@ -184,6 +254,7 @@ export class GuestSeat implements Seat {
   }
 
   close(): void {
+    log('table', 'left the table')
     this.room.close()
   }
 }

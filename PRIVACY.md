@@ -19,7 +19,7 @@ The Spielekiste keeps these in your browser's storage, or in the app's own stora
 - the camera you last scanned with, with its zoom and brightness;
 - a random token that lets a host recognise you when you sit down at their table again.
 
-A table, its games and its scores are kept in memory only, and are gone when you close the Spielekiste. In the app, an update you download stays in the app's storage until it is installed or replaced by a newer one.
+A table, its games and its scores are kept in memory only, and are gone when you close the Spielekiste. So are, for the debug report, a log of what the Spielekiste did since it started, without names, codes or addresses, and how well the connections of the last table kept up. In the app, an update you download stays in the app's storage until it is installed or replaced by a newer one.
 
 None of this leaves your device by itself. Uninstalling the app deletes it, as does clearing the app's storage in Android's settings, or the site's data in your browser.
 
@@ -30,6 +30,7 @@ You play with phones you pair with yourself, and they exchange data directly, wi
 - **While pairing by QR code,** the codes on the screens carry what the phones need to connect: their addresses in the local network, and keys for the encrypted connection. Only phones that scan a code, or are given it as text, can use it. A code you copy goes wherever you paste it.
 - **While pairing by Bluetooth,** in the app, your name is visible to phones nearby that look for or open tables in the Spielekiste, while the host's table is visible or you look for one, and both phones show a four-digit code to compare.
 - **At a table,** every phone sees every player's name, the moves, the games played and the scores. The host's phone receives your name, your moves and your token; the token never goes to other players. In games with something hidden, such as cards, fleets, dice or roles, the host's phone keeps them, and sends each phone only what its player may see.
+- **How the connection goes:** your phone and the host's measure the ping and the data between them, and the host's phone learns your ping. The host can test the connections: for five seconds the phones send each other filler data, and the host's phone tells each player how their connection did. Under _Connection details_, the addresses of a connection show hidden until you tap _Show addresses_, as what is on a screen may end up in a screenshot.
 
 The connection is encrypted. A player who leaves keeps nothing but what they saw on their screen.
 
@@ -48,6 +49,7 @@ The connection is encrypted. A player who leaves keeps nothing but what they saw
 - **Google Play services,** in the app, provide Nearby Connections for playing over Bluetooth. Google may handle data for this under the [Google privacy policy](https://policies.google.com/privacy).
 - **Google Play,** if you install the app from there, handles the download and its updates under the [Google privacy policy](https://policies.google.com/privacy).
 - **Links** in the Spielekiste, such as to GitHub, open in your browser, under the policy of the site you open.
+- **A debug report** is made only when you tap _Create debug report_ in the settings, or _Debug report_ under _Connection details_, and shown to you to read first. It says what device, browser and versions this is, the settings except your name, how well the connections of the last table kept up, what kind of address each used but not the address, and the log; no name, token or code. It leaves your device only if you copy it, download it or tap _Report on GitHub_, which opens a new issue on GitHub with it: issues there are public, under GitHub's privacy statement.
 
 ## Security
 

@@ -1,4 +1,5 @@
 import { Nearby } from '@fionapreroll/p2p-nearby'
+import { log } from './log'
 
 export {
   NearbyHosting,
@@ -20,6 +21,6 @@ let shared: Nearby | undefined
 
 /** The app's one Nearby, made when first needed. */
 export function bluetooth(): Nearby {
-  shared ??= new Nearby({ serviceId: SERVICE_ID })
+  shared ??= new Nearby({ serviceId: SERVICE_ID, log: (line) => log('bluetooth', line) })
   return shared
 }

@@ -44,6 +44,9 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - A privacy policy, in English and German, under _About the Spielekiste_ and on the website at [fionapreroll.github.io/vibe-mugames/privacy.html](https://fionapreroll.github.io/vibe-mugames/privacy.html): no accounts, no server, no advertising and no tracking, and what stays on your device and what other phones see.
 - Bluetooth in the Android app: when joining a table or adding a player, choose QR code or Bluetooth. Over Bluetooth, no Wi-Fi is needed: the host's table is visible to phones nearby, the player taps it, and the host lets them in after comparing the code both phones show. One table can mix both.
 - _Smooth out the network_ in the settings, for Air Hockey: the puck and the other mallet glide on at an even pace, however unevenly the host's word arrives, and your own mallet moves where your finger is, at once. Off at first: try it when the puck stutters.
+- The connection at a glance: at a table with other phones, the top line shows a small graph of the last half minute's ping and its newest value, green, yellow or red; on the host's phone, the worst of the players'. Tapping it opens _Connection details_: a graph of the last minute, and for each connection its ping, the pings lost, stalls, messages and data each way, and how it is carried: Wi-Fi or Bluetooth, the addresses and protocols on both ends, the round trip, packets, bytes, encryption and channels. Addresses stay hidden until you tap _Show addresses_.
+- A connection test for the host: _Test connections_ under _Connection details_ sends as much as the connections take for five seconds, beside the game, and shows for every player the ping under load and the kilobytes a second each way, with what was lost. Players see that a test runs, and their own result.
+- A debug report, to send when something does not work: _Create debug report_ in the settings, or _Debug report_ under _Connection details_. It says what device, browser and versions this is, the settings, how well the connections of the last table kept up second by second, the last connection test, and what happened recently, but no names, codes or addresses. Read it, then copy it, download it, or open an issue on GitHub with it. The privacy policy says what it holds.
 
 ### Changed
 
@@ -60,6 +63,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 - A name typed on the start screen stays when you visit the settings or change the language, instead of being forgotten.
 - A Bluetooth player the host let in whose phone never connects no longer stays on _Connecting…_ in the host's list: after 30 seconds, the list says the other phone did not answer in time.
+- Over a weak Wi-Fi, a player's phone no longer goes back to an older table for a moment when the host's messages arrive out of order.
 - Pairing by copied text codes works even when sending a code over takes minutes: the joining phone now waits up to 10 minutes for the host, instead of giving up after 30 seconds.
 - Pairing says what is going on at every step: that a code was read, that the joining phone waits for the host, and why a connection failed, with **Try again** on both phones. **Copy** always says whether it worked, and a wrong code pasted earlier no longer leaves its message behind.
 
