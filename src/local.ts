@@ -27,7 +27,7 @@ export class LocalTable implements TableHost {
     if (names.length < MIN_LOCAL || names.length > MAX_LOCAL) {
       throw new RangeError(`${names.length} players on one device`)
     }
-    this.table = new Table(shuffle)
+    this.table = new Table(shuffle, { together: true })
     this.ids = names.map((_, id) => id)
     names.forEach((name, id) => {
       this.table.join(id, name)
@@ -44,7 +44,7 @@ export class LocalTable implements TableHost {
     this.table.input(id, values)
   }
 
-  /** Runs a game in real time on by `seconds`; nothing happens in other games. */
+  /** Runs a game in real time, or the time of a party game, on by `seconds`. */
   tick(seconds: number): void {
     if (this.table.tick(seconds)) this.onChange()
   }

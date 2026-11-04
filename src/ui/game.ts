@@ -16,6 +16,7 @@ import { playersText, rulesButton, thumbnail } from './rules'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
 import { swimHints, swimStatus, swimView } from './swim'
 import { villageStatus, villageToMove, villageView } from './village'
+import { wordsStatus, wordsToMove, wordsView } from './words'
 
 /**
  * What every table shows, at phones side by side and on one device alike: the players with
@@ -51,6 +52,7 @@ export function seatMark(state: TableState, place: number): HTMLElement {
 const GROUP_TEXTS: Record<GameGroup, readonly [TextKey, TextKey]> = {
   tactics: ['groupTactics', 'groupTacticsNote'],
   luck: ['groupLuck', 'groupLuckNote'],
+  party: ['groupParty', 'groupPartyNote'],
   skill: ['groupSkill', 'groupSkillNote'],
 }
 
@@ -212,6 +214,19 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
       }),
     ]
   }
+  if (state.words) {
+    const words = state.words
+    const seated = state.seats.includes(viewer)
+    return [
+      statusLine(wordsStatus(state, words, viewer, shared), wordsToMove(state, words, viewer)),
+      ...wordsView(state, words, {
+        viewer,
+        picker,
+        move: seated ? (move) => options.move(game, state.moveNo, move) : null,
+        shared,
+      }),
+    ]
+  }
   if (state.sea) {
     const sea = state.sea
     const toMove = seaToMove(state, sea, viewer)
@@ -369,6 +384,7 @@ const HAND_OVER_NOTICES: Partial<Record<GameId, readonly [TextKey, TextKey]>> = 
   maexchen: ['handOverDice', 'hiddenDiceNotice'],
   werwolf: ['handOverRoles', 'hiddenRoleNotice'],
   schwimmen: ['handOverCards', 'hiddenCardsNotice'],
+  stadtlandfluss: ['handOverWords', 'hiddenWordsNotice'],
 }
 
 /** What a player taps once they hold the device, in a game handed over on one device. */
@@ -380,6 +396,8 @@ export function takeOverText(game: GameId, name: string): string {
         ? 'takeOverRole'
         : game === 'schwimmen'
           ? 'takeOverCards'
+        : game === 'stadtlandfluss'
+          ? 'takeOverWords'
           : 'takeOver'
   return t(key, { name })
 }

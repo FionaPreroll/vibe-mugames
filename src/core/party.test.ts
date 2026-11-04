@@ -30,7 +30,7 @@ describe('the party games', () => {
     expect(seatRange('maexchen')).toEqual({ min: 2, max: 8 })
     expect(seatRange('werwolf')).toEqual({ min: 4, max: 8 })
     expect(GAME_IDS.filter(handsOver)).toEqual(
-      expect.arrayContaining(['seeschlacht', 'maexchen', 'werwolf']),
+      expect.arrayContaining(['seeschlacht', 'maexchen', 'werwolf', 'stadtlandfluss']),
     )
     expect(table(['Ada', 'Bo', 'Cy']).choose('werwolf')).toBe(false)
   })

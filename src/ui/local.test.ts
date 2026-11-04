@@ -133,8 +133,13 @@ describe('the game chooser', () => {
   it('groups the games by kind, each with how many play it', () => {
     localScreen(new LocalTable(['Ada', 'Bo']), false, () => {})
     const groups = $$('.game-group')
-    expect(groups.map((group) => group.ariaLabel)).toEqual(['Tactics', 'Luck and bluff', 'Skill'])
-    const skill = groups[2] ?? document
+    expect(groups.map((group) => group.ariaLabel)).toEqual([
+      'Tactics',
+      'Luck and bluff',
+      'Party games',
+      'Skill',
+    ])
+    const skill = groups[3] ?? document
     expect($$('.game-choice', skill).map((choice) => choice.textContent)).toEqual([
       'Light Racers',
       'Air Hockey',

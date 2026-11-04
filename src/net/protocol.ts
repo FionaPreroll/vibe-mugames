@@ -21,7 +21,9 @@ import * as maex from '../core/maexchen'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
 import * as swim from '../core/schwimmen'
 import * as sea from '../core/seeschlacht'
+import * as words from '../core/stadtlandfluss'
 import type { Player, TableState } from '../core/table'
+import { cleanText } from '../core/text'
 import * as wolf from '../core/werwolf'
 
 /**
@@ -97,6 +99,14 @@ function parseMove(value: unknown, game: GameId): Move | undefined {
     const seat = list(value, 1, (n) => (isWhole(n, 0, wolf.MAX_VILLAGE - 1) ? n : undefined))
     return seat?.length === 1 ? seat : undefined
   }
+  if (game === 'stadtlandfluss') {
+    // An answer is its category and its characters, after the kind of move.
+    const numbers = list(value, words.MAX_ANSWER + 2, (n) =>
+      isWhole(n, 0, 0x10ffff) ? n : undefined,
+    )
+    const move = numbers && words.decode(numbers)
+    return move ? words.encode(move) : undefined
+  }
   if (game === 'seeschlacht') {
     const numbers = list(value, sea.FLEET.length, (n) =>
       isWhole(n, 0, 2 * sea.SEA_CELLS - 1) ? n : undefined,
@@ -167,6 +177,13 @@ export const parseState: Parse<TableState> = (value) => {
         ? null
         : undefined
   if (village === undefined) return undefined
+  const wordsView =
+    game === 'stadtlandfluss'
+      ? parseWords(value.words, seats.length)
+      : value.words === null
+        ? null
+        : undefined
+  if (wordsView === undefined) return undefined
   const race =
     game === 'lichtrenner'
       ? parseRace(value.race, seats.length)
@@ -178,11 +195,12 @@ export const parseState: Parse<TableState> = (value) => {
   if (rink === undefined) return undefined
   if (!isWhole(value.round, 0, MAX_ROUNDS)) return undefined
   if (!isWhole(value.moveNo, 0, MAX_MOVES)) return undefined
-  // Werwolf never shows a last move: it would give away whom a player chose.
+  // Werwolf never shows a last move: it would give away whom a player chose; nor do the party
+  // games of words, which would show what a player wrote.
   const last =
     value.last === null || !game
       ? null
-      : game === 'werwolf'
+      : game === 'werwolf' || game === 'stadtlandfluss'
         ? undefined
         : parseMove(value.last, game)
   if (last === undefined) return undefined
@@ -204,6 +222,7 @@ export const parseState: Parse<TableState> = (value) => {
     sea: seaView,
     dice,
     village,
+    words: wordsView,
     race,
     rink,
     round: value.round,
@@ -376,6 +395,71 @@ function parseVillage(value: unknown, seats: number): wolf.WolfView | undefined 
   const story = list(value.story, 2 * MAX_STORY, (event) => parseStory(event, seats))
   if (!findings || !story) return undefined
   return { roles, alive, phase, night, done, choices, healed, findings, story, winner }
+}
+
+/** A text of at most `max` characters, as the rules keep it; undefined if it is not one. */
+function parseText(value: unknown, max: number): string | undefined {
+  if (typeof value !== 'string' || value.length > 4 * max) return undefined
+  const text = cleanText(value, max)
+  return text === value ? text : undefined
+}
+
+/**
+ * Stadt, Land, Fluss: the round's letters, each seat's answers if this seat may see them, who
+ * objects to which, who is ready, and the points so far.
+ */
+function parseWords(value: unknown, seats: number): words.WordsView | undefined {
+  if (!isObject(value) || typeof value.together !== 'boolean') return undefined
+  const isSeat = (n: unknown): n is number => isWhole(n, 0, seats - 1)
+  const letters = list(value.letters, words.ROUNDS, (l) =>
+    typeof l === 'string' && l.length === 1 && words.LETTERS.includes(l) ? l : undefined,
+  )
+  if (!letters || letters.length === 0 || new Set(letters).size !== letters.length) {
+    return undefined
+  }
+  const count = words.CATEGORIES.length
+  const answers = list(value.answers, seats, (own) => {
+    if (own === null) return null
+    const texts = list(own, count, (text) => parseText(text, words.MAX_ANSWER))
+    return texts?.length === count ? texts : undefined
+  })
+  const flags = (v: unknown) => list(v, seats, (b) => (typeof b === 'boolean' ? b : undefined))
+  const done = flags(value.done)
+  const ready = flags(value.ready)
+  const filled = list(value.filled, seats, (n) => (isWhole(n, 0, count) ? n : undefined))
+  const totals = list(value.totals, seats, (n) => (isWhole(n, 0, 1_000_000) ? n : undefined))
+  const objections = list(value.objections, seats, (own) => {
+    const all = list(own, count, (against) => {
+      const by = list(against, seats, (n) => (isSeat(n) ? n : undefined))
+      return by && new Set(by).size === by.length ? by : undefined
+    })
+    return all?.length === count ? all : undefined
+  })
+  if (answers?.length !== seats || done?.length !== seats || ready?.length !== seats) {
+    return undefined
+  }
+  if (filled?.length !== seats || totals?.length !== seats || objections?.length !== seats) {
+    return undefined
+  }
+  const { phase, stopper, left, winner } = value
+  if (phase !== 'write' && phase !== 'check') return undefined
+  if (stopper !== null && !isSeat(stopper)) return undefined
+  if (!isWhole(left, 0, words.WRITE_SECONDS)) return undefined
+  if (winner !== null && winner !== 'draw' && !isSeat(winner)) return undefined
+  return {
+    together: value.together,
+    letters,
+    phase,
+    answers,
+    filled,
+    done,
+    stopper,
+    left,
+    objections,
+    ready,
+    totals,
+    winner,
+  }
 }
 
 /** The most nights a game of Werwolf lasts: one of eight players is out at least every other. */

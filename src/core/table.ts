@@ -15,6 +15,7 @@ import * as maex from './maexchen'
 import * as miau from './miaumiau'
 import * as swim from './schwimmen'
 import * as sea from './seeschlacht'
+import * as words from './stadtlandfluss'
 import * as wolf from './werwolf'
 
 /**
@@ -34,7 +35,11 @@ import * as wolf from './werwolf'
  *
  * Games in real time (Lichtrenner, air hockey) have no moves in turn: each player at the board
  * says what they want many times a second (`input`), such as where to head, and the host runs
- * the game on by the time that has passed (`tick`).
+ * the game on by the time that has passed (`tick`). Time runs out in some party games too, such
+ * as the writing in Stadt, Land, Fluss.
+ *
+ * A table on one device (`together`) plays the party games that way: in Stadt, Land, Fluss,
+ * players write one after the other.
  */
 
 export interface Player {
@@ -64,6 +69,8 @@ export interface TableState {
   readonly dice: maex.MaexView | null
   /** Werwolf as the player this state is for sees it; null in every other game. */
   readonly village: wolf.WolfView | null
+  /** Stadt, Land, Fluss as the player this state is for sees it; null in every other game. */
+  readonly words: words.WordsView | null
   /** Lichtrenner as it stands; null in every other game. */
   readonly race: licht.LichtView | null
   /** Air hockey as it stands; null in every other game. */
@@ -96,13 +103,24 @@ export function playerToMove(state: TableState): number | null {
     state.swim?.turn ??
     state.dice?.turn ??
     (state.village && (wolf.waiting(state.village)[0] ?? null)) ??
+    (state.words && (words.waitingFor(state.words)[0] ?? null)) ??
     (state.sea && (sea.nextToPlace(state.sea) ?? state.sea.turn))
   return turn === undefined || turn === null ? null : (state.seats[turn] ?? null)
 }
 
+export interface TableOptions {
+  /** Everyone plays on one device: the party games are played the way they are there. */
+  readonly together?: boolean
+}
+
 export class Table {
-  /** `random` shuffles the cards and rolls the die: numbers from 0 up to, not including, 1. */
-  constructor(private readonly random: () => number = Math.random) {}
+  /**
+   * `random` shuffles the cards and rolls the die: numbers from 0 up to, not including, 1.
+   */
+  constructor(
+    private readonly random: () => number = Math.random,
+    private readonly options: TableOptions = {},
+  ) {}
 
   private players: Player[] = []
   /** Player ids in the order they get a seat: those seated first. */
@@ -116,7 +134,11 @@ export class Table {
   private sea: sea.SeaState | null = null
   private dice: maex.MaexState | null = null
   private village: wolf.WolfState | null = null
-  /** The move number Werwolf's night or day began with: older moves were meant for another. */
+  private words: words.WordsState | null = null
+  /**
+   * The move number Werwolf's night or day, or a round's writing or checking in Stadt, Land,
+   * Fluss, began with: older moves were meant for another.
+   */
   private phaseFrom = 0
   private race: licht.LichtState | null = null
   private rink: hockey.HockeyState | null = null
@@ -169,14 +191,17 @@ export class Table {
         ? this.seaMove(seat, moveNo, move)
         : game === 'werwolf'
           ? this.wolfMove(seat, moveNo, move)
-          : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
+          : game === 'stadtlandfluss'
+            ? this.wordsMove(seat, moveNo, move)
+            : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
     if (!taken) return false
     this.moveNo++
-    // A fleet placed stays hidden, and so does whom a player of Werwolf chose: only shots, and
-    // the moves of other games, show as the last move.
+    // A fleet placed stays hidden, and so does whom a player of Werwolf chose, and what anyone
+    // wrote: only shots, and the moves of other games, show as the last move.
     if (game === 'werwolf') {
       if (this.village?.choices.every((choice) => choice === null)) this.phaseFrom = this.moveNo
-    } else if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
+    } else if (game === 'stadtlandfluss') this.newPhase()
+    else if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
     this.score()
     return true
   }
@@ -203,11 +228,20 @@ export class Table {
   }
 
   /**
-   * Runs a game in real time on by `seconds`, with what each player wants now. Returns whether
-   * one is on, as its state then changes with every tick.
+   * Runs a game in real time on by `seconds`, with what each player wants now, and the time of
+   * a party game that has one. Returns whether the table changed: in a game in real time, with
+   * every tick; in a party game, when a second more is gone, or the time is up.
    */
   tick(seconds: number): boolean {
     if (this.outcome !== null) return false
+    if (this.words) {
+      const before = this.words
+      this.words = words.advance(before, seconds)
+      this.newPhase()
+      return (
+        Math.ceil(before.left) !== Math.ceil(this.words.left) || before.phase !== this.words.phase
+      )
+    }
     if (this.race) {
       const wants = this.seats.map((_, seat) => this.wants[seat]?.[0] ?? null)
       this.race = licht.advance(this.race, wants, seconds)
@@ -257,6 +291,7 @@ export class Table {
     this.sea = null
     this.dice = null
     this.village = null
+    this.words = null
     this.race = null
     this.rink = null
     this.last = null
@@ -279,6 +314,7 @@ export class Table {
       sea: this.sea && sea.view(this.sea, this.seats.indexOf(viewer)),
       dice: this.dice && maex.view(this.dice, this.seats.indexOf(viewer)),
       village: this.village && wolf.view(this.village, this.seats.indexOf(viewer)),
+      words: this.words && words.view(this.words, this.seats.indexOf(viewer)),
       race: this.race && licht.view(this.race),
       rink: this.rink && hockey.view(this.rink),
       round: this.round,
@@ -380,6 +416,39 @@ export class Table {
     return true
   }
 
+  /**
+   * A move in Stadt, Land, Fluss: everyone writes at once, so a move may come with an older
+   * move number than the table's, but none from before this round's writing or checking began.
+   */
+  private wordsMove(seat: number, moveNo: number, move: Move): boolean {
+    const game = this.words
+    const decoded = words.decode(move)
+    if (game === null || decoded === null) return false
+    if (moveNo < this.phaseFrom || moveNo > this.moveNo) return false
+    if (!words.legal(game, seat, decoded)) return false
+    this.words = words.play(game, seat, decoded, this.random)
+    const winner = this.words.winner
+    this.outcome = winner === null ? null : winner === 'draw' ? 'draw' : { winner, line: [] }
+    return true
+  }
+
+  /** What part of a party game this is: moves meant for another part are not taken. */
+  private phaseKey(): string {
+    return this.words ? `${this.words.letters.length}:${this.words.phase}` : ''
+  }
+
+  /** The part of the game it was when `phaseFrom` was set. */
+  private phaseWas = ''
+
+  /** Marks where a new part of a party game began, if one did. */
+  private newPhase(): void {
+    const key = this.phaseKey()
+    if (key !== this.phaseWas) {
+      this.phaseWas = key
+      this.phaseFrom = this.moveNo
+    }
+  }
+
   /** A game that has just ended counts for its winner, and in Werwolf for their whole team. */
   private score(): void {
     if (this.outcome === null || this.outcome === 'draw') return
@@ -400,7 +469,12 @@ export class Table {
     this.sea = game === 'seeschlacht' ? sea.start() : null
     this.dice = game === 'maexchen' ? maex.start(this.seats.length) : null
     this.village = game === 'werwolf' ? wolf.deal(this.seats.length, this.random) : null
+    this.words =
+      game === 'stadtlandfluss'
+        ? words.start(this.seats.length, this.random, this.options.together)
+        : null
     this.phaseFrom = 0
+    this.phaseWas = this.phaseKey()
     this.race = game === 'lichtrenner' ? licht.start(this.seats.length) : null
     this.rink = game === 'airhockey' ? hockey.start() : null
     this.wants = []
