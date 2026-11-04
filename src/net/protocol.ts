@@ -30,7 +30,7 @@ import * as wolf from '../core/werwolf'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 9
+export const PROTOCOL = 10
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of

@@ -18,11 +18,13 @@ import { reversi } from './reversi'
 import { SEA_SEATS } from './seeschlacht'
 import { sternhalma } from './sternhalma'
 import { ticTacToe } from './tictactoe'
+import { ultimate } from './ultimate'
 import { MAX_VILLAGE, MIN_VILLAGE } from './werwolf'
 
 /** Every board game in the Spielekiste. */
 export const GAMES: Record<BoardGameId, BoardGame> = {
   tictactoe: ticTacToe,
+  ultimate,
   fourinarow: fourInARow,
   muehle,
   dame,

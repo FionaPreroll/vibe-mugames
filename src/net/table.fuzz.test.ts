@@ -178,7 +178,7 @@ describe('a hostile phone at the table, fuzzed', () => {
   it('makes only legal moves on its own turn, while it holds a seat', async () => {
     await fc.assert(
       fc.asyncProperty(
-        fc.constantFrom('tictactoe', 'fourinarow', 'muehle', 'dame', 'reversi'),
+        fc.constantFrom('tictactoe', 'ultimate', 'fourinarow', 'muehle', 'dame', 'reversi'),
         fc.array(hostileStep, { maxLength: 60 }),
         fc.array(fc.nat(), { maxLength: 30 }),
         async (game, messages, picks) => {

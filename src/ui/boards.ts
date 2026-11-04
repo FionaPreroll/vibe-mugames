@@ -1,4 +1,5 @@
 import {
+  type Board,
   type BoardGame,
   EMPTY,
   type GameId,
@@ -25,6 +26,7 @@ import {
   triangle,
 } from '../core/sternhalma'
 import type { TableState } from '../core/table'
+import { bigBoard, cellOf, lastMark, SPOTS, sentTo, smallOutcome } from '../core/ultimate'
 import { type TextKey, t } from '../i18n'
 import { h } from './dom'
 
@@ -137,12 +139,14 @@ export function boardView(
   const cellButton = (cell: number, label: string, content = '') => {
     const piece = position.board[cell] ?? EMPTY
     const seat = seatOf(piece)
+    // Ultimate Tic Tac Toe marks its newest mark as a kind of its own, but crowns nothing.
+    const crown = isCrowned(piece) && game !== 'ultimate'
     const into = target(cell)
     const open = next.has(into) || (path.length > 0 && cell === path[0]) || starts.has(into)
     const classes = [
       'cell',
       seat === EMPTY ? 'empty' : `seat-${seat}`,
-      isCrowned(piece) ? 'crowned' : '',
+      crown ? 'crowned' : '',
       winning.has(cell) ? 'win' : '',
       path.includes(cell) ? 'picked' : '',
       next.has(into) && (path.length > 0 || (game === 'reversi' && seat === EMPTY)) ? 'target' : '',
@@ -153,7 +157,7 @@ export function boardView(
       game === 'kaesekaestchen' && seat === EMPTY && starts.has(into) ? 'can' : '',
     ]
     const name = seat === EMPTY ? '' : pieceName(game, seat, state)
-    const crowned = isCrowned(piece) ? ` (${t('crowned')})` : ''
+    const crowned = crown ? ` (${t('crowned')})` : ''
     const button = h('button', {
       type: 'button',
       class: classes.filter(Boolean).join(' '),
@@ -180,7 +184,9 @@ export function boardView(
   if (game === 'muehle') muehleBoard(board, rules, cellButton)
   else if (game === 'dame') dameBoard(board, state.seats[1] === viewer, cellButton)
   else if (game === 'kaesekaestchen') kaeseBoard(board, cellButton)
-  else if (game === 'sternhalma') {
+  else if (game === 'ultimate') {
+    ultimateBoard(board, position.board, state.outcome === null, cellButton)
+  } else if (game === 'sternhalma') {
     const seats = sternSeats(position.board)
     sternBoard(board, seats, home(Math.max(0, state.seats.indexOf(viewer)), seats), cellButton)
   } else if (game === 'reversi') {
@@ -269,6 +275,52 @@ function kaeseBoard(board: HTMLElement, cellButton: CellButton): void {
       }
     }
   }
+}
+
+/**
+ * Ultimate Tic Tac Toe's nine small boards on the big one, each three by three. The board the
+ * player to move is sent to is marked while the game goes on, and a small board that is won
+ * shows its winner's mark over it.
+ */
+function ultimateBoard(
+  board: HTMLElement,
+  cells: Board,
+  going: boolean,
+  cellButton: CellButton,
+): void {
+  const sent = going ? sentTo(cells) : null
+  for (let small = 0; small < SPOTS; small++) {
+    const result = smallOutcome(cells, small)
+    const classes = [
+      'small',
+      small === sent ? 'sent' : '',
+      result === 'draw' ? 'full' : '',
+      result && result !== 'draw' ? `won seat-${result.winner}` : '',
+    ]
+    const part = h('div', {
+      class: classes.filter(Boolean).join(' '),
+      role: 'group',
+      ariaLabel: t('ultimateBoardAt', smallPlace(small)),
+    } as Partial<HTMLDivElement>)
+    for (let spot = 0; spot < SPOTS; spot++) {
+      const cell = cellOf(small, spot)
+      const label = t('ultimateCellAt', {
+        ...smallPlace(small),
+        row: Math.floor(spot / 3) + 1,
+        column: (spot % 3) + 1,
+      })
+      part.append(cellButton(cell, label, symbol(seatOf(cells[cell] ?? EMPTY))))
+    }
+    if (result && result !== 'draw') {
+      part.append(h('span', { class: 'owner', ariaHidden: 'true' }, symbol(result.winner)))
+    }
+    board.append(part)
+  }
+}
+
+/** Where a small board of Ultimate Tic Tac Toe lies on the big one, for its name. */
+function smallPlace(small: number): { boardRow: number; boardColumn: number } {
+  return { boardRow: Math.floor(small / 3) + 1, boardColumn: (small % 3) + 1 }
 }
 
 /** Half the width of a step across between neighbouring holes, and the height of a row. */
@@ -381,6 +433,11 @@ export function hint(state: TableState, path: readonly number[]): string {
   }
   if (state.game === 'reversi') return t('reversiHint')
   if (state.game === 'kaesekaestchen') return t('kaeseHint')
+  if (state.game === 'ultimate') {
+    const sent = sentTo(position.board)
+    if (sent !== null) return t('ultimateSent')
+    return t(lastMark(position.board) === null ? 'ultimateStart' : 'ultimateFree')
+  }
   if (state.game === 'sternhalma') return t(path.length > 0 ? 'sternWhere' : 'sternHint')
   return ''
 }
@@ -422,6 +479,11 @@ export function handText(state: TableState): string {
   }
   if (state.game === 'reversi')
     return `${t('piecesHeld')} ${each('countOf', counts(position.board))}`
+  if (state.game === 'ultimate') {
+    const big = bigBoard(position.board)
+    const won = [0, 1].map((seat) => big.filter((owner) => owner === seat).length)
+    return `${t('boardsWon')} ${each('countOf', won)}`
+  }
   if (state.game === 'kaesekaestchen') {
     return `${t('boxesHeld')} ${each('countOf', boxCounts(position.board))}`
   }
@@ -435,7 +497,7 @@ export function handText(state: TableState): string {
   return ''
 }
 
-/** The mark of a seat in Tic Tac Toe. */
+/** The mark of a seat in Tic Tac Toe and Ultimate Tic Tac Toe. */
 export function symbol(seat: number): string {
   return seat === 0 ? '✕' : seat === 1 ? '◯' : ''
 }
@@ -447,5 +509,5 @@ export function seatName(state: TableState, seat: number): string {
 
 function pieceName(game: GameId, seat: number, state: TableState): string {
   const name = seatName(state, seat)
-  return game === 'tictactoe' ? `${symbol(seat)} ${name}` : name
+  return game === 'tictactoe' || game === 'ultimate' ? `${symbol(seat)} ${name}` : name
 }

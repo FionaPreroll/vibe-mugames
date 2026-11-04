@@ -16,6 +16,7 @@ import { reversiGuide } from './reversi'
 import { seeschlachtGuide } from './seeschlacht'
 import { sternhalmaGuide } from './sternhalma'
 import { ticTacToeGuide } from './tictactoe'
+import { ultimateGuide } from './ultimate'
 import { werwolfGuide } from './werwolf'
 
 /**
@@ -24,6 +25,7 @@ import { werwolfGuide } from './werwolf'
  */
 export const GUIDES: Record<GameId, GameGuide> = {
   tictactoe: ticTacToeGuide,
+  ultimate: ultimateGuide,
   fourinarow: fourInARowGuide,
   muehle: muehleGuide,
   dame: dameGuide,

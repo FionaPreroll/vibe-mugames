@@ -5,6 +5,7 @@ The Spielekiste's games and their rules, in short. In the Spielekiste, each game
 | Game                                  | Players |
 | ------------------------------------- | ------- |
 | Tic Tac Toe                           | 2       |
+| Ultimate Tic Tac Toe                  | 2       |
 | Four in a Row (_Vier in einer Reihe_) | 2       |
 | Nine Men's Morris (_Mühle_)           | 2       |
 | Draughts (_Dame_)                     | 2       |
@@ -22,6 +23,10 @@ The Spielekiste's games and their rules, in short. In the Spielekiste, each game
 ## Tic Tac Toe
 
 3 by 3 squares. In turn, each player marks a free square. Three in a row, across, down or diagonally, win; a full board without one is a draw.
+
+## Ultimate Tic Tac Toe
+
+Nine boards of Tic Tac Toe, laid out as one big board of 3 by 3. In turn, each player marks a free square of a small board. The square marked sends the other player to the small board in the same place of the big one: a mark in a small board's top right square sends them to the top right board, which the board marks. Three in a row win a small board; a full one without is nobody's. A board that is won or full takes no more marks, and a player sent there may mark any open board. Three small boards won in a row, across, down or diagonally, win the game; once every board is closed without one, it is a draw.
 
 ## Four in a Row
 

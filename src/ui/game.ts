@@ -37,12 +37,12 @@ export function playerItems(state: TableState, marks: (player: Player) => string
   })
 }
 
-/** A seat's colour, or its mark in Tic Tac Toe. */
+/** A seat's colour, or its mark in Tic Tac Toe and Ultimate Tic Tac Toe. */
 export function seatMark(state: TableState, place: number): HTMLElement {
   return h(
     'span',
     { class: `piece seat-${place}` },
-    state.game === 'tictactoe' ? symbol(place) : '●',
+    state.game === 'tictactoe' || state.game === 'ultimate' ? symbol(place) : '●',
   )
 }
 

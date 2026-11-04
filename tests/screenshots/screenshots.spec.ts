@@ -155,7 +155,7 @@ for (const look of SHOWCASE) {
     const page = await device(browser, PHONE)
     await theme(page, look.theme)
     await local(page, NAMES.slice(0, 2))
-    await page.getByRole('button', { name: look.game }).click()
+    await page.getByRole('button', { name: look.game, exact: true }).click()
     await play(page, look.clicks)
     await shot(page, `theme-${look.file}`)
   })
@@ -176,6 +176,14 @@ test('rules', async ({ browser }) => {
     .click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await shot(page, 'rules')
+})
+
+test('Ultimate Tic Tac Toe', async ({ browser }) => {
+  const page = await device(browser, PHONE)
+  await local(page, NAMES.slice(0, 2))
+  await page.getByRole('button', { name: 'Ultimate Tic Tac Toe' }).click()
+  await play(page, 52)
+  await shot(page, 'ultimate')
 })
 
 test('Nine Men’s Morris', async ({ browser }) => {

@@ -28,7 +28,7 @@ test('two phones play Tic Tac Toe, and again with the other one starting', async
   const ada = await phone(browser, 'Ada')
   const bo = await phone(browser, 'Bo')
   await ada.getByRole('button', { name: 'Open a table' }).click()
-  await expect(ada.getByRole('button', { name: 'Tic Tac Toe' })).toBeDisabled()
+  await expect(ada.getByRole('button', { name: 'Tic Tac Toe', exact: true })).toBeDisabled()
   await seat(ada, bo)
   await expect(ada.locator('.toast')).toHaveText('Bo joined.')
   await expect(bo.locator('.players')).toContainText('Ada')
@@ -41,7 +41,7 @@ test('two phones play Tic Tac Toe, and again with the other one starting', async
   await expect(bo.getByRole('dialog', { name: 'Rules of Four in a Row' })).toBeVisible()
   await bo.getByRole('button', { name: 'Close' }).click()
 
-  await ada.getByRole('button', { name: 'Tic Tac Toe' }).click()
+  await ada.getByRole('button', { name: 'Tic Tac Toe', exact: true }).click()
   await expect(ada.locator('.status.turn')).toHaveText('Your turn')
   await expect(bo.locator('.status.turn')).toHaveText('Ada’s turn')
   // Not Bo's turn: Bo's board takes nothing.

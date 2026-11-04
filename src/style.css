@@ -2766,3 +2766,65 @@ a.button {
 a.button.primary {
   color: var(--on-accent);
 }
+
+/* Ultimate Tic Tac Toe: nine small boards of three by three on a big one. */
+.board.ultimate {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0.25rem;
+  max-width: min(100%, 30rem);
+  container-type: inline-size;
+}
+
+.board.ultimate .small {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  padding: 3px;
+  border-radius: 0.5rem;
+  background: var(--line);
+}
+
+.board.ultimate .small.sent {
+  background: var(--accent);
+}
+
+/* A won board shows its winner's mark over it. */
+.board.ultimate .owner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(2.5rem, 22cqi, 6.5rem);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.board.ultimate .small.seat-0 .owner {
+  color: var(--seat-0);
+}
+
+.board.ultimate .small.seat-1 .owner {
+  color: var(--seat-1);
+}
+
+.board.ultimate .small .cell {
+  border-radius: 0.2rem;
+  border-width: 1px;
+  font-size: clamp(0.8rem, 5cqi, 1.6rem);
+}
+
+.board.ultimate .small .cell.seat-0 {
+  color: var(--seat-0);
+}
+
+.board.ultimate .small .cell.seat-1 {
+  color: var(--seat-1);
+}
+
+/* A board that is closed takes no marks: its squares fade, but for a winning line. */
+.board.ultimate .small.won .cell:not(.win),
+.board.ultimate .small.full .cell:not(.win) {
+  opacity: 0.45;
+}

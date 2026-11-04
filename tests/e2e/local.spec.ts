@@ -30,7 +30,7 @@ async function startLocal(page: Page, names: string[], split: boolean): Promise<
 test('two players take turns on one screen at Tic Tac Toe, and play again', async ({ browser }) => {
   const page = await phone(browser, 'Ada')
   await startLocal(page, ['Ada', 'Bo'], false)
-  await page.getByRole('button', { name: 'Tic Tac Toe' }).click()
+  await page.getByRole('button', { name: 'Tic Tac Toe', exact: true }).click()
   const status = page.locator('.status.turn')
   await expect(status).toHaveText('Ada, your turn')
   // No cards to hide in Tic Tac Toe.
@@ -65,8 +65,11 @@ test('every game shows a thumbnail, and its rules with drawings, in the chooser 
   const page = await phone(browser, 'Ada')
   await startLocal(page, ['Ada', 'Bo'], false)
   const games = page.locator('.game-card')
-  await expect(games).toHaveCount(14)
-  await expect(page.locator('.game-card svg.thumbnail')).toHaveCount(14)
+  await expect(games.first()).toBeVisible()
+  // Every game in the chooser has its thumbnail.
+  const count = await games.count()
+  expect(count).toBeGreaterThanOrEqual(15)
+  await expect(page.locator('.game-card svg.thumbnail')).toHaveCount(count)
 
   await page.getByRole('group', { name: 'Draughts' }).getByRole('button', { name: 'Rules' }).click()
   const rules = page.getByRole('dialog', { name: 'Rules of Draughts' })

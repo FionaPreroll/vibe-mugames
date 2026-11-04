@@ -1,6 +1,15 @@
 import fc from 'fast-check'
 import { describe, expect, it } from 'vitest'
-import { type Board, type BoardGame, EMPTY, GAME_IDS, isLegal, isLiveGame, plain } from './board'
+import {
+  type Board,
+  type BoardGame,
+  EMPTY,
+  GAME_IDS,
+  isLegal,
+  isLiveGame,
+  plain,
+  seatOf,
+} from './board'
 import { fourInARow } from './fourInARow'
 import { GAME_GROUPS, GAMES, hasHiddenCards } from './games'
 import { ticTacToe } from './tictactoe'
@@ -106,7 +115,9 @@ describe('every game', () => {
           }
           const outcome = game.outcome(position)
           if (outcome !== null && outcome !== 'draw') {
-            for (const cell of outcome.line) expect(position.board[cell]).toBe(outcome.winner)
+            for (const cell of outcome.line) {
+              expect(seatOf(position.board[cell] ?? EMPTY)).toBe(outcome.winner)
+            }
           }
           // A game with no move left is over.
           if (game.moves(position).length === 0) expect(outcome).not.toBeNull()

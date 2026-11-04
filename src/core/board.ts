@@ -7,7 +7,10 @@
 
 export const EMPTY = -1
 
-/** A cell holds `seat + KIND * kind`: seat 1's crowned piece (kind 1) is 11. */
+/**
+ * A cell holds `seat + KIND * kind`: seat 1's crowned piece (kind 1) is 11. Ultimate Tic Tac Toe
+ * marks its newest mark that way, as it says where the next one goes.
+ */
 export const KIND = 10
 
 export type Board = readonly number[]
@@ -63,6 +66,7 @@ export interface BoardGame {
 /** The games played on a board, each a `BoardGame`. */
 export const BOARD_GAME_IDS = [
   'tictactoe',
+  'ultimate',
   'fourinarow',
   'muehle',
   'dame',

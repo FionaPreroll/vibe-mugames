@@ -78,7 +78,7 @@ About (`src/ui/about.ts`, `src/ui/privacy.ts`) reads `CHANGELOG.md` and the priv
 
 ```
 src/
-  core/       the rules: board.ts, tictactoe.ts, fourInARow.ts, muehle.ts, dame.ts, kaesekaestchen.ts,
+  core/       the rules: board.ts, tictactoe.ts, ultimate.ts, fourInARow.ts, muehle.ts, dame.ts, kaesekaestchen.ts,
               reversi.ts, sternhalma.ts, ludo.ts, miaumiau.ts, seeschlacht.ts, maexchen.ts, werwolf.ts,
               lichtrenner.ts, airhockey.ts, games.ts, table.ts
   net/        protocol.ts: the messages and their parsers; session.ts: the host's and players' seats;

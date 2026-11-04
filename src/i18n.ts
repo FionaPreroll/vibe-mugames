@@ -160,6 +160,7 @@ const en = {
   hostChooses: '{host} chooses a game.',
   needPlayers: 'Add a player to start a game.',
   tictactoe: 'Tic Tac Toe',
+  ultimate: 'Ultimate Tic Tac Toe',
   fourinarow: 'Four in a Row',
   muehle: 'Nine Men’s Morris',
   dame: 'Draughts',
@@ -352,6 +353,14 @@ const en = {
   rulesTictactoe2: 'Three of your marks in a row, across, down or diagonally, win the game.',
   rulesTictactoe3:
     'A full board without three in a row is a draw. The players take turns in starting.',
+  rulesUltimate1:
+    'Nine boards of Tic Tac Toe make one big board. Take turns putting your mark into a free square of a small board.',
+  rulesUltimate2:
+    'Where you put your mark in a small board sends the other player to the small board in the same place of the big one: a mark in the top right square sends them to the top right board.',
+  rulesUltimate3:
+    'Three in a row win a small board for you. A board that is won or full takes no more marks: whoever is sent there may play in any open board.',
+  rulesUltimate4:
+    'Three small boards won in a row, across, down or diagonally, win the game. Once every board is closed without such a row, it is a draw.',
   rulesFourinarow1:
     'Take turns dropping a disc into a column of the upright board: it falls down to the lowest free hole.',
   rulesFourinarow2:
@@ -548,6 +557,13 @@ const en = {
   kaeseYouAgain: 'You closed a box: draw another line.',
   kaeseAgain: '{name} closed a box and draws again.',
   boxesHeld: 'Boxes:',
+  ultimateBoardAt: 'Small board, row {boardRow}, column {boardColumn}',
+  ultimateCellAt: 'Small board {boardRow}/{boardColumn}, row {row}, column {column}',
+  ultimateStart:
+    'Play anywhere. The square you take sends the other player to the small board in the same place.',
+  ultimateSent: 'Play in the marked board: the square taken last sends you there.',
+  ultimateFree: 'The board you were sent to is closed: play in any board still open.',
+  boardsWon: 'Boards won:',
   sternHint:
     'Bring all ten pieces to the triangle across, ringed in your colour. Pick a piece to see where it can go.',
   sternWhere:
@@ -851,6 +867,7 @@ const de: Texts = {
   hostChooses: '{host} wählt ein Spiel.',
   needPlayers: 'Füge einen Mitspieler hinzu, um ein Spiel zu starten.',
   tictactoe: 'Tic Tac Toe',
+  ultimate: 'Ultimate Tic Tac Toe',
   fourinarow: 'Vier in einer Reihe',
   muehle: 'Mühle',
   dame: 'Dame',
@@ -1048,6 +1065,14 @@ const de: Texts = {
     'Drei deiner Zeichen in einer Reihe, waagrecht, senkrecht oder schräg, gewinnen.',
   rulesTictactoe3:
     'Ist das Brett voll und hat niemand drei in einer Reihe, ist es unentschieden. Wer anfängt, wechselt sich ab.',
+  rulesUltimate1:
+    'Neun Bretter Tic Tac Toe bilden ein großes Brett. Abwechselnd setzt ihr euer Zeichen in ein freies Feld eines kleinen Bretts.',
+  rulesUltimate2:
+    'Wohin du in einem kleinen Brett setzt, dorthin schickst du dein Gegenüber: Ein Zeichen im Feld oben rechts schickt es in das kleine Brett oben rechts.',
+  rulesUltimate3:
+    'Drei in einer Reihe gewinnen dir ein kleines Brett. Ein gewonnenes oder volles Brett nimmt keine Zeichen mehr: Wer dorthin geschickt wird, setzt in ein beliebiges offenes Brett.',
+  rulesUltimate4:
+    'Drei gewonnene kleine Bretter in einer Reihe, waagrecht, senkrecht oder schräg, gewinnen das Spiel. Sind alle Bretter zu ohne so eine Reihe, ist es unentschieden.',
   rulesFourinarow1:
     'Werft abwechselnd eine Scheibe in eine Spalte des stehenden Bretts: Sie fällt bis ins unterste freie Loch.',
   rulesFourinarow2:
@@ -1250,6 +1275,14 @@ const de: Texts = {
   kaeseYouAgain: 'Du hast ein Kästchen geschlossen: Zieh noch einen Strich.',
   kaeseAgain: '{name} hat ein Kästchen geschlossen und zieht noch mal.',
   boxesHeld: 'Kästchen:',
+  ultimateBoardAt: 'Kleines Brett, Reihe {boardRow}, Spalte {boardColumn}',
+  ultimateCellAt: 'Kleines Brett {boardRow}/{boardColumn}, Reihe {row}, Spalte {column}',
+  ultimateStart:
+    'Setze, wo du willst. Das Feld, das du nimmst, schickt dein Gegenüber in das kleine Brett an derselben Stelle.',
+  ultimateSent: 'Setze in das markierte Brett: Dorthin schickt dich das zuletzt genommene Feld.',
+  ultimateFree:
+    'Das Brett, in das du geschickt wirst, ist zu: Setze in ein beliebiges offenes Brett.',
+  boardsWon: 'Gewonnene Bretter:',
   sternHint:
     'Bring alle zehn Steine in das gegenüberliegende Dreieck, das in deiner Farbe umrandet ist. Wähle einen Stein, um zu sehen, wohin er kann.',
   sternWhere:
