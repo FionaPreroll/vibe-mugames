@@ -61,13 +61,20 @@ On a laptop or a tablet, the game chooser, and games on one device, taking turns
     <td>Miau-Miau for four on a split screen</td>
     <td>Chinese Checkers for six</td>
   </tr>
+</table>
+
+The games in real time, between phones:
+
+<table>
   <tr>
-    <td><img src="docs/screenshots/lichtrenner.png" alt="Light Racers for four on a split screen, each rider leaving a wall of light"></td>
-    <td><img src="docs/screenshots/airhockey.png" alt="Air Hockey for two on a split screen, each player's goal at the bottom of their part"></td>
+    <td width="37%"><img src="docs/screenshots/lichtrenner.png" alt="Light Racers on Ada's phone: three riders, each leaving a wall of light, and the turn buttons"></td>
+    <td width="37%"><img src="docs/screenshots/airhockey.png" alt="Air Hockey on one phone, showing the whole rink with the player's goal at the bottom"></td>
+    <td width="26%"><img src="docs/screenshots/airhockey-table.png" alt="Air Hockey on two phones laid top edge to top edge, each showing its own half, so the rink runs across both screens"></td>
   </tr>
   <tr>
-    <td>Light Racers, in real time</td>
-    <td>Air Hockey, in real time</td>
+    <td>Light Racers: each phone steers its own rider</td>
+    <td>Air Hockey, the whole rink on each phone</td>
+    <td>Air Hockey, or each phone its own half: laid top edge to top edge, the puck slides from one screen to the other</td>
   </tr>
 </table>
 
@@ -250,7 +257,7 @@ Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of
 
 **The libraries** are installed from the files on their releases, [`p2p-v0.6.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.6.0) , [`p2p-nearby-v0.3.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-nearby-v0.3.0) and [`app-updates-v0.1.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/app-updates-v0.1.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
 
-**Screenshots:** the pictures in this README live in `docs/screenshots/`. `tests/screenshots/screenshots.spec.ts` takes them: it plays each game in Chromium, on a phone (412 by 915) or a laptop (1280 by 800), with the luck seeded and the clock fixed, so the same code gives the same pictures. `pnpm screenshots` writes only the pictures that look different from those there (more than 1 % of their pixels), so fonts and antialiasing alone change nothing; `pnpm screenshots --update-snapshots=all` writes them all. The pairing code is a sample, as a real one holds new keys every time, and the connection's numbers are those of the moment. To take them anew on GitHub, run the **Screenshots** workflow by hand (_Actions_ → _Screenshots_ → _Run workflow_): it opens a pull request against `main`, from the branch `feature/update_screenshots`, with the pictures that changed, for review. It runs with Inter as the system font (`tools/screenshots/fonts.conf`), as they were first taken. GitHub runs no other workflows on a pull request a workflow opened, so CI does not check it; it changes nothing but pictures. The repository has to allow it once: _Settings_ → _Actions_ → _General_ → _Workflow permissions_ → _Allow GitHub Actions to create and approve pull requests_.
+**Screenshots:** the pictures in this README live in `docs/screenshots/`. `tests/screenshots/screenshots.spec.ts` takes them: it plays each game in Chromium, on a phone (412 by 915) or a laptop (1280 by 800), with the luck seeded and the clock fixed, so the same code gives the same pictures. The games in real time are played between phones over WebRTC, with every phone's clock standing still between the host's steps, and are shown in a generic phone's frame; the two halves of the rink lie top edge to top edge, the upper phone turned round. `pnpm screenshots` writes only the pictures that look different from those there (more than 1 % of their pixels), so fonts and antialiasing alone change nothing; `pnpm screenshots --update-snapshots=all` writes them all. The pairing code is a sample, as a real one holds new keys every time, and the connection's numbers are those of the moment. To take them anew on GitHub, run the **Screenshots** workflow by hand (_Actions_ → _Screenshots_ → _Run workflow_): it opens a pull request against `main`, from the branch `feature/update_screenshots`, with the pictures that changed, for review. It runs with Inter as the system font (`tools/screenshots/fonts.conf`), as they were first taken. GitHub runs no other workflows on a pull request a workflow opened, so CI does not check it; it changes nothing but pictures. The repository has to allow it once: _Settings_ → _Actions_ → _General_ → _Workflow permissions_ → _Allow GitHub Actions to create and approve pull requests_.
 
 **The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`. The update plugin's Java and its tests live with the library; here, `src/ui/updates.test.ts` plays the Spielekiste's dialogs in happy-dom against the library's `FakeUpdater`.
 

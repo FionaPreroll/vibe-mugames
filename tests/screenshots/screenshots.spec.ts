@@ -110,9 +110,6 @@ async function shot(
   await expect(page).toHaveScreenshot(`${name}.png`, options)
 }
 
-/** A moment after any page here starts, for games in real time to stand still at. */
-const PAUSE = new Date('2026-11-01T18:30:00Z')
-
 const NAMES = ['Ada', 'Bo', 'Cy', 'Di', 'Ed', 'Flo']
 
 test('start screen', async ({ browser }) => {
@@ -241,33 +238,145 @@ test('Werewolf', async ({ browser }) => {
   await shot(page, 'werwolf')
 })
 
-test('Light Racers', async ({ browser }) => {
-  const page = await device(browser, LAPTOP)
-  await local(page, NAMES.slice(0, 4), true)
-  // The game's time stands still between the steps below, which move it on.
-  await page.clock.pauseAt(PAUSE)
-  await page.getByRole('button', { name: 'Light Racers' }).click()
-  // The countdown, then everyone rides a little, turns away from the others, and back.
-  await page.clock.runFor(3500)
-  await steer(page, ['KeyW', 'ArrowUp', 'KeyK', 'Numpad5'], 100)
-  await page.clock.runFor(200)
-  await steer(page, ['KeyD', 'Numpad4'], 100)
-  await page.clock.runFor(300)
-  await steer(page, ['KeyL', 'ArrowLeft'], 100)
-  await page.clock.runFor(500)
-  await shot(page, 'lichtrenner')
+/**
+ * Over the network, the host may hear from the other phone a moment earlier or later, which can
+ * move the puck by a few pixels: only a larger change takes a new picture of Air Hockey.
+ */
+const PUCK_NOISE = 0.005
+
+/**
+ * Stops a page's clock where it is now. Every phone at a table stops, so none of them waits for
+ * another in vain and gives the connection up; time then moves on by `runFor` alone.
+ */
+async function freeze(page: Page): Promise<void> {
+  await page.clock.pauseAt(new Date((await page.evaluate(() => Date.now())) + 10))
+}
+
+/** Phones at one table: the first opens it, the others sit down, and the host starts a game. */
+async function liveTable(game: string, pages: Page[]): Promise<void> {
+  const [host, ...players] = pages
+  if (!host) throw new Error('no host')
+  await host.getByRole('button', { name: 'Open a table' }).click()
+  for (const player of players) await seat(host, player)
+  // The host runs the game: its time stands still between the steps that move it on, and the
+  // players' phones draw what it sends.
+  for (const page of pages) await freeze(page)
+  // Forced: with the clock standing still, no animation frame comes to show the button is still.
+  await host.getByRole('button', { name: game }).click({ force: true })
+}
+
+/** A phone's whole screen, as a picture to put into a phone's frame. */
+async function screen(page: Page): Promise<string> {
+  // A moment for the page to draw what came last.
+  await page.clock.runFor(50)
+  const png = await page.screenshot({ animations: 'disabled', caret: 'hide' })
+  return `data:image/png;base64,${png.toString('base64')}`
+}
+
+/**
+ * Phones as on a table: each screen in a generic phone's frame, the frames one above the
+ * other, a turned one upside down, as for a player across the table.
+ */
+async function phones(
+  browser: Browser,
+  name: string,
+  screens: { src: string; turned?: boolean }[],
+  maxDiffPixelRatio?: number,
+): Promise<void> {
+  const context = await browser.newContext({
+    viewport: { width: 600, height: 2200 },
+    deviceScaleFactor: 2,
+  })
+  const page = await context.newPage()
+  const { width, height } = PHONE.viewport ?? { width: 412, height: 915 }
+  await page.setContent(`<!doctype html>
+<style>
+  body { margin: 0; background: transparent; }
+  .stand { display: inline-flex; flex-direction: column; padding: 8px; }
+  .phone {
+    position: relative; padding: 14px; border-radius: 58px;
+    background: linear-gradient(145deg, #3a3d42, #16181b);
+    box-shadow: inset 0 0 0 2px #5b5f66, inset 0 0 0 5px #0b0c0e, 0 6px 18px rgb(0 0 0 / 0.35);
+  }
+  .phone.turned { transform: rotate(180deg); }
+  .phone img { display: block; width: ${width}px; height: ${height}px; border-radius: 44px; }
+  .camera {
+    position: absolute; top: 26px; left: 50%; width: 14px; height: 14px; margin-left: -7px;
+    border-radius: 50%; background: #050608; box-shadow: inset 0 0 0 3px #1c2230;
+  }
+  .button { position: absolute; width: 4px; border-radius: 2px; background: #2b2e33; }
+  .power { right: -4px; top: 210px; height: 90px; }
+  .volume { left: -4px; top: 170px; height: 130px; }
+</style>
+<div class="stand">${screens
+    .map(
+      (screen) => `<div class="phone${screen.turned ? ' turned' : ''}">
+    <img src="${screen.src}"><span class="camera"></span>
+    <span class="button power"></span><span class="button volume"></span>
+  </div>`,
+    )
+    .join('')}</div>`)
+  await expect(page.locator('.stand')).toHaveScreenshot(`${name}.png`, {
+    omitBackground: true,
+    maxDiffPixelRatio,
+  })
+  await context.close()
+}
+
+test('Light Racers on a phone', async ({ browser }) => {
+  const pages = await Promise.all(
+    ['Ada', 'Bo', 'Cy'].map((name, i) => device(browser, PHONE, name, i + 1)),
+  )
+  await liveTable('Light Racers', pages)
+  const [ada] = pages
+  if (!ada) throw new Error('no host')
+  // The countdown, then Ada rides a little and turns twice; the others ride straight on.
+  await ada.clock.runFor(3900)
+  await steer(ada, ['ArrowDown'], 100)
+  await ada.clock.runFor(400)
+  await steer(ada, ['ArrowRight'], 100)
+  await ada.clock.runFor(500)
+  await phones(browser, 'lichtrenner', [{ src: await screen(ada) }])
 })
 
-test('Air Hockey', async ({ browser }) => {
-  const page = await device(browser, LAPTOP)
-  await local(page, NAMES.slice(0, 2), true)
-  // The game's time stands still between the steps below, which move it on.
-  await page.clock.pauseAt(PAUSE)
-  await page.getByRole('button', { name: 'Air Hockey' }).click()
-  // The countdown, then Ada's mallet shoots the puck on, and Bo's moves over.
-  await page.clock.runFor(3500)
-  await steer(page, ['KeyW', 'ArrowLeft'], 800)
-  await shot(page, 'airhockey')
+test('Air Hockey on two phones, top edge to top edge', async ({ browser }) => {
+  // Both show their own half alone, for two phones laid on the table, top edge to top edge.
+  const pages = await Promise.all(
+    ['Ada', 'Bo'].map((name, i) => device(browser, PHONE, name, i + 1)),
+  )
+  for (const page of pages) {
+    await page.getByRole('button', { name: 'Settings' }).click()
+    await page.getByLabel('Show the whole rink').uncheck()
+    await page.getByRole('button', { name: 'Back' }).click()
+  }
+  await liveTable('Air Hockey', pages)
+  const [ada, bo] = pages
+  if (!ada || !bo) throw new Error('no phones')
+  // The countdown, then Ada's mallet shoots the puck over to Bo's phone.
+  await ada.clock.runFor(3500)
+  await steer(ada, ['ArrowUp'], 800)
+  await ada.clock.runFor(250)
+  // A moment of real time for the last state to reach Bo's phone.
+  await bo.waitForTimeout(500)
+  await phones(
+    browser,
+    'airhockey-table',
+    [{ src: await screen(bo), turned: true }, { src: await screen(ada) }],
+    PUCK_NOISE,
+  )
+})
+
+test('Air Hockey on a phone, the whole rink', async ({ browser }) => {
+  const pages = await Promise.all(
+    ['Ada', 'Bo'].map((name, i) => device(browser, PHONE, name, i + 1)),
+  )
+  await liveTable('Air Hockey', pages)
+  const [ada] = pages
+  if (!ada) throw new Error('no host')
+  await ada.clock.runFor(3500)
+  await steer(ada, ['ArrowUp'], 800)
+  await ada.clock.runFor(150)
+  await phones(browser, 'airhockey', [{ src: await screen(ada) }], PUCK_NOISE)
 })
 
 test('adding a player', async ({ browser }) => {
