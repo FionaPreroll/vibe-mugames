@@ -1373,6 +1373,11 @@
   opacity: 0.8;
 }
 
+/* During a game, the decorations hold still, so that they take nothing from the game's drawing. */
+body:has(.in-game, .playing) .decor * {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root .decor *,
   :root .decor .bat .wings {

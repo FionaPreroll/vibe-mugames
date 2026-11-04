@@ -17,6 +17,9 @@ export default defineConfig({
     // The built page keeps itself with a service worker; only tests/e2e/offline.spec.ts lets it,
     // so that the other tests always run the build served, and their routes see every request.
     serviceWorkers: 'block',
+    // The themes' decorations and the stickers hold still, as for players who ask for less
+    // motion, so that four phones on one machine spend nothing on them.
+    reducedMotion: 'reduce',
   },
   projects: [
     {
