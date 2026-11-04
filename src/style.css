@@ -62,7 +62,7 @@
   --puck: #f1ece2;
   --apple: #ff8c42;
   --apple-leaf: #8fc75b;
-  --signal: #6be06b;
+  --signal: var(--good);
   /* Notes, and the connection's quality. */
   --warning-text: #ffc9a3;
   --good: #6be06b;

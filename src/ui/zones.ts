@@ -142,8 +142,17 @@ export type TapAt =
   | { readonly x: number; readonly y: number; readonly zone: Zone }
   | { readonly direction: Direction | null }
 
-/** How the parts of `count` seats lie: side by side, then in two rows. */
-export function grid(count: number): { columns: number; rows: number } {
-  const columns = count <= 3 ? count : count === 4 ? 2 : 3
+/**
+ * How the parts of `count` seats lie: side by side on a wide screen, one above the other on a
+ * tall one, and in two rows or columns once there are four or more.
+ */
+export function grid(count: number, tall = isTall()): { columns: number; rows: number } {
+  const across = count <= 3 ? count : count === 4 ? 2 : 3
+  const columns = tall ? Math.ceil(count / across) : across
   return { columns, rows: Math.ceil(count / columns) }
+}
+
+/** Whether the screen is taller than it is wide, as a phone held upright. */
+function isTall(): boolean {
+  return typeof innerWidth === 'number' && innerHeight > innerWidth
 }

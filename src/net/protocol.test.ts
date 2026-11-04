@@ -1,5 +1,7 @@
 import { MAX_MESSAGE_LENGTH } from '@fionapreroll/p2p'
 import { describe, expect, it } from 'vitest'
+import type { LiveGameId } from '../core/board'
+import { packTaps } from '../core/echo'
 import { GAMES } from '../core/games'
 import { CELLS, COLUMNS, COUNTDOWN, MAX_RIDERS, ROWS } from '../core/lichtrenner'
 import { Table, type TableState } from '../core/table'
@@ -11,14 +13,25 @@ import { parseEvent, parseInput, parseState } from './protocol'
  */
 
 /** A table of `players` with a game on, run on by `seconds`. */
-function playing(game: 'lichtrenner' | 'airhockey', players = 2, seconds = 0): TableState {
+function playing(game: LiveGameId, players = 2, seconds = 0, viewer = -1): TableState {
   const t = new Table()
   for (let id = 0; id < players; id++) t.join(id, `Player ${id}`)
   t.choose(game)
-  t.input(0, game === 'lichtrenner' ? [1, 0] : [1, 0.3, 0.6])
-  for (let left = seconds; left > 0; left -= 1 / 30) t.tick(1 / 30)
-  return t.state()
+  t.input(0, game === 'airhockey' ? [1, 0.3, 0.6] : [1, 0])
+  for (let left = seconds; left > 0; left -= 1 / 30) {
+    t.tick(1 / 30)
+    // Everyone taps the signal, or the row's first colour, once it is there.
+    const now = t.state(0)
+    for (let id = 0; id < players; id++) {
+      if (now.reaction) t.input(id, [1, Math.max(1, now.reaction.signal), 200 + id])
+      if (now.echo?.phase === 'show') first = now.echo.pattern[0] ?? 0
+      if (now.echo) t.input(id, [1, now.echo.length, ...packTaps([id === 0 ? first : 3])])
+    }
+  }
+  return t.state(viewer)
 }
+
+let first = 0
 
 /** A state as it travels: JSON there and back. */
 const wire = (state: unknown) => JSON.parse(JSON.stringify(state))
@@ -32,6 +45,49 @@ describe('the protocol of games in real time', () => {
     ]) {
       expect(parseState(wire(state))).toEqual(wire(state))
     }
+  })
+
+  it('reads back Snakes, Reaction and Colour Echo as the host sends them', () => {
+    for (const state of [
+      playing('snakes', 3, 1),
+      playing('snakes', 2, 8),
+      playing('reaction', 2, 2),
+      playing('reaction', 3, 12),
+      playing('echo', 2, 1, 0),
+      playing('echo', 3, 6, 1),
+    ]) {
+      expect(parseState(wire(state))).toEqual(wire(state))
+    }
+  })
+
+  it('turns down snakes, signals and rows that do not fit the table', () => {
+    const snaky = wire(playing('snakes', 2, 1))
+    const snake = snaky.snakes.snakes[0]
+    const quick = wire(playing('reaction', 2, 1))
+    const echo = wire(playing('echo', 2, 1, 0))
+    const bad = [
+      { ...snaky, snakes: null },
+      { ...snaky, snakes: { ...snaky.snakes, snakes: [snake] } },
+      { ...snaky, snakes: { ...snaky.snakes, snakes: [{ ...snake, body: [0, 2] }, snake] } },
+      { ...snaky, snakes: { ...snaky.snakes, snakes: [{ ...snake, body: [] }, snake] } },
+      { ...snaky, snakes: { ...snaky.snakes, apples: [5, 5] } },
+      { ...snaky, snakes: { ...snaky.snakes, apples: [0, 1, 2, 3] } },
+      { ...snaky, snakes: { ...snaky.snakes, countdown: 9 } },
+      { ...quick, reaction: null },
+      { ...quick, reaction: { ...quick.reaction, phase: 'later' } },
+      { ...quick, reaction: { ...quick.reaction, answers: [5000, null] } },
+      { ...quick, reaction: { ...quick.reaction, points: [1] } },
+      { ...quick, reaction: { ...quick.reaction, scored: [2] } },
+      { ...echo, echo: null },
+      { ...echo, echo: { ...echo.echo, pattern: [4, 0] } },
+      { ...echo, echo: { ...echo.echo, pattern: [0] } },
+      { ...echo, echo: { ...echo.echo, length: 0 } },
+      { ...echo, echo: { ...echo.echo, progress: [3, 0] } },
+      { ...echo, echo: { ...echo.echo, out: [null] } },
+      { ...echo, echo: { ...echo.echo, winner: 2 } },
+      { ...echo, echo: { ...echo.echo, late: [0, 1] } },
+    ]
+    for (const value of bad) expect(parseState(value)).toBeUndefined()
   })
 
   it('turns down races that do not fit the table', () => {
@@ -102,6 +158,8 @@ describe('the protocol of games in real time', () => {
   it('reads input as a few numbers, and turns down moves in games in real time', () => {
     expect(parseInput(null)).toBeNull()
     expect(parseInput([1, 0.25, 0.5])).toEqual([1, 0.25, 0.5])
+    expect(parseInput([1, 4, 4, 9])).toEqual([1, 4, 4, 9])
+    expect(parseInput([1, 32, 32, 9, 9])).toEqual([1, 32, 32, 9, 9])
     for (const value of [[], [1, 2, 3, 4, 5, 6], ['1'], [Number.POSITIVE_INFINITY], 1, { x: 1 }]) {
       expect(parseInput(value)).toBeUndefined()
     }

@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { GOALS_TO_WIN, HALF, MALLET } from './airhockey'
+import { START_LENGTH as ECHO_START, packTaps, showTime } from './echo'
 import { COUNTDOWN, STEPS_PER_SECOND } from './lichtrenner'
+import { READY as REACTION_READY, RESULT as REACTION_RESULT, WAIT_MAX } from './reaction'
+import { COUNTDOWN as SNAKE_COUNTDOWN, STEPS_PER_SECOND as SNAKE_STEPS } from './snakes'
 import { playerToMove, Table } from './table'
 
 /** A table with players 0, 1, … as named. */
@@ -133,5 +136,66 @@ describe('games in real time at the table', () => {
     expect(t.tick(1)).toBe(false)
     expect(t.input(0, [t.state().round, 0])).toBe(false)
     expect(t.state()).toMatchObject({ race: null, rink: null })
+  })
+})
+
+describe('Snakes, Reaction and Colour Echo at the table', () => {
+  it('steers snakes as riders are steered, and ends with a snake that scores', () => {
+    const t = table('Ada', 'Bo', 'Cy')
+    expect(t.choose('snakes')).toBe(true)
+    const round = t.state().round
+    expect(t.state().snakes?.snakes).toHaveLength(3)
+    expect(t.input(0, [round, 0])).toBe(true)
+    expect(t.input(1, [round, 8])).toBe(false)
+    expect(t.input(1, [round, 0, 1])).toBe(false)
+    expect(t.move(0, 'snakes', 0, [0])).toBe(false)
+    // Ada crawls up into the top edge, Cy below her too; Bo crawls on, and is left.
+    t.input(2, [round, 0])
+    run(t, SNAKE_COUNTDOWN + 30 / SNAKE_STEPS)
+    const state = t.state()
+    expect(state.outcome).not.toBeNull()
+    expect(state.snakes?.snakes[0]?.alive).toBe(false)
+    expect(state).toMatchObject({ race: null, rink: null, reaction: null, echo: null })
+  })
+
+  it('gives Reaction’s point to the fastest tap, a phone’s own time, for this signal', () => {
+    const t = table('Ada', 'Bo')
+    t.choose('reaction')
+    const round = t.state().round
+    run(t, REACTION_READY)
+    expect(t.state().reaction?.phase).toBe('wait')
+    // Nothing of when the signal comes.
+    expect(t.state().reaction).not.toHaveProperty('timer')
+    expect(t.input(0, [round, 1, 1.5])).toBe(false)
+    expect(t.input(0, [round, 1])).toBe(false)
+    for (let i = 0; i < 30 * WAIT_MAX && t.state().reaction?.phase === 'wait'; i++) run(t, 1 / 30)
+    expect(t.state().reaction?.phase).toBe('go')
+    expect(t.input(0, [round, 1, 320])).toBe(true)
+    expect(t.input(1, [round, 1, 280])).toBe(true)
+    run(t, 0.1)
+    expect(t.state().reaction).toMatchObject({ phase: 'result', points: [0, 1], scored: [1] })
+    // The answers hold, but are for the last signal: the next waits for new ones.
+    run(t, REACTION_RESULT + 0.1)
+    expect(t.state().reaction).toMatchObject({ signal: 2, answers: [null, null] })
+  })
+
+  it('takes Colour Echo’s taps, all of them each time, and shows each only their own', () => {
+    const t = table('Ada', 'Bo')
+    t.choose('echo')
+    const round = t.state().round
+    const row = t.state().echo?.pattern ?? []
+    expect(row).toHaveLength(ECHO_START)
+    run(t, showTime(row.length) + 0.1)
+    expect(t.state().echo?.pattern).toEqual([])
+    expect(t.input(0, [round, row.length, ...packTaps(row.slice(0, 1))])).toBe(true)
+    expect(t.input(1, [round, row.length, 9])).toBe(false)
+    run(t, 0.1)
+    expect(t.state(0).echo).toMatchObject({ progress: [1, 0], entries: row.slice(0, 1) })
+    expect(t.state(1).echo?.entries).toEqual([])
+    t.input(0, [round, row.length, ...packTaps(row)])
+    t.input(1, [round, row.length, ...packTaps(row.map((c) => (c + 1) % 4))])
+    run(t, 0.1)
+    expect(t.state().outcome).toEqual({ winner: 0, line: [] })
+    expect(t.state().scores).toEqual({ 0: 1 })
   })
 })
