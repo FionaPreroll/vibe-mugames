@@ -11,6 +11,7 @@ import { codePanel } from './codes'
 import { connectionDialog } from './connection'
 import { failureText, h, show, toast } from './dom'
 import { gameChoices, gameView, nextButtons, playerItems, staged } from './game'
+import { replaceKeeping } from './keep'
 import { LiveSlot } from './live'
 import { netColor } from './report'
 import { gameTitle } from './rules'
@@ -110,7 +111,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
         player.away ? t('away') : '',
       ]),
     )
-    main.replaceChildren(...(state.game === null ? lobby(state) : game(state)))
+    replaceKeeping(main, [...(state.game === null ? lobby(state) : game(state))])
     buzz.update(main)
     screen.classList.toggle('in-game', state.game !== null)
     // A new game, or back to the lobby: from the top, not where the list was scrolled to.

@@ -438,6 +438,10 @@ button {
   --group: var(--seat-3);
 }
 
+.game-group.party {
+  --group: var(--seat-2);
+}
+
 .game-group.skill {
   --group: var(--seat-0);
 }
@@ -2837,4 +2841,181 @@ a.button.primary {
 .board.ultimate .small.won .cell:not(.win),
 .board.ultimate .small.full .cell:not(.win) {
   opacity: 0.45;
+}
+
+/* Stadt, Land, Fluss: the letter, a field for each category, then every answer with its points. */
+
+.letter-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.letter-card .letter {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 0.6rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.letter-card .time {
+  font-variant-numeric: tabular-nums;
+}
+
+.letter-card .time.short {
+  color: var(--seat-0);
+  font-weight: 700;
+}
+
+.answer-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0 0.75rem;
+}
+
+.answer-fields .buttons {
+  grid-column: 1 / -1;
+  margin: 0.5rem 0;
+}
+
+.main label.answer {
+  margin: 0.35rem 0;
+  gap: 0.2rem;
+}
+
+.answer input.fits {
+  border-color: var(--seat-2);
+}
+
+.answer input.misfit {
+  border-color: var(--seat-0);
+}
+
+.writers {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.main .writers li {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--panel);
+}
+
+.main .writers li.stopper,
+.main .writers li.won {
+  border-color: var(--accent);
+}
+
+.answers-check {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.5rem 0.75rem;
+}
+
+.answers-check > p,
+.answers-check > .buttons {
+  grid-column: 1 / -1;
+  margin: 0.25rem 0;
+}
+
+.main .category h4 {
+  margin: 0.4rem 0 0.25rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.main .category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.answer-check {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--panel);
+  text-align: start;
+}
+
+.answer-check .name {
+  min-width: 4.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.answer-check .word {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.answer-check .word.struck,
+.answer-check .word.misfit {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.answer-check .points {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.answer-check .points.p0 {
+  opacity: 0.5;
+}
+
+.answer-check .points.p20 {
+  color: var(--accent);
+}
+
+button.answer-check.objected {
+  border-color: var(--seat-0);
+  box-shadow: 0 0 0 1px var(--seat-0);
+}
+
+.words-help {
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--panel);
+  font-size: 0.9rem;
+}
+
+.main .words-help summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.main .words-help ul {
+  padding-left: 1.1rem;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.kept-place {
+  display: contents;
 }

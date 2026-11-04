@@ -50,6 +50,26 @@ export class Picker {
   showOwn = false
   /** Called when the picked cells change, to draw the board again. */
   onChange: () => void = () => {}
+  /** Elements that stay between redraws (see `keep`), by key, for the game started last. */
+  private kept = new Map<string, HTMLElement>()
+  private keptRound = -1
+
+  /**
+   * The element for `key` in this view, made by `make` the first time: the same one while the
+   * game on the table goes on, such as a text field the player types in (see `keep.ts`).
+   */
+  keep<E extends HTMLElement>(state: TableState, key: string, make: () => E): E {
+    if (state.round !== this.keptRound) {
+      this.kept.clear()
+      this.keptRound = state.round
+    }
+    let element = this.kept.get(key)
+    if (!element) {
+      element = make()
+      this.kept.set(key, element)
+    }
+    return element as E
+  }
 
   /** Everything picked that the screen shows: drawn again only when this or the table changes. */
   shown(state: TableState): unknown[] {

@@ -18,6 +18,7 @@ import {
   staged,
   takeOverText,
 } from './game'
+import { replaceKeeping } from './keep'
 import { LiveSlot } from './live'
 import { gameTitle } from './rules'
 
@@ -235,14 +236,14 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
       ended = false
     } else ended = true
     if (!playing) {
-      main.replaceChildren(
+      replaceKeeping(main, [
         h(
           'p',
           { class: 'status turn', role: 'status' } as Partial<HTMLParagraphElement>,
           t('chooseGame'),
         ),
         gameChoices(overview, local, true),
-      )
+      ])
       return
     }
     const game = overview.game
@@ -252,16 +253,16 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
     if (!split) {
       const next = playerToMove(overview)
       if (handsOver(game) && next !== null && next !== holder) {
-        main.replaceChildren(
+        replaceKeeping(main, [
           ...[gameTitle(game), openCardsNotice(game), ...handOver(overview, next)].filter(
             (node): node is HTMLElement => node !== null,
           ),
-        )
+        ])
         return
       }
       viewer = next ?? viewer
       const picker = pickers.get(viewer) ?? new Picker()
-      main.replaceChildren(
+      replaceKeeping(main, [
         ...[
           gameTitle(game),
           openCardsNotice(game),
@@ -276,7 +277,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
           ),
           actions,
         ].filter((node): node is HTMLElement => node !== null),
-      )
+      ])
       return
     }
     const panes = local.ids.map((id) => {
@@ -317,10 +318,10 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
         }),
       )
     })
-    main.replaceChildren(
+    replaceKeeping(main, [
       h('div', { class: 'split-bar' }, gameTitle(game), openCardsNotice(game, true), actions),
       h('div', { class: `panes panes-${panes.length}` }, ...panes),
-    )
+    ])
   }
 
   /**

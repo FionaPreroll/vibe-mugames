@@ -342,6 +342,52 @@ const en = {
   hiddenRoleNotice:
     'Your role stays hidden until you tap “Show my role”: the others look away while you do.',
   takeOverRole: 'I am {name}: show my role',
+  stadtlandfluss: 'City, Country, River',
+  groupParty: 'Party games',
+  groupPartyNote: 'Words, drawing and guessing, for many.',
+  catCity: 'City',
+  catCountry: 'Country',
+  catRiver: 'River',
+  catName: 'First name',
+  catAnimal: 'Animal',
+  catJob: 'Job',
+  wordsLetter: 'The letter {letter}',
+  wordsRound: 'Round {n} of {of}',
+  wordsWrite: 'Letter {letter}: a word for every category!',
+  wordsWatching: 'Letter {letter}: everyone writes.',
+  wordsWrites: '{name} writes: letter {letter}. The others look away.',
+  wordsStopped: '{name} called Stop! {n} seconds left.',
+  wordsYouStopped: 'You called Stop. The others have {n} seconds left.',
+  wordsCheck: 'Check the answers, then tap Next.',
+  wordsCheckTogether: 'Check the answers together.',
+  wordsStop: 'Stop!',
+  wordsDone: 'Done: next one',
+  wordsNotYet: 'Your turn to write comes.',
+  wordsFilled: '{n} of {of}',
+  wordsPoints: '{n} points',
+  wordsAgainst: '{n} of {of} object',
+  wordsObject: 'Tap to object',
+  wordsTakeBack: 'Tap to take your objection back',
+  wordsTap: 'Does an answer not count? Tap it to object: more than half of the others strike it.',
+  wordsTapTogether: 'Does an answer not count? Tap it to strike it.',
+  wordsNext: 'Next round',
+  wordsFinish: 'Count the points',
+  wordsHelp: 'How City, Country, River works',
+  wordsHelpWrite:
+    'Each round has a letter. Write a word starting with it for each category: a city, a country, a river, a first name, an animal and a job. Ä counts as A.',
+  wordsHelpStop:
+    'Whoever has a word in every category may call Stop: the others then have {n} seconds left. After three minutes, the round ends anyway.',
+  wordsHelpPoints:
+    'An answer counts {alone} if nobody else has one in its category, {unique} if nobody else has the same word, {shared} if someone does. A word that does not start with the letter counts nothing.',
+  wordsHelpObject:
+    'Then everyone sees every answer. Tap one that does not count, such as a city that does not exist: struck by more than half of the others, it counts nothing.',
+  wordsHelpTogether:
+    'On one device, everyone writes in turn, as long as they like, and taps Done; the others look away. Any tap strikes an answer there: decide together. After five rounds, the most points win.',
+  handOverWords:
+    'City, Country, River on one device: everyone writes in turn, and the others look away. Then you check the answers together.',
+  hiddenWordsNotice:
+    'Everyone writes in turn on their own part: the others look away while they do.',
+  takeOverWords: 'I am {name}: show my letter',
   lichtrenner: 'Light Racers',
   airhockey: 'Air Hockey',
   rules: 'Rules',
@@ -459,6 +505,14 @@ const en = {
     'In the morning, the village learns who was taken. By day, talk, then everyone votes: whoever gets the most votes is banished, and their role shown. A tie banishes nobody.',
   rulesWerwolf4:
     'The village wins once every werewolf is out; the werewolves win once they are as many as the others.',
+  rulesStadtlandfluss1:
+    'Each round has a letter, drawn by chance. Everyone writes a word starting with it for each category: a city, a country, a river, a first name, an animal and a job.',
+  rulesStadtlandfluss2:
+    'Whoever has a word in every category may call Stop: the others have ten seconds left. After three minutes, the round ends anyway.',
+  rulesStadtlandfluss3:
+    'Then everyone sees every answer, and may object to one that does not count: struck by more than half of the others, it counts nothing.',
+  rulesStadtlandfluss4:
+    'An answer counts 20 if nobody else has one in its category, 10 if nobody else has the same word, and 5 if someone does. After five rounds, the most points win.',
   lichtHint:
     'Turn before you hit a wall: swipe on the field, or tap ⟲ and ⟳. The last one riding wins.',
   lichtHintLocal:
@@ -1053,6 +1107,53 @@ const de: Texts = {
   hiddenRoleNotice:
     'Deine Rolle bleibt verborgen, bis du auf „Meine Rolle zeigen“ tippst: Die anderen schauen dann weg.',
   takeOverRole: 'Ich bin {name}: meine Rolle zeigen',
+  stadtlandfluss: 'Stadt, Land, Fluss',
+  groupParty: 'Partyspiele',
+  groupPartyNote: 'Wörter, Malen und Raten, für viele.',
+  catCity: 'Stadt',
+  catCountry: 'Land',
+  catRiver: 'Fluss',
+  catName: 'Vorname',
+  catAnimal: 'Tier',
+  catJob: 'Beruf',
+  wordsLetter: 'Der Buchstabe {letter}',
+  wordsRound: 'Runde {n} von {of}',
+  wordsWrite: 'Buchstabe {letter}: ein Wort für jede Kategorie!',
+  wordsWatching: 'Buchstabe {letter}: Alle schreiben.',
+  wordsWrites: '{name} schreibt: Buchstabe {letter}. Die anderen schauen weg.',
+  wordsStopped: '{name} hat Stopp gerufen! Noch {n} Sekunden.',
+  wordsYouStopped: 'Du hast Stopp gerufen. Die anderen haben noch {n} Sekunden.',
+  wordsCheck: 'Prüf die Antworten, dann tippe auf Weiter.',
+  wordsCheckTogether: 'Prüft die Antworten zusammen.',
+  wordsStop: 'Stopp!',
+  wordsDone: 'Fertig: der Nächste',
+  wordsNotYet: 'Du schreibst gleich.',
+  wordsFilled: '{n} von {of}',
+  wordsPoints: '{n} Punkte',
+  wordsAgainst: '{n} von {of} dagegen',
+  wordsObject: 'Tippen, um zu widersprechen',
+  wordsTakeBack: 'Tippen, um den Widerspruch zurückzunehmen',
+  wordsTap:
+    'Gilt eine Antwort nicht? Tippe darauf, um zu widersprechen: Widerspricht mehr als die Hälfte der anderen, wird sie gestrichen.',
+  wordsTapTogether: 'Gilt eine Antwort nicht? Tippt darauf, um sie zu streichen.',
+  wordsNext: 'Nächste Runde',
+  wordsFinish: 'Punkte zählen',
+  wordsHelp: 'So geht Stadt, Land, Fluss',
+  wordsHelpWrite:
+    'Jede Runde hat einen Buchstaben. Schreib zu jeder Kategorie ein Wort, das mit ihm anfängt: eine Stadt, ein Land, einen Fluss, einen Vornamen, ein Tier und einen Beruf. Ä zählt als A.',
+  wordsHelpStop:
+    'Wer zu jeder Kategorie ein Wort hat, darf Stopp rufen: Die anderen haben dann noch {n} Sekunden. Nach drei Minuten endet die Runde sowieso.',
+  wordsHelpPoints:
+    'Eine Antwort zählt {alone}, wenn sonst niemand eine in ihrer Kategorie hat, {unique}, wenn niemand dasselbe Wort hat, und {shared}, wenn jemand es hat. Ein Wort, das nicht mit dem Buchstaben anfängt, zählt nichts.',
+  wordsHelpObject:
+    'Dann sehen alle alle Antworten. Tippe auf eine, die nicht gilt, etwa eine Stadt, die es nicht gibt: Widerspricht mehr als die Hälfte der anderen, zählt sie nichts.',
+  wordsHelpTogether:
+    'Auf einem Gerät schreibt jeder der Reihe nach, so lange er mag, und tippt auf Fertig; die anderen schauen weg. Dort streicht jedes Tippen eine Antwort: Entscheidet zusammen. Nach fünf Runden gewinnen die meisten Punkte.',
+  handOverWords:
+    'Stadt, Land, Fluss auf einem Gerät: Jeder schreibt der Reihe nach, und die anderen schauen weg. Dann prüft ihr die Antworten zusammen.',
+  hiddenWordsNotice:
+    'Jeder schreibt der Reihe nach in seinem Teil: Die anderen schauen weg, solange er schreibt.',
+  takeOverWords: 'Ich bin {name}: meinen Buchstaben zeigen',
   lichtrenner: 'Lichtrenner',
   airhockey: 'Airhockey',
   rules: 'Regeln',
@@ -1174,6 +1275,14 @@ const de: Texts = {
     'Am Morgen erfährt das Dorf, wen es getroffen hat. Tagsüber wird geredet, dann stimmen alle ab: Wer die meisten Stimmen bekommt, wird verbannt, und seine Rolle gezeigt. Bei Gleichstand wird niemand verbannt.',
   rulesWerwolf4:
     'Das Dorf gewinnt, sobald alle Werwölfe draußen sind; die Werwölfe gewinnen, sobald sie so viele sind wie die anderen.',
+  rulesStadtlandfluss1:
+    'Jede Runde hat einen Buchstaben, den der Zufall zieht. Alle schreiben zu jeder Kategorie ein Wort, das mit ihm anfängt: eine Stadt, ein Land, einen Fluss, einen Vornamen, ein Tier und einen Beruf.',
+  rulesStadtlandfluss2:
+    'Wer zu jeder Kategorie ein Wort hat, darf Stopp rufen: Die anderen haben dann noch zehn Sekunden. Nach drei Minuten endet die Runde sowieso.',
+  rulesStadtlandfluss3:
+    'Dann sehen alle alle Antworten und dürfen einer widersprechen, die nicht gilt: Widerspricht mehr als die Hälfte der anderen, zählt sie nichts.',
+  rulesStadtlandfluss4:
+    'Eine Antwort zählt 20, wenn sonst niemand eine in ihrer Kategorie hat, 10, wenn niemand dasselbe Wort hat, und 5, wenn jemand es hat. Nach fünf Runden gewinnen die meisten Punkte.',
   lichtHint:
     'Biege ab, bevor du gegen eine Wand fährst: wische über das Feld, oder tippe auf ⟲ und ⟳. Wer als Letzter fährt, gewinnt.',
   lichtHintLocal:

@@ -16,6 +16,7 @@ import { MAX_SEATS, MIN_SEATS } from './miaumiau'
 import { muehle } from './muehle'
 import { reversi } from './reversi'
 import { SEA_SEATS } from './seeschlacht'
+import { MAX_WRITERS, MIN_WRITERS } from './stadtlandfluss'
 import { sternhalma } from './sternhalma'
 import { ticTacToe } from './tictactoe'
 import { ultimate } from './ultimate'
@@ -34,12 +35,13 @@ export const GAMES: Record<BoardGameId, BoardGame> = {
 }
 
 /** The kinds of games, as the game chooser groups them. */
-export type GameGroup = 'tactics' | 'luck' | 'skill'
+export type GameGroup = 'tactics' | 'luck' | 'party' | 'skill'
 
 /**
  * The games of each kind, in the order the chooser shows them: games of tactics, with nothing
- * left to chance; games of luck and bluff, with dice, cards or something hidden; and games of
- * skill, in real time. Every game is in exactly one.
+ * left to chance; games of luck and bluff, with dice, cards or something hidden; party games of
+ * words, drawing and asking, for many; and games of skill, in real time. Every game is in exactly
+ * one.
  */
 export const GAME_GROUPS: readonly {
   readonly group: GameGroup
@@ -47,6 +49,7 @@ export const GAME_GROUPS: readonly {
 }[] = [
   { group: 'tactics', games: BOARD_GAME_IDS },
   { group: 'luck', games: ['ludo', 'miaumiau', 'seeschlacht', 'maexchen', 'werwolf'] },
+  { group: 'party', games: ['stadtlandfluss'] },
   { group: 'skill', games: LIVE_GAME_IDS },
 ]
 
@@ -62,6 +65,7 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (game === 'ludo') return { min: MIN_LUDO, max: MAX_LUDO }
   if (game === 'maexchen') return { min: MIN_DICE_SEATS, max: MAX_DICE_SEATS }
   if (game === 'werwolf') return { min: MIN_VILLAGE, max: MAX_VILLAGE }
+  if (game === 'stadtlandfluss') return { min: MIN_WRITERS, max: MAX_WRITERS }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
 
@@ -77,11 +81,17 @@ export function hasHiddenCards(game: GameId): boolean {
 }
 
 /** Games in which each player's view is theirs alone, and the device hides it from the others. */
-const HANDED_OVER: ReadonlySet<GameId> = new Set<GameId>(['seeschlacht', 'maexchen', 'werwolf'])
+const HANDED_OVER: ReadonlySet<GameId> = new Set<GameId>([
+  'seeschlacht',
+  'maexchen',
+  'werwolf',
+  'stadtlandfluss',
+])
 
 /**
  * Whether a game is hidden on one device instead of played open, such as the fleets of Sea
- * Battle, the dice under Mäxchen's cup or the roles of Werwolf: taking turns on one screen, the
+ * Battle, the dice under Mäxchen's cup, the roles of Werwolf or the answers of Stadt, Land, Fluss
+ * while they are written: taking turns on one screen, the
  * device is handed over between the players, and shows nothing of a player's own until they say
  * they hold it; on a split screen, each part hides its player's own until they ask to see it.
  */

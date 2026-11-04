@@ -14,6 +14,7 @@ import { miauMiauGuide } from './miaumiau'
 import { muehleGuide } from './muehle'
 import { reversiGuide } from './reversi'
 import { seeschlachtGuide } from './seeschlacht'
+import { stadtLandFlussGuide } from './stadtlandfluss'
 import { sternhalmaGuide } from './sternhalma'
 import { ticTacToeGuide } from './tictactoe'
 import { ultimateGuide } from './ultimate'
@@ -39,6 +40,7 @@ export const GUIDES: Record<GameId, GameGuide> = {
   ludo: ludoGuide,
   maexchen: maexchenGuide,
   werwolf: werwolfGuide,
+  stadtlandfluss: stadtLandFlussGuide,
 }
 
 /** The small picture of a game, for the game chooser. */
