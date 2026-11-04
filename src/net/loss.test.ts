@@ -17,7 +17,7 @@ import { GuestSeat, HostSeat, type Seat } from './session'
  * and delay and reorder them, while `control` (the moves) only arrives late, as a reliable
  * channel would. Every phone plays as an honest player would, from the table as it last heard
  * of it: whatever is lost, every move arrives once, and in the end every phone shows the table
- * the host keeps for it. Games in real time keep going, each phone a few ticks behind at most.
+ * the host keeps for it. Games in real time keep going, each phone only a few ticks behind, as many as the loss makes likely.
  */
 
 /** The host's dice and shuffles, by seed, so that a run that fails fails again. */
@@ -149,6 +149,19 @@ async function agree(host: HostSeat, guests: readonly GuestSeat[]): Promise<void
 }
 
 const LOSSES = [0.1, 0.3, 0.5] as const
+
+/** The longest the weak connections below hold a message back, in ticks of 1/30 s. */
+const IN_FLIGHT = Math.ceil(150 / (1000 / 30))
+
+/**
+ * How many of the newest states sent a phone's table may be from, at a share `loss` of them
+ * lost: those still on their way, and enough before them that all of them lost is less likely
+ * than one in a billion. Every message is lost on its own, so at 50 % ten in a row go now and
+ * then: a window of 15 for every loss, as at first, failed in CI (50 %, seed 644748).
+ */
+function window(loss: number): number {
+  return IN_FLIGHT + Math.ceil(Math.log(1e-9) / Math.log(loss))
+}
 const TURN_GAMES: GameId[] = [
   ...BOARD_GAME_IDS,
   'ludo',
@@ -194,7 +207,7 @@ describe('every game over a weak connection', () => {
   }
 
   for (const game of LIVE_GAME_IDS) {
-    it(`keeps ${game} going in real time, every phone a few ticks behind at most`, async () => {
+    it(`keeps ${game} going in real time, every phone only a few ticks behind`, async () => {
       await fc.assert(
         fc.asyncProperty(
           fc.constantFrom(...LOSSES),
@@ -221,9 +234,9 @@ describe('every game over a weak connection', () => {
               // From the second second on: the first states may still be on their way.
               if (step < 5) continue
               for (const guest of guests) {
-                // The newest table this phone heard of was sent within the last half second
-                // (15 ticks), as long as the game is on.
-                const recent = (sent.get(guest.id) ?? []).slice(-15)
+                // The newest table this phone heard of is among the last few sent, as long as
+                // the game is on: 14 at 10 % lost, 23 at 30 %, 35 at 50 %.
+                const recent = (sent.get(guest.id) ?? []).slice(-window(loss))
                 expect(recent).toContain(JSON.stringify(guest.state()))
               }
             }
