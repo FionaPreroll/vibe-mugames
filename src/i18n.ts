@@ -5,6 +5,27 @@ const en = {
   tagline:
     'Games for everyone at one table: on phones side by side, or together around one tablet or laptop. No internet, no server, no accounts.',
   heroLabel: 'An open box of games: boards, cards, dice and pieces.',
+  stickerTdov:
+    'Trans Day of Visibility, 31 March: a day to celebrate trans people, and to see them as they are.',
+  stickerIdahobit:
+    'IDAHOBIT, 17 May: the International Day Against Homophobia, Biphobia, Interphobia and Transphobia.',
+  stickerNonbinary:
+    'International Non-Binary People’s Day, 14 July: for everyone whose gender is neither only woman nor only man.',
+  stickerBi: 'Bi Visibility Day, 23 September: for bi, pan and all who love more than one gender.',
+  stickerComingOut:
+    'Coming Out Day, 11 October: for everyone who came out, will one day, or is still finding their way.',
+  stickerIntersex:
+    'Intersex Awareness Day, 26 October: for intersex people, and their right to decide about their own bodies.',
+  stickerAce:
+    'Ace Week, the last full week of October: for asexual people and everyone on the asexual spectrum.',
+  stickerPride:
+    'Pride Month: in June, the Spielekiste celebrates lesbian, gay, bi, trans, intersex, queer and asexual people, their love and their rights. Everyone is welcome at the table.',
+  stickerTransMonth:
+    'Trans Awareness Month: in November, the Spielekiste stands with trans, non-binary and gender-diverse people.',
+  stickerTransWeek:
+    'Trans Awareness Week, 13 to 19 November: a week to make trans people, their lives and what they face visible.',
+  stickerTdor:
+    'Transgender Day of Remembrance, 20 November: in memory of the trans people killed by transphobic violence.',
   groupTactics: 'Tactics',
   groupTacticsNote: 'Think ahead: no luck, only moves.',
   groupLuck: 'Luck and bluff',
@@ -674,6 +695,28 @@ const de: Texts = {
   tagline:
     'Spiele für alle an einem Tisch: auf Handys nebeneinander oder gemeinsam an einem Tablet oder Laptop. Ohne Internet, ohne Server, ohne Konten.',
   heroLabel: 'Eine offene Kiste voller Spiele: Bretter, Karten, Würfel und Steine.',
+  stickerTdov:
+    'Trans Day of Visibility, 31. März: ein Tag, um trans Menschen zu feiern und sie zu sehen, wie sie sind.',
+  stickerIdahobit:
+    'IDAHOBIT, 17. Mai: der Internationale Tag gegen Homo-, Bi-, Inter- und Transfeindlichkeit.',
+  stickerNonbinary:
+    'Internationaler Tag nicht-binärer Menschen, 14. Juli: für alle, deren Geschlecht weder nur Frau noch nur Mann ist.',
+  stickerBi:
+    'Bi Visibility Day, 23. September: für bi, pan und alle, die mehr als ein Geschlecht lieben.',
+  stickerComingOut:
+    'Coming Out Day, 11. Oktober: für alle, die sich geoutet haben, es eines Tages tun oder noch ihren Weg suchen.',
+  stickerIntersex:
+    'Intersex Awareness Day, 26. Oktober: für inter Menschen und ihr Recht, selbst über ihren Körper zu bestimmen.',
+  stickerAce:
+    'Ace Week, die letzte volle Oktoberwoche: für asexuelle Menschen und alle im asexuellen Spektrum.',
+  stickerPride:
+    'Pride Month: Im Juni feiert die Spielekiste lesbische, schwule, bi, trans, inter, queere und asexuelle Menschen, ihre Liebe und ihre Rechte. Am Tisch sind alle willkommen.',
+  stickerTransMonth:
+    'Trans Awareness Month: Im November steht die Spielekiste an der Seite von trans, nicht-binären und genderdiversen Menschen.',
+  stickerTransWeek:
+    'Trans Awareness Week, 13. bis 19. November: eine Woche, die trans Menschen, ihr Leben und das, was sie erleben, sichtbar macht.',
+  stickerTdor:
+    'Transgender Day of Remembrance, 20. November: in Erinnerung an die trans Menschen, die durch transfeindliche Gewalt getötet wurden.',
   groupTactics: 'Taktik',
   groupTacticsNote: 'Vorausdenken: kein Glück, nur Züge.',
   groupLuck: 'Glück und Bluff',

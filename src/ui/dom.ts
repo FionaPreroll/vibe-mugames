@@ -48,12 +48,12 @@ export function handleBack(exit: () => void): void {
   else if (document.querySelector('.home')) exit()
 }
 
-/** A short message that fades away by itself. */
-export function toast(text: string): void {
+/** A short message that fades away by itself, after `ms`. */
+export function toast(text: string, ms = 2500): void {
   const element = h('div', { class: 'toast', role: 'status' } as Partial<HTMLDivElement>, text)
   document.body.append(element)
-  setTimeout(() => element.classList.add('gone'), 2500)
-  setTimeout(() => element.remove(), 3000)
+  setTimeout(() => element.classList.add('gone'), ms)
+  setTimeout(() => element.remove(), ms + 500)
 }
 
 /** Why joining failed, for players. */

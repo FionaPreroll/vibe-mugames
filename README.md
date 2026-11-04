@@ -10,7 +10,7 @@ Games for everyone at one table: board games, card and dice games, party games a
 
 <table>
   <tr>
-    <td width="25%"><img src="docs/screenshots/home.png" alt="The start screen: a box of games, your name, Open a table, Join a table and Play on this device"></td>
+    <td width="25%"><img src="docs/screenshots/home.png" alt="The start screen: a box of games with the sticker of Trans Awareness Month, your name, Open a table, Join a table and Play on this device"></td>
     <td width="25%"><img src="docs/screenshots/muehle.png" alt="Nine Men's Morris on a phone, with pieces being placed"></td>
     <td width="25%"><img src="docs/screenshots/ludo.png" alt="Ludo for four on a phone, with the die"></td>
     <td width="25%"><img src="docs/screenshots/maexchen.png" alt="Mäxchen: the dice under the cup, and what to say"></td>
@@ -141,7 +141,9 @@ To make a move of several steps, tap the piece, then where it goes, and every sq
 
 **Screens:** on a phone held upright, a game shows its board under whose turn it is. On a laptop, a tablet on its side or a phone on its side, the board stands on the left, as large as the screen is high, and whose turn it is, the help and the players on the right; a tablet held upright shows larger boards. The page does not stop two fingers from zooming in the browser, but the boards fit the screen by themselves, so that two players' fingers on one screen, a swipe in Light Racers or a mallet in Air Hockey are never taken for a zoom. **⛶** gives the game the whole screen, where the browser can (not on iPhones, and not needed in the app). While a player sits at a table, the screen stays on, in the app (`KeepAwakePlugin.java`) and in browsers with a wake lock, as a phone that goes dark drops out; a short buzz says it is their turn, unless switched off in the settings. The chooser shows the three games chosen last on the device on top, under _Played lately_.
 
-**Themes:** under _Settings_ → _Theme_, the Spielekiste takes on other colours. The first choice, _With the seasons_, follows the calendar: Chinese New Year from its eve to the Lantern Festival a fortnight later, Easter from Palm Sunday to Easter Monday, Halloween in October, Christmas until 27 December and New Year from 28 December to 6 January; between them winter from November to February, spring from March to May and summer from June to August, and the classic look in September. Or a player picks one: _Classic_, the Spielekiste's own dark blue; _Light_; _Black_; _AMOLED black_, pure black for OLED screens; _Wood_, _Green felt_ and _Forest_, a walnut table, a card table and deep woods; _Nord_ and _Gruvbox_, after the well-known colour schemes; _Neon_; _High contrast_, black and white with yellow; _Night mode, red_, dim reds only, for eyes used to the dark; or one of the seasons' own. _Halloween_, _Winter_ and _Christmas_ are after those of the [puzzles](https://github.com/FionaPreroll/vibe-puzzles); _Spring_, _Easter_ and _Summer_ are light. Each has its decorations behind the screens: lanterns, cherry blossom, painted eggs in a meadow, the sun and clouds, bats round the moon, falling snow, fairy lights and fireworks, and firs in the forest, which hold still for players who ask their device for less motion. A theme colours everything, the boards, cards and dice and the fields of the games in real time too; the settings show each as a small picture of itself, and the one picked applies at once. Each device keeps its own.
+**Themes:** under _Settings_ → _Theme_, the Spielekiste takes on other colours. The first choice, _With the seasons_, follows the calendar: Chinese New Year from its eve to the Lantern Festival a fortnight later, Easter from Palm Sunday to Easter Monday, Halloween in October, Christmas until 27 December and New Year from 28 December to 6 January; between them winter from November to February, spring from March to May and summer from June to August, and the classic look in September. Or a player picks one: _Classic_, the Spielekiste's own dark blue; _Light_; _Black_; _AMOLED black_, pure black for OLED screens; _Wood_, _Green felt_ and _Forest_, a walnut table, a card table and deep woods; _Nord_ and _Gruvbox_, after the well-known colour schemes; _Neon_; _High contrast_, black and white with yellow; _Night mode, red_, dim reds only, for eyes used to the dark; or one of the seasons' own. _Halloween_, _Winter_ and _Christmas_ are after those of the [puzzles](https://github.com/FionaPreroll/vibe-puzzles); _Spring_, _Easter_ and _Summer_ are light. Each has its decorations behind the screens: lanterns, cherry blossom, painted eggs in a meadow, the sun and clouds, bats round the moon, falling snow, fairy lights and fireworks, and firs in the forest, which hold still for players who ask their device for less motion. A theme colours everything, the boards, cards and dice and the fields of the games in real time too; the settings show each as a small picture of itself, and the one picked applies at once. Each device keeps its own. [docs/THEMES.md](docs/THEMES.md) lists every theme and how they work.
+
+**Stickers:** on queer and trans days, weeks and months, a small sticker in its flag's colours sits on the box on the start screen, and sparkles a little: Trans Day of Visibility (31 March), IDAHOBIT (17 May), Pride Month (June), International Non-Binary People's Day (14 July), Bi Visibility Day (23 September), Coming Out Day (11 October), Intersex Awareness Day (26 October), Ace Week (the last full week of October), and in November Trans Awareness Month, Trans Awareness Week (13 to 19 November) and the Transgender Day of Remembrance (20 November), whose sticker holds a candle that glows quietly instead. Several at once each get their own. Hovering over one, or tapping it, says what it is for. [docs/STICKERS.md](docs/STICKERS.md) shows them all.
 
 English and German, as the browser's language says, or chosen on the start screen.
 
@@ -206,6 +208,7 @@ src/
   local.ts    the table on one device
   offline.ts  the website's service worker: registering it, and loading a newer build
   theme.ts    the themes, and the one the calendar suggests; ui/theme.ts applies them, themes.css colours them
+  awareness.ts the days of the stickers on the start screen's box; ui/hero.ts draws them
   storage.ts  name, language, the theme, the update switches, the buzz switch, the games chosen lately, the camera
               last used, who last played on this device and the player's token, in local storage
   native.ts   the Android app's back button, keeping the screen on, and the buzz on a turn
@@ -217,7 +220,8 @@ android/      the Android app's project (Capacitor), with KeepAwakePlugin, which
 tools/        icons.ts: draws the icon, for the app and the website; licenses.ts, privacyPage.ts and
               serviceWorker.ts: licenses.json, privacy.html and sw.js in every build; smoothing.ts
               and charts.ts: the benchmark of air hockey's smoothing, and its plots
-docs/         NETWORKING.md: the network's layers, each game's messages and the Kalman filter;
+docs/         THEMES.md and STICKERS.md: every theme, and the stickers on the start screen's box;
+              NETWORKING.md: the network's layers, each game's messages and the Kalman filter;
               networking/: the benchmark's numbers and plots, made by `pnpm bench:smoothing`
 tests/e2e/    Playwright: phones in separate browser profiles pair through the text codes and play;
               the website offers a newer build; pairing.spec.ts: slow, wrong and failed codes, and copying;
