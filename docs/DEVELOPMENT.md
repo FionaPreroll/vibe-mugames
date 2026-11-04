@@ -66,8 +66,9 @@ The icon, an open games box with a card, a draughts piece and a pawn, is drawn i
 2. Give it a name in `src/i18n.ts`, in English and German, and a board in `src/ui/boards.ts`. Moves of several cells are picked there one cell at a time from the rules' `moves()`, so a board only needs to draw its cells.
 3. If it needs more than a board of cells, such as dice or hidden cards, extend the table and the protocol, and raise `PROTOCOL` in `src/net/protocol.ts`. Miau-Miau shows how: its own state on the table, a view per player sent through `stateFor`, its seat range in `seatRange` (`src/core/games.ts`), and a parser for its view. A game that hides something from some players also goes into `hasHiddenCards` there, so that on one device it says it is played open, or, like Sea Battle, into `handsOver`, if one device can keep it hidden by being handed over.
 4. Give it a guide in `src/ui/rules/` (`GUIDES` in `index.ts`; the type check fails without one): a thumbnail for the game chooser and its rules, a step at a time, each a text in `src/i18n.ts` (`rules<Game>1`, …) with a drawing made with the helpers in `src/ui/rules/draw.ts`, as small inline SVG.
-5. A game in real time goes into `LIVE_GAME_IDS` (`src/core/board.ts`): its rules run by time and by what each seat wants (`Table.input` and `Table.tick`), and its field is a canvas made by `LiveSlot` (`src/ui/live.ts`), as Lichtrenner and air hockey show.
-6. Give it a screenshot: a test in `tests/screenshots/screenshots.spec.ts`, then `pnpm screenshots`, and the picture in the README's gallery.
+5. A game where players type, such as Stadt, Land, Fluss, keeps its text fields between redraws with `Picker.keep` and `keptPlace` (`src/ui/keep.ts`), and sends its words as numbers (`src/core/text.ts`). A game whose time runs out runs it in `Table.tick`.
+6. A game in real time goes into `LIVE_GAME_IDS` (`src/core/board.ts`): its rules run by time and by what each seat wants (`Table.input` and `Table.tick`), and its field is a canvas made by `LiveSlot` (`src/ui/live.ts`), as Lichtrenner and air hockey show.
+7. Give it a screenshot: a test in `tests/screenshots/screenshots.spec.ts`, then `pnpm screenshots`, and the picture in the README's gallery.
 
 ## Workflows
 

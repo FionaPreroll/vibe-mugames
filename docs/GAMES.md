@@ -2,24 +2,25 @@
 
 The Spielekiste's games and their rules, in short. In the Spielekiste, each game's **?** in the chooser, or **Rules** beside its name in a game, shows its rules a step at a time, with drawings.
 
-| Game                                  | Players |
-| ------------------------------------- | ------- |
-| Tic Tac Toe                           | 2       |
-| Ultimate Tic Tac Toe                  | 2       |
-| Four in a Row (_Vier in einer Reihe_) | 2       |
-| Nine Men's Morris (_Mühle_)           | 2       |
-| Draughts (_Dame_)                     | 2       |
-| Ludo (dice)                           | 2–4     |
-| Miau-Miau (Mau-Mau, cards)            | 2–6     |
-| Schwimmen (31, cards)                 | 2–8     |
-| Sea Battle (_Schiffe versenken_)      | 2       |
-| Mäxchen (dice)                        | 2–8     |
-| Werewolf (_Werwolf_)                  | 4–8     |
-| Light Racers (_Lichtrenner_), live    | 2–6     |
-| Air Hockey (_Airhockey_), live        | 2       |
-| Dots and Boxes (_Käsekästchen_)       | 2       |
-| Reversi                               | 2       |
-| Chinese Checkers (_Sternhalma_)       | 2–6     |
+| Game                                        | Players |
+| ------------------------------------------- | ------- |
+| Tic Tac Toe                                 | 2       |
+| Ultimate Tic Tac Toe                        | 2       |
+| Four in a Row (_Vier in einer Reihe_)       | 2       |
+| Nine Men's Morris (_Mühle_)                 | 2       |
+| Draughts (_Dame_)                           | 2       |
+| Ludo (dice)                                 | 2–4     |
+| Miau-Miau (Mau-Mau, cards)                  | 2–6     |
+| Schwimmen (31, cards)                       | 2–8     |
+| Sea Battle (_Schiffe versenken_)            | 2       |
+| Mäxchen (dice)                              | 2–8     |
+| Werewolf (_Werwolf_)                        | 4–8     |
+| City, Country, River (_Stadt, Land, Fluss_) | 2–8     |
+| Light Racers (_Lichtrenner_), live          | 2–6     |
+| Air Hockey (_Airhockey_), live              | 2       |
+| Dots and Boxes (_Käsekästchen_)             | 2       |
+| Reversi                                     | 2       |
+| Chinese Checkers (_Sternhalma_)             | 2–6     |
 
 ## Tic Tac Toe
 
@@ -64,6 +65,14 @@ A dice game of bluffing, with three lives each. The player to move rolls two dic
 ## Werewolf
 
 A village of four to eight, with werewolves hidden in it: one for four and five players, two from six, a seer always and a healer from five; everyone else is a villager. Each phone shows only its own role, and the werewolves see each other. At night, everyone taps someone in secret: the werewolves a victim (chance decides if they disagree), the seer whom to learn about, the healer whom to protect, themselves too but not the same twice in a row, and villagers whom they suspect, which changes nothing but gives no role away. In the morning, everyone learns who was taken, and what they were. By day, the village talks, then everyone still in votes: whoever gets the most votes is out and their role shown, and a tie banishes nobody. The village wins once every werewolf is out, the werewolves once they are as many as the others; a win counts for the whole team. Werewolf is a party game anyone may play; the Spielekiste's roles and words are its own.
+
+## City, Country, River
+
+_Stadt, Land, Fluss_, for two to eight. Each round has a letter, drawn by chance, a new one every round (never C, Q, X or Y). Everyone writes, on their own phone, a word starting with it for each category: a city, a country, a river, a first name, an animal and a job; Ä counts as A. Nobody sees another's answers while they write. Whoever has a word in every category may call **Stop!**: the others have ten seconds left. After three minutes, the round ends anyway.
+
+Then everyone sees every answer, and taps those of the others that do not count, such as a river that does not exist: an answer that more than half of the others object to counts nothing, and so does one that does not start with the letter. An answer counts 20 if nobody else has one in its category, 10 if nobody else has the same word, and 5 if someone does. Once everyone has tapped **Next round**, the next letter comes. After five rounds, the most points win; with the same, it is a draw.
+
+On one device, everyone writes in turn, as long as they like, while the others look away, and taps **Done**; then the answers are checked together, and one tap strikes an answer.
 
 ## Light Racers
 

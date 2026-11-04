@@ -49,9 +49,11 @@ Games for everyone at one table: board games, card and dice games, party games a
   </tr>
   <tr>
     <td><img src="docs/screenshots/ultimate.png" alt="Ultimate Tic Tac Toe on a phone: nine small boards, two of them won, and the board to play in marked"></td>
+    <td><img src="docs/screenshots/stadtlandfluss.png" alt="City, Country, River: the letter O, and every player's answers with their points, one of them struck"></td>
   </tr>
   <tr>
     <td>Ultimate Tic Tac Toe</td>
+    <td>City, Country, River: checking the answers</td>
   </tr>
 </table>
 
@@ -59,7 +61,7 @@ On a laptop or a tablet, the game chooser, and games on one device, taking turns
 
 <table>
   <tr>
-    <td colspan="2"><img src="docs/screenshots/chooser.png" alt="The game chooser: Tactics, Luck and bluff, and Skill, each game with its picture and number of players"></td>
+    <td colspan="2"><img src="docs/screenshots/chooser.png" alt="The game chooser: Tactics, Luck and bluff, Party games and Skill, each game with its picture and number of players"></td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/screenshots/miaumiau-split.png" alt="Miau-Miau for four on a split screen, each part with its own hand"></td>
@@ -106,16 +108,16 @@ In the app, phones can also connect **by Bluetooth**, without any Wi-Fi. On a la
 
 ## The games
 
-| Tactics                                                       | Luck and bluff                            | Skill                                           |
-| ------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------- |
-| [Tic Tac Toe](docs/GAMES.md#tic-tac-toe), 2                   | [Ludo](docs/GAMES.md#ludo), 2–4           | [Light Racers](docs/GAMES.md#light-racers), 2–6 |
-| [Ultimate Tic Tac Toe](docs/GAMES.md#ultimate-tic-tac-toe), 2 | [Miau-Miau](docs/GAMES.md#miau-miau), 2–6 | [Air Hockey](docs/GAMES.md#air-hockey), 2       |
-| [Four in a Row](docs/GAMES.md#four-in-a-row), 2               | [Schwimmen](docs/GAMES.md#schwimmen), 2–8 |                                                 |
-| [Nine Men's Morris](docs/GAMES.md#nine-mens-morris), 2        | [Sea Battle](docs/GAMES.md#sea-battle), 2 |                                                 |
-| [Draughts](docs/GAMES.md#draughts), 2                         | [Mäxchen](docs/GAMES.md#mäxchen), 2–8     |                                                 |
-| [Dots and Boxes](docs/GAMES.md#dots-and-boxes), 2             | [Werewolf](docs/GAMES.md#werewolf), 4–8   |                                                 |
-| [Reversi](docs/GAMES.md#reversi), 2                           |                                           |                                                 |
-| [Chinese Checkers](docs/GAMES.md#chinese-checkers), 2–6       |                                           |                                                 |
+| Tactics                                                       | Luck and bluff                            | Party                                                         | Skill                                           |
+| ------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------- |
+| [Tic Tac Toe](docs/GAMES.md#tic-tac-toe), 2                   | [Ludo](docs/GAMES.md#ludo), 2–4           | [City, Country, River](docs/GAMES.md#city-country-river), 2–8 | [Light Racers](docs/GAMES.md#light-racers), 2–6 |
+| [Ultimate Tic Tac Toe](docs/GAMES.md#ultimate-tic-tac-toe), 2 | [Miau-Miau](docs/GAMES.md#miau-miau), 2–6 |                                                               | [Air Hockey](docs/GAMES.md#air-hockey), 2       |
+| [Four in a Row](docs/GAMES.md#four-in-a-row), 2               | [Schwimmen](docs/GAMES.md#schwimmen), 2–8 |                                                               |                                                 |
+| [Nine Men's Morris](docs/GAMES.md#nine-mens-morris), 2        | [Sea Battle](docs/GAMES.md#sea-battle), 2 |                                                               |                                                 |
+| [Draughts](docs/GAMES.md#draughts), 2                         | [Mäxchen](docs/GAMES.md#mäxchen), 2–8     |                                                               |                                                 |
+| [Dots and Boxes](docs/GAMES.md#dots-and-boxes), 2             | [Werewolf](docs/GAMES.md#werewolf), 4–8   |                                                               |                                                 |
+| [Reversi](docs/GAMES.md#reversi), 2                           |                                           |                                                               |                                                 |
+| [Chinese Checkers](docs/GAMES.md#chinese-checkers), 2–6       |                                           |                                                               |                                                 |
 
 Each game's rules are in the Spielekiste, a step at a time with drawings, and in short in [docs/GAMES.md](docs/GAMES.md).
 

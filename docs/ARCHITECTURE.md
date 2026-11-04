@@ -26,6 +26,12 @@ Sea Battle (`src/core/seeschlacht.ts`) works the same way: the host alone knows 
 
 Dice and roles stay hidden the same way. In Mäxchen (`src/core/maexchen.ts`), the host rolls with the browser's cryptographic randomness, and only the roller's `MaexView` holds the dice, until a doubt lifts the cup for everyone. A move is a number: 1 rolls, 2 doubts, 3 gives up, and a throw such as 53 says it. In Werwolf (`src/core/werwolf.ts`), each phone's `WolfView` holds its own role, the other wolves' for a wolf, what the seer learned, and the roles of those out. Everyone chooses at once, at night and by day, so a choice (the seat chosen) may come with an older move number, but none from before the night or day began, and none ever shows as the last move. A won game counts for every player of the winning team.
 
+## Words stay hidden, and stay put
+
+Stadt, Land, Fluss (`src/core/stadtlandfluss.ts`) shows each phone its own answers, `WordsView`, until the round is checked. Everyone writes at once, so an answer may come with an older move number, but none from before this round's writing or checking began; a player's phone sends each field a moment after they stop typing. The host runs the round's time with `Table.tick`, which says when a second more is gone, so the phones count down. Words travel as their characters' numbers (`src/core/text.ts`), which the host cleans and cuts, and the rules compare them without capitals, accents or spaces. On one device (`new Table(random, { together: true })`), players write one after the other instead, with no time running.
+
+The screens draw everything anew whenever the table changes, which would take a text field out of the page as a player types, and close the keyboard. So a view keeps its fields through `Picker.keep` and puts `keptPlace(field)` where one goes; `replaceKeeping` (`src/ui/keep.ts`) then draws the screen around fields already on it, without taking them out.
+
 ## Games in real time
 
 Games in real time (Lichtrenner, `src/core/lichtrenner.ts`, and air hockey, `src/core/airhockey.ts`) have no turns. Each player's phone sends what they want now as the room's input, 30 times a second, of which only the newest counts: a heading, or where the mallet should go in their own half as they see it, after the number of the game it is meant for (`round`), so last game's input never steers the next. The host runs the game by the time that passed, 30 times a second (`Table.tick`), and sends the table that often while one is on, and every third tick otherwise. Lichtrenner moves a cell a step on a grid and sends each rider's wall as the cells where it turns, never more than fits in one message; air hockey runs its puck in steps of 1/240 s, so that nothing slides through a mallet, and phones draw the puck gliding on between two states.
@@ -80,14 +86,15 @@ About (`src/ui/about.ts`, `src/ui/privacy.ts`) reads `CHANGELOG.md` and the priv
 src/
   core/       the rules: board.ts, tictactoe.ts, ultimate.ts, fourInARow.ts, muehle.ts, dame.ts,
               kaesekaestchen.ts, reversi.ts, sternhalma.ts, ludo.ts, miaumiau.ts, schwimmen.ts,
-              seeschlacht.ts, maexchen.ts, werwolf.ts, lichtrenner.ts, airhockey.ts, games.ts,
-              table.ts
+              seeschlacht.ts, maexchen.ts, werwolf.ts, stadtlandfluss.ts, text.ts (words players
+              write), lichtrenner.ts, airhockey.ts, games.ts, table.ts
   net/        protocol.ts: the messages and their parsers; session.ts: the host's and players' seats;
               clock.ts and smooth.ts: air hockey's drawing between states, with the Kalman filter;
               netlog.ts: the connections of the last table, for the connection view and the report
   ui/         the screens: home.ts, table.ts, local.ts (playing on one device), game.ts (what every
               table shows), boards.ts, ludo.ts (Ludo's board and die), cards.ts, swim.ts
-              (Schwimmen), sea.ts (Sea Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), live.ts, canvas.ts, race.ts
+              (Schwimmen), sea.ts (Sea Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), words.ts (Stadt, Land,
+              Fluss), keep.ts (fields that stay while the screen is drawn anew), live.ts, canvas.ts, race.ts
               and rink.ts (the fields of the games in real time), codes.ts (QR codes and text
               codes), rules/ (each game's thumbnail and rules with drawings), hero.ts (the start
               screen's picture, made of those thumbnails), updates.ts and webUpdates.ts (the
@@ -123,6 +130,7 @@ tests/e2e/    Playwright: phones in separate browser profiles pair through the t
               local.spec.ts: playing on one device, taking turns (Sea Battle handed over) and on a split screen;
               live.spec.ts: the games in real time between phones and on one device;
               party.spec.ts: Mäxchen and Werwolf between phones, and Werwolf handed round one device
+              words.spec.ts: Stadt, Land, Fluss between phones, and in turn on one device
               about.spec.ts: About, its licenses, and the privacy policy in it and as privacy.html;
               connection.spec.ts: the connection details, the connection test and the debug report;
               offline.spec.ts: the built website installs, opens offline, and takes a new build
