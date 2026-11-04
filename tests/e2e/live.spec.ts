@@ -62,7 +62,6 @@ test('two phones play air hockey: the whole rink, or one half, smoothed', async 
   for (const page of [ada, bo]) {
     await expect(page.locator('.rink-bar .net')).toBeVisible({ timeout: 5000 })
   }
-  if (process.env.SCREENSHOTS) await bo.screenshot({ path: `${process.env.SCREENSHOTS}/rink-bo.png` })
 
   // After the countdown, Bo's finger sweeps his mallet up through the puck in the middle,
   // at the top of his screen, and Ada's drags hers about.
