@@ -147,12 +147,14 @@ English and German, as the browser's language says, or chosen on the start scree
 
 **Privacy:** no accounts, no server, no advertising, no tracking. The policy is [`PRIVACY.md`](PRIVACY.md), in German [`PRIVACY.de.md`](PRIVACY.de.md); the Spielekiste shows it in the player's language, and every build puts both on one page of its own, [`privacy.html`](https://fionapreroll.github.io/vibe-mugames/privacy.html), the address for an app store. A change to what the Spielekiste keeps, shows other phones, sends anywhere or asks permission for changes both files, with the same sections (`src/privacy.test.ts` checks that), and the changelog says so.
 
+**Installing the website:** in Chrome, on Android or a computer, _Install app_ or _Add to home screen_ puts the Spielekiste beside the other apps, where it opens in a window of its own, without the browser's bars, in any orientation. Once opened, the website keeps itself for offline use, installed or not, and starts without internet, such as on a hotspot where the phones pair anyway. Each time it opens with internet, the browser fetches a newer version, if there is one, in the background, and runs it from the next start on; a page that is open, at a table or not, goes on with the version it started with.
+
 **Android app:** download [`spielekiste.apk`](https://github.com/FionaPreroll/vibe-mugames/releases/latest/download/spielekiste.apk) from the release _Spielekiste for Android_ and open it on the phone; Android asks once to allow installing apps from that source. The website links there too, on its start screen and in the settings. A newer APK installs over the older one and keeps the settings. These are debug builds, for playing with friends, not for the Play Store.
 
 **Updates** are opt-in, in the settings (⚙ on the start screen):
 
 - **In the app,** if you agree at its first start or switch it on in the settings: at every start, the app looks for a newer build and offers to install it; _Look for a new version now_ looks at once. The dialog says how large the download is, and warns when the phone is on mobile data or another metered connection. While downloading, it shows the progress; **Pause** stops, and the download goes on where it stopped, also after the app was closed. Android asks before installing; the first time, it wants you to allow the app to install apps: the app opens that setting, and goes on installing by itself when you come back, without downloading again. The app hands the update to Android as an installer session, which reports back: the dialog says when Android waits for your confirmation, and if Android's installer does not open, or the update was not installed, it says so and offers to try again. The start screen shows the app's build number.
-- **On the website,** once switched on in the settings, an open page looks for a newer build when it starts, every quarter of an hour and when it comes back to the front; _Look for a new version now_ in the settings looks at once, whatever the switch says. The start screen then says so, and _Load it_ loads the new version. It does not say so at a table, as loading the page anew there would end the table.
+- **On the website,** once switched on in the settings, an open page looks for a newer build when it starts, every quarter of an hour and when it comes back to the front; _Look for a new version now_ in the settings looks at once, whatever the switch says. The start screen then says so, and _Load it_ loads the new version. It does not say so at a table, as loading the page anew there would end the table. Without the switch, a newer version still comes at the next start (above).
 
 **The connection:** at a table with other phones, the top line shows a small graph of the ping, and its newest value, green, yellow or red; on the host's phone, the worst of the players'. Tapping it opens _Connection details_: the last minute's pings, and for each connection its ping, pings lost, stalls, messages and data, and how it is carried (Wi-Fi or Bluetooth, both ends' addresses and protocols, round trip, packets, bytes, encryption, channels). Addresses show hidden until _Show addresses_. The host can _Test connections_: for five seconds the phones send as much as the connections take, beside the game, and every player's ping under load and kilobytes a second each way appear on both phones.
 
@@ -176,6 +178,7 @@ English and German, as the browser's language says, or chosen on the start scree
 - **App updates** come from the library [`@fionapreroll/app-updates`](https://github.com/FionaPreroll/vibe-p2pgame/tree/main/packages/app-updates), which Spark Hunt uses too (`src/updates.ts` names the release, `src/ui/updates.ts` gives its dialogs the Spielekiste's texts): the release _Spielekiste for Android_ holds `version.json` beside the APK, naming its build and size. The app compares it with its own build number, the APK's `versionCode`; CI sets both to the Android workflow's run number. The library's plugin reads and downloads only from the releases named in `capacitor.config.ts`, this repository's, over HTTPS, and brings its permissions with it, so a build for the Play Store, which forbids apps updating themselves, can leave the package out. Android installs an update only if it is signed with the same key as the app installed: every build is signed with `android/app/debug.keystore`, in the repository on purpose. It is public, so it proves only that an update comes from a build of this project.
 - **About** (`src/ui/about.ts`, `src/ui/privacy.ts`) reads `CHANGELOG.md` and the privacy policy as Markdown (`src/markdown.ts`), into elements built from text, so nothing in them is taken as HTML. Every build writes `licenses.json` beside the page (`tools/licenses.ts`): the packages of other people's code in the bundle, found from the bundle's own modules, with their license and NOTICE files; `@fionapreroll/p2p` is left out, as it is the same developer's. The Android app's native parts are listed by hand in `NATIVE` (`src/ui/about.ts`), from its Gradle files. `tools/privacyPage.ts` writes `privacy.html`.
 - **Website updates** (`src/webUpdates.ts`, `src/ui/webUpdates.ts`, switched in `src/ui/settings.ts`): every build writes `version.json` beside the page (`vite.config.ts`), with its version, commit and time. The page reads the deployed one, past every cache, and calls it newer if it is another commit, built later. The app does not look there, as its files are inside it.
+- **Offline and installing** (`src/offline.ts`, `tools/serviceWorker.ts`): `public/manifest.webmanifest` names the website, its colours and icons for installing; it fixes no orientation, for the games on a phone on its side and split screens. After every build, `tools/serviceWorker.ts` writes `sw.js`, a service worker with the list of every file built and a version hashed from their contents, so each change is a new worker. It keeps them all in a cache of its own scope, serves the page and its files from there, and always leaves `version.json` to the network. `src/main.ts` registers it on the website in production builds only, never in the app; a new worker takes over as soon as it has kept its files, which leaves an open page running the build it started with (the website loads all its code at the start), so the next start runs the new one. _Load it_ (`loadNewer`) asks the browser to look for a new worker, waits for it to take over, and only then loads the page anew. Spark Hunt has the same worker.
 
 ```
 src/
@@ -198,16 +201,18 @@ src/
   markdown.ts the little Markdown of the changelog and the privacy policy
   i18n.ts     every text players see, in English and German
   local.ts    the table on one device
+  offline.ts  the website's service worker: registering it, and loading a newer build
   storage.ts  name, language, the update switches, the buzz switch, the games chosen lately, the camera
               last used, who last played on this device and the player's token, in local storage
   native.ts   the Android app's back button, keeping the screen on, and the buzz on a turn
   bluetooth.ts the Spielekiste's Nearby service for @fionapreroll/p2p-nearby; ui/bluetooth.ts draws it
   updates.ts  the app's updates from its release; webUpdates.ts: the website's
 PRIVACY.md    the privacy policy, PRIVACY.de.md in German
+public/       icon.svg, icons/ (made by tools/icons.ts) and manifest.webmanifest, for installing the website
 android/      the Android app's project (Capacitor), with KeepAwakePlugin, which keeps the screen on
-tools/        icons.ts: draws the icon, for the app and the website; licenses.ts and privacyPage.ts:
-              licenses.json and privacy.html in every build; smoothing.ts and charts.ts: the benchmark
-              of air hockey's smoothing, and its plots
+tools/        icons.ts: draws the icon, for the app and the website; licenses.ts, privacyPage.ts and
+              serviceWorker.ts: licenses.json, privacy.html and sw.js in every build; smoothing.ts
+              and charts.ts: the benchmark of air hockey's smoothing, and its plots
 docs/         NETWORKING.md: the network's layers, each game's messages and the Kalman filter;
               networking/: the benchmark's numbers and plots, made by `pnpm bench:smoothing`
 tests/e2e/    Playwright: phones in separate browser profiles pair through the text codes and play;
@@ -216,7 +221,8 @@ tests/e2e/    Playwright: phones in separate browser profiles pair through the t
               live.spec.ts: the games in real time between phones and on one device;
               party.spec.ts: Mäxchen and Werwolf between phones, and Werwolf handed round one device
               about.spec.ts: About, its licenses, and the privacy policy in it and as privacy.html;
-              connection.spec.ts: the connection details, the connection test and the debug report
+              connection.spec.ts: the connection details, the connection test and the debug report;
+              offline.spec.ts: the built website installs, opens offline, and takes a new build
 ```
 
 ### Adding a game
@@ -261,7 +267,7 @@ Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of
 
 **The Android app** is built by CI (`.github/workflows/android.yml`). Locally, with the Android SDK: `pnpm android:sync`, then build in `android/` with `./gradlew assembleDebug`. The update plugin's Java and its tests live with the library; here, `src/ui/updates.test.ts` plays the Spielekiste's dialogs in happy-dom against the library's `FakeUpdater`.
 
-**The icon**, an open games box with a card, a draughts piece and a pawn, is drawn in `tools/icons.ts`. `pnpm icons` writes everything made from it: the app's adaptive icon as vector drawables in `android/app/src/main/res/drawable/` (a background of squares, the box, and a one-colour layer for themed icons), its PNGs for Android 7 in `mipmap-*/`, and the website's `public/icon.svg`. The app's start screen shows the same box on the same dark blue.
+**The icon**, an open games box with a card, a draughts piece and a pawn, is drawn in `tools/icons.ts`. `pnpm icons` writes everything made from it: the app's adaptive icon as vector drawables in `android/app/src/main/res/drawable/` (a background of squares, the box, and a one-colour layer for themed icons), its PNGs for Android 7 in `mipmap-*/`, and the website's `public/icon.svg`, with the PNGs in `public/icons/` for installing it: rounded ones, maskable ones that show the whole board for phones to cut to their own shape, and Apple's. The app's start screen shows the same box on the same dark blue.
 
 ### Workflows
 
@@ -287,5 +293,5 @@ Every feature or fix gets its own branch off `main`, named `feature/<name_in_sna
 - **The app's updates are unit-tested, but not yet tried on phones.** An app installed before builds were signed with the same key has to be uninstalled once.
 - **Some Wi-Fi networks** isolate their clients, so the phones cannot see each other there; a phone's own hotspot does not.
 - **A game on one device is not saved:** closing the page or the app ends it, scores and all.
-- **The website is not yet a PWA:** it cannot be installed from the browser, and it needs the network to start. Planned: a manifest and a service worker, so browsers can install it and it starts offline.
+- **Installing the website and starting it offline are tested in Chromium only:** not yet on real phones, nor the camera in the installed window. Safari on iPhones installs only through _Share_ → _Add to Home Screen_.
 - **A host who closes the page ends the table:** players cannot sit down again until the host opens a new one. A player who drops out gets their place and score back by pairing again.

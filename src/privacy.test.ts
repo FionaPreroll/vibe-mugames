@@ -16,8 +16,8 @@ describe('the privacy policy', () => {
 
   it('names the contact address and the same date in both', () => {
     for (const text of [privacyEn, privacyDe]) expect(text).toContain('fipreroll+app@gmail.com')
-    expect(privacyEn).toContain('In force from 3 November 2026')
-    expect(privacyDe).toContain('Gültig ab 3. November 2026')
+    expect(privacyEn).toContain('In force from 4 November 2026')
+    expect(privacyDe).toContain('Gültig ab 4. November 2026')
   })
 
   it('links only to https addresses', () => {

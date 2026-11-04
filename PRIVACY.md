@@ -1,6 +1,6 @@
 # Privacy policy
 
-The Spielekiste, as a website and as an Android app. In force from 3 November 2026.
+The Spielekiste, as a website and as an Android app. In force from 4 November 2026.
 
 ## In short
 
@@ -20,7 +20,7 @@ The Spielekiste keeps these in your browser's storage, or in the app's own stora
 - the camera you last scanned with, with its zoom and brightness;
 - a random token that lets a host recognise you when you sit down at their table again.
 
-A table, its games and its scores are kept in memory only, and are gone when you close the Spielekiste. So are, for the debug report, a log of what the Spielekiste did since it started, without names, codes or addresses, and how well the connections of the last table kept up. In the app, an update you download stays in the app's storage until it is installed or replaced by a newer one.
+A table, its games and its scores are kept in memory only, and are gone when you close the Spielekiste. So are, for the debug report, a log of what the Spielekiste did since it started, without names, codes or addresses, and how well the connections of the last table kept up. In the app, an update you download stays in the app's storage until it is installed or replaced by a newer one. On the website, your browser keeps a copy of the Spielekiste's own files once you opened it, so that it starts without internet, also when you installed it from the browser; nothing of yours is in that copy.
 
 None of this leaves your device by itself. Uninstalling the app deletes it, as does clearing the app's storage in Android's settings, or the site's data in your browser.
 
@@ -49,7 +49,7 @@ While you sit at a table, the Spielekiste keeps the screen on, in the app and in
 
 ## Services of others
 
-- **GitHub** hosts the website and the app's releases. When you open the website, when it looks for a newer version of itself, and when the app looks for or downloads an update, GitHub receives your IP address and the usual details of a web request. Both look for updates only if you switched that on in the settings, or tap _Look for a new version now_. See the [GitHub privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+- **GitHub** hosts the website and the app's releases. When you open the website, when it looks for a newer version of itself, and when the app looks for or downloads an update, GitHub receives your IP address and the usual details of a web request. Each time you open the website with internet, your browser asks GitHub whether its copy of the Spielekiste is still the newest, and fetches a newer one for the next start, as every website you open is fetched anew; without internet, it asks nothing. Beyond that, the website and the app look for updates only if you switched that on in the settings, or tap _Look for a new version now_. See the [GitHub privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
 - **Google Play services,** in the app, provide Nearby Connections for playing over Bluetooth. Google may handle data for this under the [Google privacy policy](https://policies.google.com/privacy).
 - **Google Play,** if you install the app from there, handles the download and its updates under the [Google privacy policy](https://policies.google.com/privacy).
 - **Links** in the Spielekiste, such as to GitHub, open in your browser, under the policy of the site you open.

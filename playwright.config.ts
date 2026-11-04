@@ -14,6 +14,9 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${port}/`,
     trace: 'retain-on-failure',
+    // The built page keeps itself with a service worker; only tests/e2e/offline.spec.ts lets it,
+    // so that the other tests always run the build served, and their routes see every request.
+    serviceWorkers: 'block',
   },
   projects: [
     {

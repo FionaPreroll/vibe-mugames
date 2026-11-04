@@ -85,7 +85,8 @@ describe('the settings on the website', () => {
     const reload = vi.fn()
     vi.stubGlobal('location', { reload })
     button('Load it').click()
-    expect(reload).toHaveBeenCalledOnce()
+    // Once the browser had its say about a newer service worker: here it has none.
+    await vi.waitFor(() => expect(reload).toHaveBeenCalledOnce())
     expect(settings().webUpdates).toBe(false)
   })
 

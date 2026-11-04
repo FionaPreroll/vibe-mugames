@@ -1,6 +1,7 @@
 // Draws the Spielekiste's icon, a games box with a card and two pieces, and writes every file
 // made from it: the Android app's adaptive icon (vector drawables), its PNGs for Android 7, and
-// the website's icon. Run it with `pnpm icons` after changing a shape here.
+// the website's icons, for its tab and for installing it (public/manifest.webmanifest). Run it
+// with `pnpm icons` after changing a shape here.
 //
 // The drawing is on Android's adaptive icon grid of 108 by 108: launchers cut it to a circle,
 // squircle or rounded square, and only the circle of 66 around the middle is always shown.
@@ -225,6 +226,23 @@ try {
       const png = await page.screenshot({ omitBackground: true })
       write(join(res, `mipmap-${density}/${name}.png`), png)
     }
+  }
+  // The installed website's icons: rounded like public/icon.svg; maskable ones, which the phone
+  // cuts to its own shape, show the whole board, with the box inside their safe circle of 40 %;
+  // and Apple's, square, which iOS rounds itself.
+  const web = [
+    ['icon-192.png', 192, 'square', '18 18 72 72'],
+    ['icon-512.png', 512, 'square', '18 18 72 72'],
+    ['icon-maskable-192.png', 192, 'none', '12 12 84 84'],
+    ['icon-maskable-512.png', 512, 'none', '12 12 84 84'],
+    ['apple-touch-icon.png', 180, 'none', '18 18 72 72'],
+  ] as const
+  for (const [name, size, clip, viewBox] of web) {
+    await page.setViewportSize({ width: size, height: size })
+    await page.setContent(
+      `<style>html,body{margin:0;background:transparent}svg{display:block;width:${size}px;height:${size}px}</style>${svg(clip, viewBox)}`,
+    )
+    write(join(root, `public/icons/${name}`), await page.screenshot({ omitBackground: true }))
   }
 } finally {
   await browser.close()

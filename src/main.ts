@@ -1,7 +1,8 @@
 import './style.css'
 import { setLanguage } from './i18n'
 import { captureErrors, log } from './log'
-import { onBackButton } from './native'
+import { isApp, onBackButton } from './native'
+import { keepOffline } from './offline'
 import { settings } from './storage'
 import { handleBack } from './ui/dom'
 import { homeScreen } from './ui/home'
@@ -17,3 +18,6 @@ homeScreen()
 void offerUpdates()
 // On the website: tell the player when a newer build is deployed.
 watchForWebUpdates()
+// On the website: keep it for offline use, so it starts on a hotspot without internet and can be
+// installed. The app has its files inside; a service worker would only keep a second copy.
+if (import.meta.env.PROD && !isApp()) void keepOffline()

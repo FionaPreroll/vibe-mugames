@@ -1,5 +1,6 @@
 import { t } from '../i18n'
 import { isApp } from '../native'
+import { loadNewer } from '../offline'
 import { settings, updateSettings } from '../storage'
 import { type WebBuild, watchWebUpdates } from '../webUpdates'
 import { h } from './dom'
@@ -56,7 +57,7 @@ function fill(banner: HTMLElement): void {
       type: 'button',
       class: 'primary',
       textContent: t('webUpdateReload'),
-      onclick: () => location.reload(),
+      onclick: () => void loadNewer(),
     }),
   )
 }

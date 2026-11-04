@@ -1,6 +1,6 @@
 # Datenschutzerklärung
 
-Die Spielekiste, als Website und als Android-App. Gültig ab 3. November 2026.
+Die Spielekiste, als Website und als Android-App. Gültig ab 4. November 2026.
 
 ## Kurz gesagt
 
@@ -20,7 +20,7 @@ Die Spielekiste speichert im Speicher deines Browsers oder im eigenen Speicher d
 - die Kamera, mit der du zuletzt gescannt hast, mit Zoom und Helligkeit;
 - ein zufälliges Token, an dem dich ein Gastgeber wiedererkennt, wenn du dich wieder an seinen Tisch setzt.
 
-Ein Tisch, seine Spiele und Punkte stehen nur im Arbeitsspeicher und sind weg, wenn du die Spielekiste schließt. Ebenso, für den Fehlerbericht, ein Protokoll dessen, was die Spielekiste seit ihrem Start getan hat, ohne Namen, Codes oder Adressen, und wie gut die Verbindungen am letzten Tisch mithielten. In der App bleibt ein heruntergeladenes Update im Speicher der App, bis es installiert oder durch ein neueres ersetzt ist.
+Ein Tisch, seine Spiele und Punkte stehen nur im Arbeitsspeicher und sind weg, wenn du die Spielekiste schließt. Ebenso, für den Fehlerbericht, ein Protokoll dessen, was die Spielekiste seit ihrem Start getan hat, ohne Namen, Codes oder Adressen, und wie gut die Verbindungen am letzten Tisch mithielten. In der App bleibt ein heruntergeladenes Update im Speicher der App, bis es installiert oder durch ein neueres ersetzt ist. Auf der Website behält dein Browser eine Kopie der eigenen Dateien der Spielekiste, sobald du sie einmal geöffnet hast, damit sie auch ohne Internet startet, auch wenn du sie aus dem Browser installiert hast; nichts von dir steht in dieser Kopie.
 
 Nichts davon verlässt dein Gerät von selbst. Wenn du die App deinstallierst, ist es gelöscht, ebenso, wenn du den Speicher der App in Androids Einstellungen oder die Daten der Website in deinem Browser löschst.
 
@@ -49,7 +49,7 @@ Solange du an einem Tisch sitzt, hält die Spielekiste den Bildschirm an, in der
 
 ## Dienste anderer
 
-- **GitHub** stellt die Website und die Releases der App bereit. Wenn du die Website öffnest, wenn sie nach einer neueren Version von sich sucht und wenn die App nach einem Update sucht oder es lädt, bekommt GitHub deine IP-Adresse und die üblichen Angaben einer Web-Anfrage. Beide suchen nur nach Updates, wenn du das in den Einstellungen eingeschaltet hast oder auf _Jetzt nach einer neuen Version suchen_ tippst. Siehe die [Datenschutzerklärung von GitHub](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+- **GitHub** stellt die Website und die Releases der App bereit. Wenn du die Website öffnest, wenn sie nach einer neueren Version von sich sucht und wenn die App nach einem Update sucht oder es lädt, bekommt GitHub deine IP-Adresse und die üblichen Angaben einer Web-Anfrage. Jedes Mal, wenn du die Website mit Internet öffnest, fragt dein Browser bei GitHub, ob seine Kopie der Spielekiste noch die neueste ist, und holt eine neuere für den nächsten Start, so wie jede Website, die du öffnest, neu geladen wird; ohne Internet fragt er nichts. Darüber hinaus suchen die Website und die App nur nach Updates, wenn du das in den Einstellungen eingeschaltet hast oder auf _Jetzt nach einer neuen Version suchen_ tippst. Siehe die [Datenschutzerklärung von GitHub](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
 - **Google Play-Dienste** stellen in der App Nearby Connections bereit, um über Bluetooth zu spielen. Google kann dafür Daten nach der [Datenschutzerklärung von Google](https://policies.google.com/privacy) verarbeiten.
 - **Google Play** übernimmt, wenn du die App von dort installierst, den Download und ihre Updates, unter der [Datenschutzerklärung von Google](https://policies.google.com/privacy).
 - **Links** in der Spielekiste, etwa zu GitHub, öffnen sich in deinem Browser, unter der Erklärung der Seite, die du öffnest.

@@ -5,6 +5,7 @@ import type { Plugin } from 'vite'
 import { defineConfig } from 'vitest/config'
 import { licenses } from './tools/licenses.ts'
 import { privacyPage } from './tools/privacyPage.ts'
+import { serviceWorker } from './tools/serviceWorker.ts'
 
 /** Which build this is, for the start screen and About: the version, the commit and the time. */
 function buildInfo(): { version: string; commit: string; time: string } {
@@ -47,13 +48,15 @@ export default defineConfig(({ mode }) => {
     base: './',
     // Source maps only for measuring coverage in the browser tests (COVERAGE, see tests/e2e/coverage.ts).
     build: { sourcemap: Boolean(process.env.COVERAGE) },
-    // Beside the page: version.json for website updates, licenses.json for About, and the
-    // privacy policy as a page of its own. Phones only open the camera on HTTPS pages, so
+    // Beside the page: version.json for website updates, licenses.json for About, the
+    // privacy policy as a page of its own, and sw.js, the service worker that keeps the website
+    // for offline use (see src/offline.ts). Phones only open the camera on HTTPS pages, so
     // `pnpm dev:phone` serves with a self-signed certificate that each phone accepts once.
     plugins: [
       versionFile(build),
       licenses(),
       privacyPage(),
+      serviceWorker(),
       ...(mode === 'phone' ? [basicSsl()] : []),
     ],
     test: {

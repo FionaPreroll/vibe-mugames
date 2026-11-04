@@ -1,5 +1,6 @@
 import { t } from '../i18n'
 import { isApp } from '../native'
+import { loadNewer } from '../offline'
 import { settings, updateSettings } from '../storage'
 import { lookForWebUpdate } from '../webUpdates'
 import { h, show } from './dom'
@@ -99,7 +100,7 @@ export function webUpdateSettings(): HTMLElement {
     class: 'primary',
     textContent: t('webUpdateReload'),
     hidden: true,
-    onclick: () => location.reload(),
+    onclick: () => void loadNewer(),
   })
   const button = h('button', {
     type: 'button',

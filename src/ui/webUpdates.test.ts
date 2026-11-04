@@ -7,7 +7,7 @@ const { setLanguage } = await import('../i18n')
 const { foundNewer, webUpdateBanner } = await import('./webUpdates')
 
 describe('the website’s note about a newer build', () => {
-  it('stays hidden until a newer build is found, then offers to load it', () => {
+  it('stays hidden until a newer build is found, then offers to load it', async () => {
     setLanguage('en')
     const banner = webUpdateBanner()
     document.body.append(banner)
@@ -22,7 +22,8 @@ describe('the website’s note about a newer build', () => {
     const reload = vi.fn()
     vi.stubGlobal('location', { reload })
     banner.querySelector('button')?.click()
-    expect(reload).toHaveBeenCalledOnce()
+    // Once the browser had its say about a newer service worker: here it has none.
+    await vi.waitFor(() => expect(reload).toHaveBeenCalledOnce())
     vi.unstubAllGlobals()
   })
 })
