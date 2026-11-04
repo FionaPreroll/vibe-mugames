@@ -18,7 +18,7 @@ import {
   staged,
   takeOverText,
 } from './game'
-import { LiveSlot } from './live'
+import { LiveSlot, withoutLive } from './live'
 import { gameTitle } from './rules'
 
 /**
@@ -215,7 +215,7 @@ export function localScreen(local: LocalTable, split: boolean, onLeave: () => vo
     const overview = local.state(-1)
     for (const slot of slots) slot.update(overview)
     const drawn = JSON.stringify([
-      { ...overview, race: null, rink: null },
+      withoutLive(overview),
       [...turned],
       [...pickers.values()].map((picker) => picker.shown(overview)),
     ])

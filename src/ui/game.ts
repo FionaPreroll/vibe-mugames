@@ -2,6 +2,7 @@ import { type GameId, isLiveGame, type Move } from '../core/board'
 import { GAME_GROUPS, type GameGroup, handsOver, hasHiddenCards, seatRange } from '../core/games'
 import { encode as encodeLudo } from '../core/ludo'
 import { encode } from '../core/miaumiau'
+import { WIN_LENGTH } from '../core/snakes'
 import type { Player, TableState } from '../core/table'
 import { type TextKey, t } from '../i18n'
 import type { TableHost } from '../net/session'
@@ -329,6 +330,9 @@ function liveStatus(state: TableState, mine: number, shared: boolean, local: boo
       : t('watchingAll', { names: state.seats.map((_, i) => name(i)).join(', ') })
   }
   if (state.game === 'lichtrenner') return t(local ? 'lichtHintLocal' : 'lichtHint')
+  if (state.game === 'snakes') return t(local ? 'snakesHintLocal' : 'snakesHint', { n: WIN_LENGTH })
+  if (state.game === 'reaction') return t(local ? 'reactionHintLocal' : 'reactionHint')
+  if (state.game === 'echo') return t(local ? 'echoHintLocal' : 'echoHint')
   return t(local ? 'hockeyHintLocal' : settings().hockeyWhole ? 'hockeyHintWhole' : 'hockeyHint')
 }
 

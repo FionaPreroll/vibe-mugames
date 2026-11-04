@@ -343,6 +343,9 @@ const en = {
   takeOverRole: 'I am {name}: show my role',
   lichtrenner: 'Light Racers',
   airhockey: 'Air Hockey',
+  snakes: 'Snakes',
+  reaction: 'Reaction',
+  echo: 'Colour Echo',
   rules: 'Rules',
   rulesOf: 'Rules of {game}',
   playersExactly: '{n} players',
@@ -405,6 +408,21 @@ const en = {
     'Your mallet follows your finger. Hit the puck, off the sides if you like, into the other player’s goal.',
   rulesAirhockey3:
     'A goal is a point, and the player who let it in gets the puck. The first to seven goals wins.',
+  rulesSnakes1:
+    'A game in real time: every snake crawls on by itself. Steer yours by swiping on the field, with ⟲ and ⟳, or with the arrow keys. A snake cannot turn straight back.',
+  rulesSnakes2: 'Eat an apple, and your snake grows by one. The first snake 15 long wins.',
+  rulesSnakes3:
+    'Crawling into the edge, into itself or into another snake puts a snake out, and leaves the grid free where it lay. The last snake still crawling wins too.',
+  rulesReaction1:
+    'Everyone waits for the signal. When the field lights up, tap it as fast as you can: whoever is fastest scores a point.',
+  rulesReaction2: 'Tap before the signal, and you have jumped the gun: no point for you this time.',
+  rulesReaction3:
+    'Every phone measures its own player’s time, so the network is fair to all. The first to 5 points wins, if nobody else has as many.',
+  rulesEcho1: 'Watch the pad: its colours light up, one after another.',
+  rulesEcho2:
+    'Then everyone taps the same row back on their own pad, all at once. A wrong colour, or waiting too long, puts you out.',
+  rulesEcho3:
+    'Everyone still in gets the same row again, one colour longer. The last one in wins once they have tapped their row back; if the last ones go out in the same row, whoever got further wins.',
   rulesKaesekaestchen1:
     'In turn, draw a line between two neighbouring dots, across or down. A line that closes no box passes the turn.',
   rulesKaesekaestchen2: 'Draw the fourth side of a box, and the box is yours: then you draw again.',
@@ -476,6 +494,35 @@ const en = {
   hockeyFirstTo: 'First to {n} goals wins.',
   hockeyGoal: 'Goal for {name}!',
   hockeyScore: '{a} {goalsA} : {goalsB} {b}',
+  snakesHint:
+    'Swipe on the field, or tap ⟲ and ⟳. Eat apples and grow to {n}, or be the last snake crawling.',
+  snakesHintLocal:
+    'Steer with your keys or your ⟲ and ⟳. Eat apples and grow to {n}, or be the last snake crawling.',
+  snakesGoal: 'first to {n}',
+  snakesGetReady: 'Your snake is the one in the ring.',
+  snakesOut: 'You are out. The others crawl on.',
+  reactionHint:
+    'Wait for the field to light up, then tap it at once. Too early counts for nothing.',
+  reactionHintLocal:
+    'Everyone has their own button, and their own keys. Wait for the light, then tap at once.',
+  reactionGoal: 'first to {n}',
+  reactionReady: 'Get ready…',
+  reactionWait: 'Wait…',
+  reactionTap: 'Tap!',
+  reactionGo: 'Now!',
+  reactionEarly: 'Too early!',
+  reactionMs: '{ms} ms',
+  reactionFastest: 'Fastest!',
+  reactionTooSlow: 'Too slow',
+  reactionNobody: 'Nobody scores.',
+  reactionWinner: '{name}: {ms} ms',
+  echoHint:
+    'Watch the colours light up, then tap them back in the same order. The arrow keys work too.',
+  echoHintLocal:
+    'Everyone has their own pad, and their own keys: up, right, down and left for its four colours.',
+  echoWatch: 'Watch',
+  echoWrong: 'Wrong',
+  echoLate: 'Too slow',
   stopGame: 'Stop the game',
   clubs: 'clubs',
   spades: 'spades',
@@ -1038,6 +1085,9 @@ const de: Texts = {
   takeOverRole: 'Ich bin {name}: meine Rolle zeigen',
   lichtrenner: 'Lichtrenner',
   airhockey: 'Airhockey',
+  snakes: 'Schlangen',
+  reaction: 'Reaktion',
+  echo: 'Farbecho',
   rules: 'Regeln',
   rulesOf: 'Regeln: {game}',
   playersExactly: '{n} Spieler',
@@ -1102,6 +1152,22 @@ const de: Texts = {
     'Dein Schläger folgt deinem Finger. Schlag den Puck, gern auch über die Banden, ins Tor des anderen.',
   rulesAirhockey3:
     'Ein Tor ist ein Punkt, und wer es kassiert hat, bekommt den Puck. Wer zuerst sieben Tore schießt, gewinnt.',
+  rulesSnakes1:
+    'Ein Spiel in Echtzeit: Jede Schlange kriecht von selbst immer weiter. Lenke deine mit Wischen auf dem Feld, mit ⟲ und ⟳ oder mit den Pfeiltasten. Umkehren geht nicht.',
+  rulesSnakes2:
+    'Frisst deine Schlange einen Apfel, wird sie ein Feld länger. Die erste Schlange, die 15 Felder lang ist, gewinnt.',
+  rulesSnakes3:
+    'Wer an den Rand, in sich selbst oder in eine andere Schlange kriecht, ist raus, und wo die Schlange lag, wird das Feld wieder frei. Auch die letzte Schlange, die noch kriecht, gewinnt.',
+  rulesReaction1:
+    'Alle warten auf das Zeichen. Leuchtet das Feld auf, tippe so schnell du kannst: Wer am schnellsten ist, bekommt einen Punkt.',
+  rulesReaction2: 'Wer vor dem Zeichen tippt, hat einen Fehlstart: Diesmal gibt es keinen Punkt.',
+  rulesReaction3:
+    'Jedes Handy misst die Zeit seines eigenen Spielers, so ist das Netzwerk für alle gleich. Wer zuerst 5 Punkte hat, gewinnt, wenn niemand sonst so viele hat.',
+  rulesEcho1: 'Schau auf die Scheibe: Ihre Farben leuchten nacheinander auf.',
+  rulesEcho2:
+    'Dann tippen alle dieselbe Reihe auf ihrer eigenen Scheibe nach, alle gleichzeitig. Eine falsche Farbe oder zu langes Warten, und du bist raus.',
+  rulesEcho3:
+    'Wer noch dabei ist, bekommt dieselbe Reihe wieder, eine Farbe länger. Wer als Letztes noch dabei ist, gewinnt, sobald die Reihe nachgetippt ist; scheiden die Letzten in derselben Reihe aus, gewinnt, wer weiter kam.',
   rulesKaesekaestchen1:
     'Zieht abwechselnd einen Strich zwischen zwei benachbarten Punkten, waagrecht oder senkrecht. Ein Strich, der kein Kästchen schließt, gibt den Zug weiter.',
   rulesKaesekaestchen2:
@@ -1176,6 +1242,34 @@ const de: Texts = {
   hockeyFirstTo: 'Wer zuerst {n} Tore schießt, gewinnt.',
   hockeyGoal: 'Tor für {name}!',
   hockeyScore: '{a} {goalsA} : {goalsB} {b}',
+  snakesHint:
+    'Wische auf dem Feld oder tippe ⟲ und ⟳. Friss Äpfel, bis du {n} lang bist, oder sei die letzte Schlange.',
+  snakesHintLocal:
+    'Lenke mit deinen Tasten oder mit ⟲ und ⟳. Friss Äpfel, bis du {n} lang bist, oder sei die letzte Schlange.',
+  snakesGoal: 'Ziel: {n}',
+  snakesGetReady: 'Deine Schlange ist die im Ring.',
+  snakesOut: 'Du bist raus. Die anderen kriechen weiter.',
+  reactionHint: 'Warte, bis das Feld aufleuchtet, dann tippe sofort. Zu früh zählt nicht.',
+  reactionHintLocal:
+    'Alle haben einen eigenen Knopf und eigene Tasten. Warte auf das Licht, dann tippe sofort.',
+  reactionGoal: 'Ziel: {n}',
+  reactionReady: 'Mach dich bereit …',
+  reactionWait: 'Warten …',
+  reactionTap: 'Tippen!',
+  reactionGo: 'Jetzt!',
+  reactionEarly: 'Zu früh!',
+  reactionMs: '{ms} ms',
+  reactionFastest: 'Am schnellsten!',
+  reactionTooSlow: 'Zu langsam',
+  reactionNobody: 'Niemand bekommt einen Punkt.',
+  reactionWinner: '{name}: {ms} ms',
+  echoHint:
+    'Schau, wie die Farben aufleuchten, und tippe sie in derselben Reihenfolge nach. Die Pfeiltasten gehen auch.',
+  echoHintLocal:
+    'Alle haben eine eigene Scheibe und eigene Tasten: hoch, rechts, runter und links für ihre vier Farben.',
+  echoWatch: 'Schau',
+  echoWrong: 'Falsch',
+  echoLate: 'Zu langsam',
   stopGame: 'Spiel abbrechen',
   clubs: 'Kreuz',
   spades: 'Pik',

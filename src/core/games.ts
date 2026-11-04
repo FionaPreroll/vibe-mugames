@@ -7,6 +7,7 @@ import {
   LIVE_GAME_IDS,
 } from './board'
 import { dame } from './dame'
+import * as echo from './echo'
 import { fourInARow } from './fourInARow'
 import { kaesekaestchen } from './kaesekaestchen'
 import { MAX_RIDERS, MIN_RIDERS } from './lichtrenner'
@@ -14,8 +15,10 @@ import { MAX_LUDO, MIN_LUDO } from './ludo'
 import { MAX_DICE_SEATS, MIN_DICE_SEATS } from './maexchen'
 import { MAX_SEATS, MIN_SEATS } from './miaumiau'
 import { muehle } from './muehle'
+import * as reaction from './reaction'
 import { reversi } from './reversi'
 import { SEA_SEATS } from './seeschlacht'
+import { MAX_SNAKES, MIN_SNAKES } from './snakes'
 import { sternhalma } from './sternhalma'
 import { ticTacToe } from './tictactoe'
 import { MAX_VILLAGE, MIN_VILLAGE } from './werwolf'
@@ -57,6 +60,9 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (game === 'seeschlacht') return { min: SEA_SEATS, max: SEA_SEATS }
   if (game === 'lichtrenner') return { min: MIN_RIDERS, max: MAX_RIDERS }
   if (game === 'airhockey') return { min: 2, max: 2 }
+  if (game === 'snakes') return { min: MIN_SNAKES, max: MAX_SNAKES }
+  if (game === 'reaction') return { min: reaction.MIN_PLAYERS, max: reaction.MAX_PLAYERS }
+  if (game === 'echo') return { min: echo.MIN_PLAYERS, max: echo.MAX_PLAYERS }
   if (game === 'ludo') return { min: MIN_LUDO, max: MAX_LUDO }
   if (game === 'maexchen') return { min: MIN_DICE_SEATS, max: MAX_DICE_SEATS }
   if (game === 'werwolf') return { min: MIN_VILLAGE, max: MAX_VILLAGE }

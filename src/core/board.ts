@@ -73,7 +73,7 @@ export const BOARD_GAME_IDS = [
 export type BoardGameId = (typeof BOARD_GAME_IDS)[number]
 
 /** The games played in real time, with input many times a second instead of moves in turn. */
-export const LIVE_GAME_IDS = ['lichtrenner', 'airhockey'] as const
+export const LIVE_GAME_IDS = ['lichtrenner', 'airhockey', 'snakes', 'reaction', 'echo'] as const
 export type LiveGameId = (typeof LIVE_GAME_IDS)[number]
 
 /**

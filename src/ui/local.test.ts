@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { GAME_IDS } from '../core/board'
 import { setLanguage } from '../i18n'
 import { LocalTable } from '../local'
 import { settings, updateSettings } from '../storage'
@@ -137,8 +138,11 @@ describe('the game chooser', () => {
     expect($$('.game-choice', skill).map((choice) => choice.textContent)).toEqual([
       'Light Racers',
       'Air Hockey',
+      'Snakes',
+      'Reaction',
+      'Colour Echo',
     ])
-    expect($$('.game-card')).toHaveLength(14)
+    expect($$('.game-card')).toHaveLength(GAME_IDS.length)
     const werewolf = $$('.game-card').find((card) => card.ariaLabel === 'Werewolf') ?? document
     expect($('.seats-badge', werewolf).textContent).toBe('4–8')
     expect($('.seats-badge', werewolf).title).toBe('4 to 8 players')

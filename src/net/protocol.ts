@@ -14,12 +14,15 @@ import {
   PHASES,
   type Position,
 } from '../core/board'
+import * as echo from '../core/echo'
 import { GAMES, seatRange } from '../core/games'
 import * as licht from '../core/lichtrenner'
 import * as ludo from '../core/ludo'
 import * as maex from '../core/maexchen'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
+import * as react from '../core/reaction'
 import * as sea from '../core/seeschlacht'
+import * as snakes from '../core/snakes'
 import type { Player, TableState } from '../core/table'
 import * as wolf from '../core/werwolf'
 
@@ -30,7 +33,7 @@ import * as wolf from '../core/werwolf'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 9
+export const PROTOCOL = 10
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of
@@ -52,8 +55,11 @@ const MAX_MOVES = 100_000
 /** More pieces than any game has in hand. */
 const MAX_HAND = 12
 
-/** The most numbers an input has: the round, and a mallet's two. */
-const MAX_INPUT = 3
+/**
+ * The most numbers an input has: the round, then Colour Echo's length of the row, the number of
+ * taps and the two numbers they are packed into.
+ */
+const MAX_INPUT = 5
 
 export const parseInput: Parse<Input> = (value) => {
   if (value === null) return null
@@ -163,6 +169,23 @@ export const parseState: Parse<TableState> = (value) => {
   if (race === undefined) return undefined
   const rink = game === 'airhockey' ? parseRink(value.rink) : value.rink === null ? null : undefined
   if (rink === undefined) return undefined
+  const snakeView =
+    game === 'snakes'
+      ? parseSnakes(value.snakes, seats.length)
+      : value.snakes === null
+        ? null
+        : undefined
+  if (snakeView === undefined) return undefined
+  const reaction =
+    game === 'reaction'
+      ? parseReaction(value.reaction, seats.length)
+      : value.reaction === null
+        ? null
+        : undefined
+  if (reaction === undefined) return undefined
+  const echoView =
+    game === 'echo' ? parseEcho(value.echo, seats.length) : value.echo === null ? null : undefined
+  if (echoView === undefined) return undefined
   if (!isWhole(value.round, 0, MAX_ROUNDS)) return undefined
   if (!isWhole(value.moveNo, 0, MAX_MOVES)) return undefined
   // Werwolf never shows a last move: it would give away whom a player chose.
@@ -192,6 +215,9 @@ export const parseState: Parse<TableState> = (value) => {
     village,
     race,
     rink,
+    snakes: snakeView,
+    reaction,
+    echo: echoView,
     round: value.round,
     moveNo: value.moveNo,
     last,
@@ -400,6 +426,78 @@ function parseRider(value: unknown): licht.Rider | undefined {
   )
   if (!path || !licht.isPath(path)) return undefined
   return { path, heading: value.heading, alive: value.alive }
+}
+
+/** Snakes: a snake for every seat, each a body on the grid, and apples on it. */
+function parseSnakes(value: unknown, seats: number): snakes.SnakesView | undefined {
+  if (!isObject(value)) return undefined
+  const all = list(value.snakes, seats, (snake) => {
+    if (!isObject(snake) || typeof snake.alive !== 'boolean') return undefined
+    if (!isWhole(snake.heading, 0, 3)) return undefined
+    const body = list(snake.body, snakes.WIN_LENGTH, (cell) =>
+      isWhole(cell, 0, snakes.CELLS - 1) ? cell : undefined,
+    )
+    if (!body || !snakes.isBody(body)) return undefined
+    return { body, heading: snake.heading, alive: snake.alive }
+  })
+  if (!all || all.length !== seats) return undefined
+  const apples = list(value.apples, snakes.appleCount(seats), (cell) =>
+    isWhole(cell, 0, snakes.CELLS - 1) ? cell : undefined,
+  )
+  if (!apples || new Set(apples).size !== apples.length) return undefined
+  if (!inRange(value.countdown, 0, snakes.COUNTDOWN)) return undefined
+  if (!isWhole(value.steps, 0, MAX_MOVES)) return undefined
+  return { snakes: all, apples, countdown: value.countdown, steps: value.steps }
+}
+
+/** Reaction: the phase, the signal, every seat's answer and points, and who scored last. */
+function parseReaction(value: unknown, seats: number): react.ReactionView | undefined {
+  if (!isObject(value)) return undefined
+  const phases: readonly react.Phase[] = ['ready', 'wait', 'go', 'result']
+  const phase = phases.find((p) => p === value.phase)
+  if (!phase || !isWhole(value.signal, 0, MAX_MOVES)) return undefined
+  const answers = list(value.answers, seats, (time) =>
+    time === null || time === react.EARLY || isWhole(time, 0, react.MAX_TIME) ? time : undefined,
+  )
+  const points = list(value.points, seats, (n) => (isWhole(n, 0, MAX_MOVES) ? n : undefined))
+  const scored = list(value.scored, seats, (n) => (isWhole(n, 0, seats - 1) ? n : undefined))
+  if (answers?.length !== seats || points?.length !== seats || !scored) return undefined
+  return { phase, signal: value.signal, answers: answers as (number | null)[], points, scored }
+}
+
+/** Colour Echo: the row while it shows, each seat's progress and this phone's own taps. */
+function parseEcho(value: unknown, seats: number): echo.EchoView | undefined {
+  if (!isObject(value)) return undefined
+  const phases: readonly echo.Phase[] = ['show', 'repeat', 'pause']
+  const phase = phases.find((p) => p === value.phase)
+  if (!phase || !isWhole(value.length, 1, echo.MAX_LENGTH)) return undefined
+  const length = value.length
+  const colours = (v: unknown) => list(v, length, (c) => (echo.isColour(c) ? c : undefined))
+  const pattern = colours(value.pattern)
+  if (!pattern || (pattern.length !== 0 && pattern.length !== length)) return undefined
+  const entries = colours(value.entries)
+  if (!entries || !inRange(value.clock, 0, 86_400)) return undefined
+  const progress = list(value.progress, seats, (n) => (isWhole(n, 0, length) ? n : undefined))
+  const out = list(value.out, seats, (n) =>
+    n === null ? null : isWhole(n, 1, length) ? n : undefined,
+  )
+  const late = list(value.late, seats, (b) => (typeof b === 'boolean' ? b : undefined))
+  if (progress?.length !== seats || out?.length !== seats || late?.length !== seats) {
+    return undefined
+  }
+  const { winner } = value
+  if (winner !== null && winner !== 'draw' && !isWhole(winner, 0, seats - 1)) return undefined
+  return {
+    length,
+    pattern,
+    phase,
+    clock: value.clock,
+    progress,
+    entries,
+    out,
+    late,
+    winner: winner as number | 'draw' | null,
+  }
 }
 
 /** Air hockey: the puck and both mallets on or near the rink, the goals and the pause. */

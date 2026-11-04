@@ -102,7 +102,7 @@ describe('the protocol of games in real time', () => {
   it('reads input as a few numbers, and turns down moves in games in real time', () => {
     expect(parseInput(null)).toBeNull()
     expect(parseInput([1, 0.25, 0.5])).toEqual([1, 0.25, 0.5])
-    for (const value of [[], [1, 2, 3, 4], ['1'], [Number.POSITIVE_INFINITY], 1, { x: 1 }]) {
+    for (const value of [[], [1, 2, 3, 4, 5, 6], ['1'], [Number.POSITIVE_INFINITY], 1, { x: 1 }]) {
       expect(parseInput(value)).toBeUndefined()
     }
     expect(parseEvent({ type: 'move', game: 'lichtrenner', moveNo: 0, move: [1] })).toBeUndefined()
