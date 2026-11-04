@@ -15,7 +15,7 @@ Die Spielekiste ist von FionaPreroll auf GitHub. Schreib an fipreroll+app@gmail.
 Die Spielekiste speichert im Speicher deines Browsers oder im eigenen Speicher der App:
 
 - deinen Namen und deine Sprache, und ob nach Updates gesucht wird: in der App, und ob sie dich das schon gefragt hat, und auf der Website;
-- ob das Handy vibriert, wenn du dran bist, und die drei Spiele, die auf diesem Gerät zuletzt gewählt wurden und die die Spieleauswahl oben zeigt;
+- das Design, das du gewählt hast, ob das Handy vibriert, wenn du dran bist, und die drei Spiele, die auf diesem Gerät zuletzt gewählt wurden und die die Spieleauswahl oben zeigt;
 - die Namen der Spieler, die zuletzt an diesem Gerät gespielt haben, und ob sie abwechselnd oder auf geteiltem Bildschirm gespielt haben;
 - die Kamera, mit der du zuletzt gescannt hast, mit Zoom und Helligkeit;
 - ein zufälliges Token, an dem dich ein Gastgeber wiedererkennt, wenn du dich wieder an seinen Tisch setzt.

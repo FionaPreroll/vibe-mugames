@@ -26,6 +26,7 @@ import {
   type LiveView,
   Painter,
   pointOn,
+  themeColour,
   typing,
 } from './canvas'
 import { h } from './dom'
@@ -334,9 +335,9 @@ export class RinkView implements LiveView {
     }
     // The ice, its middle line and circle, and the two goals in their players' colours.
     const ice = corner({ x: 0, y: 0 }, { x: WIDTH, y: LENGTH })
-    context.fillStyle = '#16324a'
+    context.fillStyle = themeColour('rink')
     context.fillRect(ice.x, ice.y, ice.w, ice.h)
-    context.strokeStyle = 'rgb(241 236 226 / 0.35)'
+    context.strokeStyle = themeColour('rink-line')
     context.lineWidth = Math.max(2, k * 0.012)
     context.beginPath()
     const left = frame.toScreen({ x: 0, y: HALF })
@@ -393,7 +394,7 @@ export class RinkView implements LiveView {
       (smooth ? this.smoother.puck(now / 1000, seconds) : null) ??
       arrivalPuck(rink, over, (now - this.since) / 1000)
     const puck = frame.toScreen(glided)
-    context.fillStyle = '#f1ece2'
+    context.fillStyle = themeColour('puck')
     context.beginPath()
     context.arc(puck.x, puck.y, PUCK * k, 0, 2 * Math.PI)
     context.fill()

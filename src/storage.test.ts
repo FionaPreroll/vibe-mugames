@@ -15,6 +15,7 @@ describe('settings from storage', () => {
       hockeySmooth: false,
       vibrate: true,
       recentGames: [],
+      theme: 'classic',
     })
     expect(
       parseSettings({ language: 'fr', checkUpdates: 'yes', webUpdates: 1, localSplit: 1 }),
@@ -24,6 +25,13 @@ describe('settings from storage', () => {
       webUpdates: false,
       localSplit: false,
     })
+  })
+
+  it('keeps a theme that exists, or the classic one', () => {
+    expect(parseSettings({ theme: 'nord' }).theme).toBe('nord')
+    expect(parseSettings({ theme: 'seasons' }).theme).toBe('seasons')
+    expect(parseSettings({ theme: 'solarized' }).theme).toBe('classic')
+    expect(parseSettings({ theme: 3 }).theme).toBe('classic')
   })
 
   it('buzzes unless told not to', () => {

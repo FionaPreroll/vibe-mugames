@@ -117,6 +117,15 @@ test('start screen', async ({ browser }) => {
   await shot(page, 'home')
 })
 
+test('themes', async ({ browser }) => {
+  // The page's clock says 1 November: with the seasons, that is still Halloween.
+  const page = await device(browser, PHONE)
+  await page.getByRole('button', { name: 'Settings' }).click()
+  await page.getByRole('radiogroup', { name: 'Theme' }).getByText('With the seasons').click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'halloween')
+  await shot(page, 'themes')
+})
+
 test('game chooser', async ({ browser }) => {
   const page = await device(browser, LAPTOP)
   await local(page, NAMES.slice(0, 2))

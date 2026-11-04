@@ -3,11 +3,12 @@ import { type CameraChoice, parseCameraChoice } from '@fionapreroll/p2p/qr'
 import { isToken, randomToken } from '@fionapreroll/p2p/room'
 import { type GameId, isGameId } from './core/board'
 import type { Language } from './i18n'
+import { isThemeChoice, type ThemeChoice } from './theme'
 
 /**
  * What this phone remembers, in the browser's local storage: the player's name, the language,
  * whether the app and the website look for updates, whether to buzz on the player's turn, the
- * games chosen lately, the camera last used for scanning with its zoom and
+ * games chosen lately, the colour theme, the camera last used for scanning with its zoom and
  * brightness, who last played on this device, and the token with which a player gets their place back. Everything read is
  * checked.
  */
@@ -35,6 +36,8 @@ export interface Settings {
   readonly vibrate: boolean
   /** The games this device chose last, newest first, which the chooser shows on top. */
   readonly recentGames: readonly GameId[]
+  /** The colour theme, or 'seasons' for the one the calendar suggests (see src/theme.ts). */
+  readonly theme: ThemeChoice
 }
 
 /** As many games as the chooser shows as played lately. */
@@ -55,6 +58,7 @@ const DEFAULTS: Settings = {
   hockeySmooth: false,
   vibrate: true,
   recentGames: [],
+  theme: 'classic',
 }
 
 function read(key: string): unknown {
@@ -89,6 +93,7 @@ export function parseSettings(value: unknown): Settings {
     hockeySmooth,
     vibrate,
     recentGames,
+    theme,
   } = value as Record<string, unknown>
   return {
     name: typeof name === 'string' ? cleanName(name, '') : '',
@@ -108,6 +113,7 @@ export function parseSettings(value: unknown): Settings {
     recentGames: Array.isArray(recentGames)
       ? [...new Set(recentGames.filter(isGameId))].slice(0, MAX_RECENT)
       : [],
+    theme: isThemeChoice(theme) ? theme : 'classic',
   }
 }
 

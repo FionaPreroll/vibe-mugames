@@ -5,6 +5,7 @@ import { settings, updateSettings } from '../storage'
 import { lookForWebUpdate } from '../webUpdates'
 import { h, show } from './dom'
 import { reportDialog } from './report'
+import { themeSettings } from './theme'
 import { appUpdateSettings } from './updates'
 import { foundNewer, setWebUpdates } from './webUpdates'
 
@@ -13,7 +14,7 @@ export const APP_RELEASE =
   'https://github.com/FionaPreroll/vibe-mugames/releases/tag/android-latest'
 
 /**
- * The settings: a buzz on the player's turn, how air hockey shows the rink and the network, and the updates. In the app, the
+ * The settings: the colour theme, a buzz on the player's turn, how air hockey shows the rink and the network, and the updates. In the app, the
  * app's own (see src/ui/updates.ts); on the website, its note about a newer build, and the way to
  * the Android app. Last, the debug report.
  */
@@ -34,6 +35,8 @@ export function settingsScreen(onBack: () => void): void {
         }),
         h('h1', {}, t('settings')),
       ),
+      h('h2', {}, t('themeTitle')),
+      themeSettings(),
       h('h2', {}, t('tableSettings')),
       tableSettings(),
       h('h2', {}, t('hockeySettings')),

@@ -1,4 +1,5 @@
 import './style.css'
+import './themes.css'
 import { setLanguage } from './i18n'
 import { captureErrors, log } from './log'
 import { isApp, onBackButton } from './native'
@@ -6,12 +7,14 @@ import { keepOffline } from './offline'
 import { settings } from './storage'
 import { handleBack } from './ui/dom'
 import { homeScreen } from './ui/home'
+import { applyTheme } from './ui/theme'
 import { offerUpdates } from './ui/updates'
 import { watchForWebUpdates } from './ui/webUpdates'
 
 captureErrors()
 log('app', `started ${__BUILD__.version} (${__BUILD__.commit})`)
 setLanguage(settings().language)
+applyTheme(settings().theme)
 onBackButton(handleBack)
 homeScreen()
 // In the app: ask once about updates, then look for one at every start if the player wants.

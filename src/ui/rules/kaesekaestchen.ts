@@ -18,13 +18,13 @@ function paper(
   const dots: SVGElement[] = []
   for (let y = 0; y <= size; y++) {
     for (let x = 0; x <= size; x++) {
-      dots.push(svg('circle', { cx: x + 0.5, cy: y + 0.5, r: 0.11, fill: INK.bg }))
+      dots.push(svg('circle', { cx: x + 0.5, cy: y + 0.5, r: 0.11, fill: INK.dot }))
     }
   }
   return picture(
     size + 1,
     size + 1,
-    rect(0, 0, size + 1, size + 1, '#f4efe1', 0.25),
+    rect(0, 0, size + 1, size + 1, INK.dotsPaper, 0.25),
     ...boxes.map(([x, y, seat]) =>
       svg('rect', {
         x: x + 0.5,

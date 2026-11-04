@@ -1,8 +1,8 @@
 import { arrow, cx, INK, picture, piece, rect, ring } from './draw'
 import type { GameGuide } from './guide'
 
-const FELT = '#1f6b47'
-const EDGE = '#143d2b'
+const FELT = INK.felt
+const EDGE = INK.feltDeep
 
 /** Rows of green squares, each '0' or '1' for a seat's piece and '.' for a free square. */
 function squares(rows: readonly string[], top = 0): SVGElement[] {

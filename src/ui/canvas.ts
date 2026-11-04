@@ -6,10 +6,47 @@ import { t } from '../i18n'
  * every frame.
  */
 
-/** The seats' colours, as in the style sheet. */
+/** The seats' colours in the classic look, as in the style sheet. */
 export const SEAT_COLOURS = ['#e5484d', '#f5c542', '#4fb3a9', '#8f7cf0', '#e98ac0', '#8fc75b']
 
-export const colour = (seat: number): string => SEAT_COLOURS[seat % SEAT_COLOURS.length] ?? '#fff'
+/** The classic look's colours that canvases use, for when the style sheet is not there. */
+const CLASSIC: Record<string, string> = {
+  ...Object.fromEntries(SEAT_COLOURS.map((value, seat) => [`seat-${seat}`, value])),
+  text: '#f1ece2',
+  field: '#0d1620',
+  'field-line': 'rgb(255 255 255 / 0.05)',
+  rider: '#fff',
+  rink: '#16324a',
+  'rink-line': 'rgb(241 236 226 / 0.35)',
+  puck: '#f1ece2',
+}
+
+let colours = new Map<string, string>()
+
+/**
+ * A colour of the current theme, from its token in the style sheet (`--name`), for a canvas or a
+ * drawing, which cannot always use CSS variables. Kept until the theme changes (src/ui/theme.ts).
+ */
+export function themeColour(name: string): string {
+  let value = colours.get(name)
+  if (value === undefined) {
+    const root = typeof document === 'undefined' ? null : document.documentElement
+    value =
+      (root && getComputedStyle(root).getPropertyValue(`--${name}`).trim()) ||
+      CLASSIC[name] ||
+      '#fff'
+    colours.set(name, value)
+  }
+  return value
+}
+
+/** Forgets the colours read so far, once another theme applies. */
+export function forgetThemeColours(): void {
+  colours = new Map()
+}
+
+/** A seat's colour in the current theme. */
+export const colour = (seat: number): string => themeColour(`seat-${seat % SEAT_COLOURS.length}`)
 
 /** Keys for players on one keyboard, by seat: four directions each. */
 export const KEY_SETS = [
@@ -158,7 +195,7 @@ export function banner(
   context.textBaseline = 'middle'
   context.shadowColor = 'rgb(0 0 0 / 0.8)'
   context.shadowBlur = size / 4
-  context.fillStyle = '#f1ece2'
+  context.fillStyle = themeColour('text')
   context.fillText(text, x, y)
   context.restore()
 }

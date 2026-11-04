@@ -1,0 +1,991 @@
+/*
+ * The themes besides the classic one, on <html data-theme="…"> (src/ui/theme.ts): each gives the
+ * tokens of src/style.css its own values. Tokens are set on [data-theme] alone, so that a swatch in
+ * the settings shows its theme too; what changes more than colours is set on :root[data-theme].
+ * Halloween, winter and Christmas take their colours from the puzzles' night looks (vibe-puzzles).
+ */
+
+/* Light: paper white, for daylight. */
+[data-theme="light"] {
+  --bg: #f4f1ea;
+  --panel: #ffffff;
+  --panel-deep: #ebe6dc;
+  --line: #cbc3b4;
+  --text: #1f2933;
+  --muted: #5b6672;
+  --accent: #1d7d74;
+  --on-accent: #ffffff;
+  --seat-0: #d7383e;
+  --seat-1: #e2a800;
+  --seat-2: #1f9488;
+  --seat-3: #6c55d6;
+  --seat-4: #d25ea0;
+  --seat-5: #5a9a2a;
+  --field: #18222e;
+  --rink: #dfe9f1;
+  --rink-line: rgb(29 43 58 / 0.35);
+  --puck: #1d2b3a;
+  --warning-text: #8a3a00;
+  --good: #1d8a2e;
+  --fair: #9a6c00;
+  --poor: #c8243f;
+}
+
+/* Black: a quiet, neutral dark. */
+[data-theme="black"] {
+  --bg: #121212;
+  --panel: #1e1e1e;
+  --panel-deep: #181818;
+  --line: #343434;
+  --text: #ececec;
+  --muted: #a3a3a3;
+  --accent: #7cc4b9;
+  --on-accent: #0f1f1c;
+  --field: #0b0b0b;
+  --rink: #1f2a33;
+}
+
+/* AMOLED black: pure black, which turns an OLED screen's pixels off. */
+[data-theme="amoled"] {
+  --bg: #000000;
+  --panel: #000000;
+  --panel-deep: #000000;
+  --line: #2e2e2e;
+  --text: #e9e9e9;
+  --muted: #8f8f8f;
+  --accent: #4fb3a9;
+  --on-accent: #001512;
+  --field: #000000;
+  --field-line: rgb(255 255 255 / 0.07);
+  --rink: #06141f;
+  --sea-deep: #000000;
+  --sea-target: #000000;
+}
+
+/* Wood: a walnut table, its grain behind the screens. */
+[data-theme="wood"] {
+  --bg: #2e1f13;
+  --panel: #43301e;
+  --panel-deep: #382717;
+  --line: #6a4c2f;
+  --text: #f6ead6;
+  --muted: #cdb393;
+  --accent: #e3a457;
+  --on-accent: #2a1a0b;
+  --wood: #d39552;
+  --board-light: #f0dcb4;
+  --board-dark: #8f5d2d;
+  --frame: #7a4a22;
+  --cup: #b9783a;
+  --field: #1a120b;
+  --rink: #2d3d33;
+  --backdrop:
+    repeating-linear-gradient(
+      97deg,
+      rgb(0 0 0 / 0) 0 7px,
+      rgb(0 0 0 / 0.08) 7px 9px,
+      rgb(0 0 0 / 0) 9px 19px,
+      rgb(255 220 170 / 0.035) 19px 21px
+    ),
+    linear-gradient(180deg, #332316, #2a1c11);
+}
+
+/* Green felt: a card table, with brass. */
+[data-theme="felt"] {
+  --bg: #0f4a30;
+  --panel: #165c3c;
+  --panel-deep: #11502f;
+  --line: #2b7a54;
+  --text: #f5f0df;
+  --muted: #b9d3bd;
+  --accent: #e8c766;
+  --on-accent: #22200b;
+  --seat-2: #5cc9e6;
+  --frame: #7a4a22;
+  --felt: #1d7a4f;
+  --felt-deep: #0b3a23;
+  --field: #062a1a;
+  --rink: #0d3b2a;
+  --sea-deep: #0e3a57;
+  --backdrop:
+    radial-gradient(ellipse at 50% 30%, rgb(255 255 255 / 0.07), rgb(0 0 0 / 0.35) 80%),
+    repeating-linear-gradient(45deg, rgb(0 0 0 / 0.05) 0 2px, rgb(0 0 0 / 0) 2px 4px);
+}
+
+/* Nord: polar night, snow storm, frost and aurora (nordtheme.com, MIT). */
+[data-theme="nord"] {
+  --bg: #2e3440;
+  --panel: #3b4252;
+  --panel-deep: #353c4a;
+  --line: #4c566a;
+  --text: #eceff4;
+  --muted: #a7b1c2;
+  --accent: #88c0d0;
+  --on-accent: #2e3440;
+  --seat-0: #bf616a;
+  --seat-1: #ebcb8b;
+  --seat-2: #8fbcbb;
+  --seat-3: #b48ead;
+  --seat-4: #d08770;
+  --seat-5: #a3be8c;
+  --wood: #4c566a;
+  --board-line: #d8dee9;
+  --board-light: #e5e9f0;
+  --board-dark: #5e81ac;
+  --board-edge: #81a1c1;
+  --ludo: #434c5e;
+  --frame: #5e81ac;
+  --felt: #4c7a6b;
+  --felt-deep: #2e3440;
+  --dots-paper: #eceff4;
+  --dots-line: #c3cad6;
+  --dot: #2e3440;
+  --paper: #eceff4;
+  --paper-edge: #c3cad6;
+  --ink: #2e3440;
+  --card-red: #bf616a;
+  --card-blue: #5e81ac;
+  --card-blue-deep: #4c6f99;
+  --card-edge: #81a1c1;
+  --cup: #81a1c1;
+  --sea: #5e81ac;
+  --sea-deep: #2e3440;
+  --sea-target: #3b4252;
+  --water: #434c5e;
+  --water-text: #d8dee9;
+  --ship: #d8dee9;
+  --sunk: #8b4a52;
+  --field: #242933;
+  --rink: #3b4252;
+  --rink-line: rgb(216 222 233 / 0.35);
+  --puck: #eceff4;
+  --warning-text: #d08770;
+  --good: #a3be8c;
+  --fair: #ebcb8b;
+  --poor: #bf616a;
+}
+
+/* Gruvbox: warm retro colours (github.com/morhetz/gruvbox, MIT). */
+[data-theme="gruvbox"] {
+  --bg: #282828;
+  --panel: #3c3836;
+  --panel-deep: #32302f;
+  --line: #504945;
+  --text: #ebdbb2;
+  --muted: #a89984;
+  --accent: #fabd2f;
+  --on-accent: #282828;
+  --seat-0: #fb4934;
+  --seat-1: #fabd2f;
+  --seat-2: #8ec07c;
+  --seat-3: #d3869b;
+  --seat-4: #fe8019;
+  --seat-5: #b8bb26;
+  --wood: #665c54;
+  --board-line: #d5c4a1;
+  --board-light: #ebdbb2;
+  --board-dark: #7c6f64;
+  --board-edge: #bdae93;
+  --ludo: #504945;
+  --frame: #458588;
+  --felt: #427b58;
+  --felt-deep: #1d2021;
+  --dots-paper: #fbf1c7;
+  --dots-line: #d5c4a1;
+  --dot: #282828;
+  --paper: #fbf1c7;
+  --paper-edge: #d5c4a1;
+  --ink: #282828;
+  --card-red: #cc241d;
+  --card-blue: #458588;
+  --card-blue-deep: #076678;
+  --card-edge: #83a598;
+  --cup: #b57614;
+  --sea: #458588;
+  --sea-deep: #1d2021;
+  --sea-target: #32302f;
+  --water: #2c4645;
+  --water-text: #a89984;
+  --ship: #bdae93;
+  --sunk: #9d0006;
+  --field: #1d2021;
+  --rink: #32302f;
+  --rink-line: rgb(235 219 178 / 0.35);
+  --puck: #fbf1c7;
+  --warning-text: #fe8019;
+  --good: #b8bb26;
+  --fair: #fabd2f;
+  --poor: #fb4934;
+}
+
+/* Neon: a dark arcade, with glowing lines. */
+[data-theme="neon"] {
+  --bg: #0b0618;
+  --panel: #170d2e;
+  --panel-deep: #110a24;
+  --line: #3d2273;
+  --text: #f5e9ff;
+  --muted: #b7a2d9;
+  --accent: #ff2bd6;
+  --on-accent: #16001a;
+  --seat-0: #ff3864;
+  --seat-1: #ffe94d;
+  --seat-2: #00f0ff;
+  --seat-3: #b26bff;
+  --seat-4: #ff8fd8;
+  --seat-5: #39ff14;
+  --wood: #1a0f33;
+  --board-line: #00f0ff;
+  --board-light: #2a1850;
+  --board-dark: #120a24;
+  --board-edge: #ff2bd6;
+  --ludo: #1a0f33;
+  --frame: #3d2273;
+  --felt: #1a0f33;
+  --felt-deep: #00f0ff;
+  --dots-paper: #120a24;
+  --dots-line: #3d2273;
+  --dot: #00f0ff;
+  --paper: #f8f0ff;
+  --paper-edge: #b7a2d9;
+  --ink: #16001a;
+  --card-red: #e0005a;
+  --card-blue: #3d2273;
+  --card-blue-deep: #2a1850;
+  --card-edge: #ff2bd6;
+  --cup: #ff2bd6;
+  --sea: #102a5c;
+  --sea-deep: #00f0ff;
+  --sea-target: #ff2bd6;
+  --water: #0a1638;
+  --water-text: #7fe9ff;
+  --ship: #b7a2d9;
+  --sunk: #5c0b3a;
+  --field: #05020d;
+  --field-line: rgb(0 240 255 / 0.12);
+  --rink: #0d0620;
+  --rink-line: rgb(0 240 255 / 0.6);
+  --puck: #f5e9ff;
+  --warning-text: #ffb86b;
+  --good: #39ff14;
+  --fair: #ffe94d;
+  --poor: #ff3864;
+}
+
+/* High contrast: black and white, with yellow for what can be done. */
+[data-theme="contrast"] {
+  --bg: #000000;
+  --panel: #000000;
+  --panel-deep: #000000;
+  --line: #ffffff;
+  --text: #ffffff;
+  --muted: #e6e6e6;
+  --accent: #ffe600;
+  --on-accent: #000000;
+  --seat-0: #ff5c5c;
+  --seat-1: #ffe600;
+  --seat-2: #00e5ff;
+  --seat-3: #c79bff;
+  --seat-4: #ff6fdc;
+  --seat-5: #6dff6d;
+  --wood: #000000;
+  --board-line: #ffffff;
+  --board-light: #ffffff;
+  --board-dark: #000000;
+  --board-edge: #ffffff;
+  --ludo: #000000;
+  --frame: #0033cc;
+  --felt: #00451f;
+  --felt-deep: #ffffff;
+  --dots-paper: #000000;
+  --dots-line: #6e6e6e;
+  --dot: #ffffff;
+  --paper: #ffffff;
+  --paper-edge: #000000;
+  --ink: #000000;
+  --card-red: #d00000;
+  --card-blue: #0033cc;
+  --card-blue-deep: #001f80;
+  --card-edge: #ffffff;
+  --cup: #ffffff;
+  --sea: #003a80;
+  --sea-deep: #ffffff;
+  --sea-target: #ffffff;
+  --water: #000000;
+  --water-text: #ffffff;
+  --ship: #c0c0c0;
+  --sunk: #7a0000;
+  --field: #000000;
+  --field-line: rgb(255 255 255 / 0.2);
+  --rink: #000000;
+  --rink-line: #ffffff;
+  --puck: #ffffff;
+  --warning-text: #ffc28a;
+  --good: #6dff6d;
+  --fair: #ffe600;
+  --poor: #ff5c5c;
+}
+
+/* Night mode, red: only dim reds on black, which keep eyes used to the dark. */
+[data-theme="nightred"] {
+  --bg: #000000;
+  --panel: #120100;
+  --panel-deep: #0a0000;
+  --line: #4a0c08;
+  --text: #e8382b;
+  --muted: #9a2a20;
+  --accent: #b3261e;
+  --on-accent: #000000;
+  --seat-0: #ff2d1f;
+  --seat-1: #d9781a;
+  --seat-2: #9e1b12;
+  --seat-3: #ff8466;
+  --seat-4: #6e0e0a;
+  --seat-5: #c24a1d;
+  --wood: #2a0604;
+  --board-line: #7a1a12;
+  --board-light: #2a0604;
+  --board-dark: #4a0d08;
+  --board-edge: #7a1a12;
+  --ludo: #1a0302;
+  --frame: #3a0a06;
+  --felt: #2a0604;
+  --felt-deep: #120100;
+  --dots-paper: #120100;
+  --dots-line: #4a0c08;
+  --dot: #e8382b;
+  --paper: #2a0604;
+  --paper-edge: #7a1a12;
+  --ink: #ff4a3d;
+  --card-red: #ff8466;
+  --card-blue: #4a0d08;
+  --card-blue-deep: #2a0604;
+  --card-edge: #7a1a12;
+  --cup: #4a0d08;
+  --sea: #2a0604;
+  --sea-deep: #120100;
+  --sea-target: #0a0000;
+  --water: #0a0000;
+  --water-text: #9a2a20;
+  --ship: #7a1a12;
+  --sunk: #4a0d08;
+  --field: #000000;
+  --field-line: rgb(255 40 20 / 0.08);
+  --rider: #ff8466;
+  --rink: #0a0000;
+  --rink-line: rgb(232 56 43 / 0.45);
+  --puck: #e8382b;
+  --warning-text: #ff6a50;
+  --good: #e8382b;
+  --fair: #d9781a;
+  --poor: #ff2d1f;
+}
+
+/* Halloween: the puzzles' "Mondnacht", a violet night with embers. */
+[data-theme="halloween"] {
+  --bg: #171126;
+  --panel: #2c2342;
+  --panel-deep: #211a35;
+  --line: #44365f;
+  --text: #f2eef9;
+  --muted: #b4a9c8;
+  --accent: #f28a2e;
+  --on-accent: #1a0e05;
+  --seat-0: #f97316;
+  --seat-1: #facc15;
+  --seat-2: #84cc16;
+  --seat-3: #a855f7;
+  --seat-4: #f472b6;
+  --seat-5: #22d3ee;
+  --wood: #4e3d5e;
+  --board-line: #1a1026;
+  --board-light: #f6d9bf;
+  --board-dark: #66536f;
+  --board-edge: #3a2a4a;
+  --frame: #6d28d9;
+  --felt: #4e3d5e;
+  --felt-deep: #2a1b3d;
+  --dots-paper: #fff8f1;
+  --dots-line: #ebc6a4;
+  --dot: #2a1b3d;
+  --paper: #fff8f1;
+  --paper-edge: #ebc6a4;
+  --ink: #2a1b3d;
+  --card-red: #c2410c;
+  --card-blue: #6d28d9;
+  --card-blue-deep: #5b21b6;
+  --card-edge: #c084fc;
+  --cup: #c2410c;
+  --sea: #4a3b6b;
+  --sea-deep: #2a1b3d;
+  --sea-target: #1f1833;
+  --water: #221a35;
+  --water-text: #b4a9c8;
+  --ship: #a99aae;
+  --sunk: #7c2d12;
+  --field: #0e0a17;
+  --field-line: rgb(242 138 46 / 0.07);
+  --rink: #211a35;
+  --rink-line: rgb(242 166 90 / 0.4);
+  --puck: #ffd3a1;
+  --backdrop: radial-gradient(circle at 85% 6rem, rgb(244 236 216 / 0.1), transparent 14rem);
+}
+
+/* Winter: the puzzles' polar night, ice cyan under the northern lights. */
+[data-theme="winter"] {
+  --bg: #111f33;
+  --panel: #1f3048;
+  --panel-deep: #182840;
+  --line: #34496a;
+  --text: #eef4fb;
+  --muted: #9fb1c6;
+  --accent: #5cc8e6;
+  --on-accent: #08121f;
+  --seat-0: #ff6b6b;
+  --seat-1: #ffd166;
+  --seat-2: #5cc8e6;
+  --seat-3: #a78bfa;
+  --seat-4: #f9a8d4;
+  --seat-5: #86efac;
+  --wood: #bcd3ea;
+  --board-line: #173d65;
+  --board-light: #e8f1fa;
+  --board-dark: #475f78;
+  --board-edge: #22364b;
+  --ludo: #d3e2f1;
+  --frame: #1b6cb8;
+  --felt: #1c6f8a;
+  --felt-deep: #103a4a;
+  --dots-paper: #f3f8fd;
+  --dots-line: #b7cde3;
+  --dot: #142638;
+  --paper: #f3f8fd;
+  --paper-edge: #b7cde3;
+  --ink: #0a1726;
+  --card-red: #c2283c;
+  --card-blue: #1b6cb8;
+  --card-blue-deep: #175795;
+  --card-edge: #8ecbf6;
+  --cup: #55aaec;
+  --field: #08121f;
+  --field-line: rgb(125 223 245 / 0.07);
+  --rink: #12304a;
+  --rink-line: rgb(177 237 250 / 0.45);
+  --backdrop:
+    radial-gradient(ellipse 70% 40% at 20% -5%, rgb(45 212 191 / 0.14), transparent),
+    radial-gradient(ellipse 60% 35% at 80% -5%, rgb(139 92 246 / 0.14), transparent);
+}
+
+/* Christmas: the puzzles' fir green night, with gold and fairy lights. */
+[data-theme="christmas"] {
+  --bg: #13241b;
+  --panel: #23352a;
+  --panel-deep: #1b2c22;
+  --line: #3a5040;
+  --text: #f4efe2;
+  --muted: #b8ad92;
+  --accent: #f5c451;
+  --on-accent: #2a1f09;
+  --seat-0: #e0362c;
+  --seat-1: #f5c451;
+  --seat-2: #4ade80;
+  --seat-3: #6ea8ff;
+  --seat-4: #f9a8d4;
+  --seat-5: #e7e5e4;
+  --wood: #a0703f;
+  --board-line: #34291e;
+  --board-light: #f7ecdc;
+  --board-dark: #65543f;
+  --board-edge: #4b3d2d;
+  --ludo: #ebdac2;
+  --frame: #931f19;
+  --felt: #17663a;
+  --felt-deep: #0a3d20;
+  --dots-paper: #fcf7ef;
+  --dots-line: #dbc3a3;
+  --dot: #231b12;
+  --paper: #fffdf8;
+  --paper-edge: #e3c98f;
+  --ink: #231b12;
+  --card-red: #b3261e;
+  --card-blue: #166534;
+  --card-blue-deep: #14532d;
+  --card-edge: #f5c451;
+  --cup: #b3261e;
+  --field: #0a1610;
+  --field-line: rgb(245 196 81 / 0.07);
+  --rink: #1b2c22;
+  --rink-line: rgb(245 196 81 / 0.4);
+  --puck: #fffdf8;
+}
+
+/* New Year: midnight blue with champagne gold, and fireworks. */
+[data-theme="newyear"] {
+  --bg: #0b1026;
+  --panel: #161d3d;
+  --panel-deep: #111834;
+  --line: #2c3868;
+  --text: #f6f1e4;
+  --muted: #a9afd2;
+  --accent: #e6c068;
+  --on-accent: #1a1405;
+  --seat-0: #ff5d73;
+  --seat-1: #ffd166;
+  --seat-2: #4fd1c5;
+  --seat-3: #a78bfa;
+  --seat-4: #f78fb3;
+  --seat-5: #9ae66e;
+  --wood: #1c2450;
+  --board-line: #e6c068;
+  --board-light: #ece2c8;
+  --board-dark: #2c3868;
+  --board-edge: #e6c068;
+  --ludo: #2c3868;
+  --frame: #2c3868;
+  --felt: #1f4a5a;
+  --felt-deep: #0b1026;
+  --dots-paper: #fffaf0;
+  --dots-line: #d6cfb8;
+  --dot: #0b1026;
+  --paper: #fffaf0;
+  --paper-edge: #d6cfb8;
+  --ink: #0b1026;
+  --card-blue: #2c3868;
+  --card-blue-deep: #1c2450;
+  --card-edge: #e6c068;
+  --cup: #e6c068;
+  --field: #05081a;
+  --field-line: rgb(230 192 104 / 0.08);
+  --rink: #111834;
+  --rink-line: rgb(230 192 104 / 0.45);
+  --puck: #fffaf0;
+  --backdrop: radial-gradient(ellipse 80% 50% at 50% -10%, rgb(230 192 104 / 0.12), transparent);
+}
+
+/* More than colours. */
+
+:root[data-theme="contrast"] button,
+:root[data-theme="contrast"] a.button,
+:root[data-theme="contrast"] input,
+:root[data-theme="contrast"] select {
+  border-width: 2px;
+}
+
+:root[data-theme="contrast"] :focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+:root[data-theme="contrast"] a {
+  color: var(--accent);
+}
+
+:root[data-theme="neon"] button.primary,
+:root[data-theme="neon"] a.button.primary {
+  box-shadow:
+    0 0 0 1px rgb(255 43 214 / 0.5),
+    0 0 18px -2px rgb(255 43 214 / 0.75);
+}
+
+:root[data-theme="neon"] h1 {
+  text-shadow:
+    0 0 6px rgb(255 43 214 / 0.8),
+    0 0 18px rgb(0 240 255 / 0.45);
+}
+
+:root[data-theme="neon"] .board {
+  box-shadow: 0 0 24px -6px rgb(0 240 255 / 0.55);
+}
+
+/* Night mode keeps pictures red too: the hero, the chooser's drawings and the rules'. */
+:root[data-theme="nightred"] .hero,
+:root[data-theme="nightred"] svg.figure,
+:root[data-theme="nightred"] .thumbnail {
+  filter: grayscale(1) sepia(1) saturate(5) hue-rotate(-35deg) brightness(0.7);
+}
+
+:root[data-theme="halloween"] h1,
+:root[data-theme="halloween"] h2,
+:root[data-theme="christmas"] h1,
+:root[data-theme="christmas"] h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
+
+:root[data-theme="halloween"] h1 {
+  color: #ffd3a1;
+}
+
+:root[data-theme="christmas"] h1,
+:root[data-theme="newyear"] h1 {
+  color: var(--accent);
+}
+
+:root[data-theme="halloween"] button.primary,
+:root[data-theme="halloween"] a.button.primary {
+  box-shadow:
+    0 0 0 1px rgb(242 138 46 / 0.45),
+    0 6px 22px -8px rgb(242 138 46 / 0.65);
+}
+
+:root[data-theme="christmas"] button.primary,
+:root[data-theme="christmas"] a.button.primary {
+  box-shadow: inset 0 0 0 1px rgb(255 253 248 / 0.55);
+}
+
+:root[data-theme="winter"] button.primary,
+:root[data-theme="winter"] a.button.primary {
+  box-shadow: 0 4px 14px -6px rgb(92 200 230 / 0.7);
+}
+
+/* The settings' picker: each theme as a small picture of itself. */
+.themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 0.5rem;
+}
+
+.theme-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.4rem;
+  border: 2px solid var(--line);
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+
+.theme-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-option:has(input:checked) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.theme-option:has(input:focus-visible) {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.theme-option .swatch {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 3.2rem;
+  padding: 0.4rem;
+  border-radius: 0.45rem;
+  background-color: var(--bg);
+  background-image: var(--backdrop);
+  border: 1px solid var(--line);
+}
+
+.swatch-bar {
+  display: flex;
+  justify-content: flex-end;
+  height: 0.9rem;
+  padding: 0.15rem;
+  border-radius: 0.3rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.swatch-accent {
+  width: 40%;
+  border-radius: 0.2rem;
+  background: var(--accent);
+}
+
+.swatch-seats {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.swatch-seat {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: var(--seat);
+}
+
+.swatch-seat.seat-0 {
+  --seat: var(--seat-0);
+}
+
+.swatch-seat.seat-1 {
+  --seat: var(--seat-1);
+}
+
+.swatch-seat.seat-2 {
+  --seat: var(--seat-2);
+}
+
+.swatch-seat.seat-3 {
+  --seat: var(--seat-3);
+}
+
+.theme-name {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.theme-name .muted {
+  font-size: 0.8rem;
+}
+
+/* The seasonal decorations, behind every screen. */
+.decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Halloween: the moon, bats round it, stars and a cobweb in the corner. */
+.decor-halloween .moon {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  width: 5.5rem;
+  filter: drop-shadow(0 0 24px rgb(244 236 216 / 0.3));
+  opacity: 0.85;
+}
+
+.decor-halloween .bat {
+  position: absolute;
+  width: 2.6rem;
+  fill: #0e0a17;
+  filter: drop-shadow(0 0 1px rgb(244 236 216 / 0.4));
+  animation: decor-drift 10s ease-in-out infinite;
+}
+
+.decor-halloween .bat .wings {
+  transform-origin: 50% 40%;
+  animation: decor-flap 0.45s ease-in-out infinite alternate;
+}
+
+.decor-halloween .bat-0 {
+  top: 5.5rem;
+  right: 6.5rem;
+}
+
+.decor-halloween .bat-1 {
+  top: 2rem;
+  right: 8.5rem;
+  width: 1.8rem;
+  animation-duration: 13s;
+  animation-direction: reverse;
+}
+
+.decor-halloween .bat-2 {
+  top: 8rem;
+  right: 2rem;
+  width: 2rem;
+  animation-delay: -4s;
+}
+
+.decor-halloween .cobweb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7rem;
+  fill: none;
+  stroke: rgb(244 236 216 / 0.16);
+  stroke-width: 0.8;
+}
+
+.decor-halloween .star,
+.decor-newyear .sparkle {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #f4ecd8;
+  animation: decor-twinkle 3.5s ease-in-out var(--d) infinite;
+}
+
+@keyframes decor-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-18px, 8px);
+  }
+}
+
+@keyframes decor-flap {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.5);
+  }
+}
+
+@keyframes decor-twinkle {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* Winter, and Christmas's lighter snow. */
+.decor .flake {
+  position: absolute;
+  top: -12px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: #f3f8fd;
+  opacity: calc(var(--o) * 0.7);
+  animation: decor-fall var(--t) linear var(--d) infinite;
+}
+
+@keyframes decor-fall {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(var(--dx), 50vh);
+  }
+  100% {
+    transform: translate(0, calc(100vh + 24px));
+  }
+}
+
+/* Christmas: a string of fairy lights along the top. */
+.decor-christmas .lights {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1.5rem;
+  overflow: hidden;
+}
+
+.decor-christmas .wire {
+  fill: none;
+  stroke: #4b6a4f;
+  stroke-width: 1.2;
+}
+
+.decor-christmas .socket {
+  fill: #6b7a5f;
+}
+
+.decor-christmas .bulb {
+  animation: decor-bulb 2.4s ease-in-out var(--d, 0s) infinite;
+}
+
+.decor-christmas .bulb .halo {
+  opacity: 0.35;
+}
+
+@keyframes decor-bulb {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* New Year: fireworks bursting high up, and sparkles. */
+.decor-newyear .firework {
+  position: absolute;
+  width: 7rem;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  opacity: 0;
+  transform: scale(0.3);
+  animation: decor-burst 4.8s ease-out infinite;
+}
+
+.decor-newyear .firework-0 {
+  top: 1rem;
+  left: 6%;
+  stroke: #e6c068;
+  fill: #e6c068;
+}
+
+.decor-newyear .firework-1 {
+  top: 4rem;
+  right: 8%;
+  width: 5.5rem;
+  stroke: #ff5d73;
+  fill: #ff5d73;
+  animation-delay: -1.2s;
+}
+
+.decor-newyear .firework-2 {
+  top: 0.5rem;
+  left: 42%;
+  width: 4.5rem;
+  stroke: #4fd1c5;
+  fill: #4fd1c5;
+  animation-delay: -2.4s;
+}
+
+.decor-newyear .firework-3 {
+  top: 7rem;
+  left: 22%;
+  width: 4rem;
+  stroke: #a78bfa;
+  fill: #a78bfa;
+  animation-delay: -3.6s;
+}
+
+.decor-newyear .sparkle {
+  background: #e6c068;
+}
+
+@keyframes decor-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  8% {
+    opacity: 0.9;
+  }
+  45% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(1.08) translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .decor *,
+  :root .decor .bat .wings {
+    animation: none;
+  }
+
+  .decor-newyear .firework {
+    opacity: 0.5;
+    transform: none;
+  }
+
+  .decor .flake {
+    top: auto;
+    bottom: calc(var(--x) / 2);
+  }
+}

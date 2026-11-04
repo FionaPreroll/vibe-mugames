@@ -1,20 +1,72 @@
+/*
+ * The colours, as tokens: this is the classic look. src/themes.css gives each other theme its own
+ * values, on <html data-theme="…">, and nothing else in the style sheet names a colour of its own.
+ * The fields of the games in real time read them too (themeColour in src/ui/theme.ts).
+ */
 :root {
   color-scheme: dark;
   --bg: #1d2b3a;
   --panel: #26384b;
+  --panel-deep: #1a2733;
   --line: #3a516a;
   --text: #f1ece2;
   --muted: #a9b4c0;
-  --wood: #c8833b;
+  --accent: #4fb3a9;
+  --on-accent: #0d1b24;
   --seat-0: #e5484d;
   --seat-1: #f5c542;
   --seat-2: #4fb3a9;
   --seat-3: #8f7cf0;
   --seat-4: #e98ac0;
   --seat-5: #8fc75b;
-  --accent: #4fb3a9;
+  /* Boards: Mühle's and Sternhalma's wood, their lines and holes, Dame's squares, Ludo's board. */
+  --wood: #c8833b;
+  --board-line: #3b2410;
+  --board-light: #e9d3a8;
+  --board-dark: #8a5a2b;
+  --board-edge: #6d4a25;
+  --ludo: var(--board-light);
+  --frame: #2457a6;
+  --felt: #1f6b47;
+  --felt-deep: #143d2b;
+  --dots-paper: #f4efe1;
+  --dots-line: #c9c2b0;
+  --dot: #1d2b3a;
+  /* Cards, dice and the Mäxchen cup. */
+  --paper: #fbf8f1;
+  --paper-edge: #cfc6b4;
+  --ink: #1b1b1b;
+  --card-red: #c62a2f;
+  --card-blue: #2f5fa8;
+  --card-blue-deep: #24508f;
+  --card-edge: #a9c1e6;
+  --cup: var(--wood);
+  /* Sea Battle. */
+  --sea: #2a6a94;
+  --sea-deep: #16405e;
+  --sea-target: #1b3550;
+  --water: #183c56;
+  --water-text: #a7c7dc;
+  --ship: #8a97a6;
+  --sunk: #6b2427;
+  /* The fields of Light Racers and Air Hockey. */
+  --field: #0d1620;
+  --field-line: rgb(255 255 255 / 0.05);
+  --rider: #ffffff;
+  --rink: #16324a;
+  --rink-line: rgb(241 236 226 / 0.35);
+  --puck: #f1ece2;
+  /* Notes, and the connection's quality. */
+  --warning-text: #ffc9a3;
+  --good: #6be06b;
+  --fair: #ffcf3f;
+  --poor: #ff5470;
+  /* A picture behind the page, such as wood's grain or the felt's weave. */
+  --backdrop: none;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: var(--backdrop);
+  background-attachment: fixed;
   color: var(--text);
 }
 
@@ -22,10 +74,10 @@
   box-sizing: border-box;
 }
 
+/* The page's background is the root's, so that a seasonal theme's decorations show over it. */
 body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--bg);
 }
 
 #app {
@@ -129,7 +181,7 @@ button.primary,
 a.button.primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #0d1b24;
+  color: var(--on-accent);
   font-weight: 600;
 }
 
@@ -192,6 +244,8 @@ button {
 }
 
 .screen.home .top-bar {
+  position: relative;
+  z-index: 1;
   margin-bottom: -2.5rem;
 }
 
@@ -371,7 +425,7 @@ button {
   padding: 7rem 0.75rem 1.85rem;
   font-size: 1.1rem;
   text-align: center;
-  background: linear-gradient(160deg, var(--panel), #1a2733);
+  background: linear-gradient(160deg, var(--panel), var(--panel-deep));
   border: 1px solid var(--line);
   border-radius: 0.6rem;
 }
@@ -397,7 +451,7 @@ button {
   height: 2rem;
   font-size: 1rem;
   border-radius: 50%;
-  background: rgb(29 43 58 / 0.85);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
 }
 
 /* A game's name over its table, with the button for its rules beside it. */
@@ -554,7 +608,7 @@ button {
 }
 
 .board.fourinarow {
-  background: #2457a6;
+  background: var(--frame);
 }
 
 .board.fourinarow .cell {
@@ -628,7 +682,7 @@ button {
 
 .board.muehle svg path {
   fill: none;
-  stroke: #3b2410;
+  stroke: var(--board-line);
   stroke-width: 0.06;
 }
 
@@ -649,7 +703,7 @@ button {
   position: absolute;
   inset: 38%;
   border-radius: 50%;
-  background: #3b2410;
+  background: var(--board-line);
 }
 
 .board.muehle .cell.seat-0,
@@ -670,19 +724,19 @@ button {
 .board.dame {
   gap: 0;
   padding: 0;
-  border: 4px solid #3b2410;
+  border: 4px solid var(--board-line);
   border-radius: 0.3rem;
 }
 
 .board.dame .square {
   aspect-ratio: 1;
-  background: #e9d3a8;
+  background: var(--board-light);
 }
 
 .board.dame .cell {
   border-radius: 0;
   border: none;
-  background: #8a5a2b;
+  background: var(--board-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -709,14 +763,14 @@ button {
 .board.reversi {
   gap: 2px;
   padding: 4px;
-  background: #143d2b;
+  background: var(--felt-deep);
   border-radius: 0.3rem;
 }
 
 .board.reversi .cell {
   border-radius: 0;
   border: none;
-  background: #1f6b47;
+  background: var(--felt);
   display: flex;
 }
 
@@ -746,7 +800,7 @@ button {
   gap: 0;
   aspect-ratio: 1;
   width: min(100%, 26rem);
-  background: #f4efe1;
+  background: var(--dots-paper);
   border-radius: 0.5rem;
 }
 
@@ -755,7 +809,7 @@ button {
   aspect-ratio: 1;
   margin: auto;
   border-radius: 50%;
-  background: #1d2b3a;
+  background: var(--dot);
 }
 
 .board.kaesekaestchen .cell {
@@ -773,7 +827,7 @@ button {
   content: "";
   margin: auto;
   border-radius: 2px;
-  background: #c9c2b0;
+  background: var(--dots-line);
 }
 
 .board.kaesekaestchen .cell.across::before {
@@ -812,7 +866,7 @@ button {
 }
 
 .board.kaesekaestchen .cell.last::before {
-  outline: 2px solid #1d2b3a;
+  outline: 2px solid var(--dot);
 }
 
 .board.kaesekaestchen .cell.box.seat-0 {
@@ -841,7 +895,7 @@ button {
 
 .board.sternhalma svg polygon {
   fill: var(--wood);
-  stroke: #3b2410;
+  stroke: var(--board-line);
   stroke-width: 0.006;
 }
 
@@ -860,7 +914,7 @@ button {
   position: absolute;
   inset: 30%;
   border-radius: 50%;
-  background: #3b2410;
+  background: var(--board-line);
 }
 
 .board.sternhalma .cell:not(.empty) {
@@ -924,10 +978,10 @@ button {
 .board.ludo {
   gap: 0.15rem;
   padding: 0.4rem;
-  background: #e9d3a8;
+  background: var(--ludo);
   max-width: min(100%, 28rem);
-  --seat: #fbf8f1;
-  --board-free: #fbf8f1;
+  --seat: var(--paper);
+  --board-free: var(--paper);
 }
 
 .board.ludo .seat-0 {
@@ -952,18 +1006,18 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 2px solid #3b2410;
-  background: #fbf8f1;
+  border: 2px solid var(--board-line);
+  background: var(--paper);
 }
 
 .board.ludo .cell.home,
 .board.ludo .cell.start {
-  background: color-mix(in srgb, var(--seat) 55%, #fbf8f1);
+  background: color-mix(in srgb, var(--seat) 55%, var(--paper));
 }
 
 .board.ludo .cell.yard {
-  background: color-mix(in srgb, var(--seat) 30%, #e9d3a8);
-  border-color: color-mix(in srgb, var(--seat) 60%, #3b2410);
+  background: color-mix(in srgb, var(--seat) 30%, var(--ludo));
+  border-color: color-mix(in srgb, var(--seat) 60%, var(--board-line));
 }
 
 .board.ludo .token {
@@ -971,23 +1025,23 @@ button {
   height: 72%;
   border-radius: 50%;
   background: var(--seat);
-  border: 2px solid #1b1b1b;
+  border: 2px solid var(--ink);
   box-shadow: 0 2px 3px rgb(0 0 0 / 0.5);
 }
 
 .board.ludo .cell.can .token {
-  outline: 3px dashed #1b1b1b;
+  outline: 3px dashed var(--ink);
   outline-offset: 2px;
 }
 
 .board.ludo .cell.picked .token {
-  outline: 3px solid #1b1b1b;
+  outline: 3px solid var(--ink);
   outline-offset: 2px;
 }
 
 .board.ludo .cell.target {
   background: var(--accent);
-  border-color: #1b1b1b;
+  border-color: var(--ink);
 }
 
 .board.ludo .cell.target::after {
@@ -1003,7 +1057,7 @@ button {
 
 .board.ludo .cell.last {
   box-shadow: none;
-  border-color: #6d4a25;
+  border-color: var(--board-edge);
   border-style: dotted;
   border-width: 3px;
 }
@@ -1033,7 +1087,7 @@ button {
   height: 3.6rem;
   padding: 0.45rem;
   border-radius: 0.6rem;
-  background: #fbf8f1;
+  background: var(--paper);
   border: 3px solid var(--line);
 }
 
@@ -1062,7 +1116,7 @@ button {
   height: 70%;
   margin: auto;
   border-radius: 50%;
-  background: #1b1b1b;
+  background: var(--ink);
 }
 
 .die.can {
@@ -1291,7 +1345,7 @@ button {
   border-radius: 0.6rem;
   background: rgb(255 138 60 / 0.12);
   border: 1px solid rgb(255 138 60 / 0.5);
-  color: #ffc9a3;
+  color: var(--warning-text);
 }
 
 /* Miau-Miau: cards face up are white, face down blue. */
@@ -1308,9 +1362,9 @@ button {
   height: 4.8rem;
   padding: 0;
   border-radius: 0.45rem;
-  background: #fbf8f1;
-  border: 1px solid #cfc6b4;
-  color: #1b1b1b;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  color: var(--ink);
   line-height: 1;
   position: relative;
 }
@@ -1322,7 +1376,7 @@ button {
   right: 0.2rem;
   font-size: 0.65rem;
   font-weight: 700;
-  color: #2f5fa8;
+  color: var(--card-blue);
 }
 
 .cards .card .rank {
@@ -1335,7 +1389,7 @@ button {
 }
 
 .cards .red {
-  color: #c62a2f;
+  color: var(--card-red);
 }
 
 .cards .back {
@@ -1343,8 +1397,12 @@ button {
   width: 1.1rem;
   height: 1.6rem;
   border-radius: 0.2rem;
-  background: repeating-linear-gradient(45deg, #2f5fa8 0 4px, #24508f 4px 8px);
-  border: 1px solid #a9c1e6;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--card-blue) 0 4px,
+    var(--card-blue-deep) 4px 8px
+  );
+  border: 1px solid var(--card-edge);
 }
 
 .cards .stock .back {
@@ -1443,14 +1501,14 @@ button {
 
 .cards .wish {
   font-weight: 600;
-  background: #fbf8f1;
-  color: #1b1b1b;
+  background: var(--paper);
+  color: var(--ink);
   border-radius: 1rem;
   padding: 0.15rem 0.6rem;
 }
 
 .cards .wish.red {
-  color: #c62a2f;
+  color: var(--card-red);
 }
 
 .cards .hand {
@@ -1498,12 +1556,12 @@ button {
   width: 3.5rem;
   height: 3.5rem;
   padding: 0;
-  background: #fbf8f1;
-  color: #1b1b1b;
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .cards .suit-button.red {
-  color: #c62a2f;
+  color: var(--card-red);
 }
 
 .cards .card-help,
@@ -1548,8 +1606,8 @@ button {
   width: 2rem;
   height: 2.8rem;
   border-radius: 0.3rem;
-  background: #fbf8f1;
-  color: #1b1b1b;
+  background: var(--paper);
+  color: var(--ink);
   font-weight: 700;
 }
 
@@ -1837,7 +1895,7 @@ button {
   gap: 2px;
   padding: 3px;
   border-radius: 0.5rem;
-  background: #16405e;
+  background: var(--sea-deep);
 }
 
 .sea .square-sea {
@@ -1846,7 +1904,7 @@ button {
   padding: 0;
   border: none;
   border-radius: 2px;
-  background: #2a6a94;
+  background: var(--sea);
   color: var(--text);
   font-size: clamp(0.6rem, 3.5vw, 1.1rem);
   line-height: 1;
@@ -1862,13 +1920,13 @@ button {
 }
 
 .sea .square-sea.ship {
-  background: #8a97a6;
+  background: var(--ship);
 }
 
 .sea .square-sea.water,
 .sea .square-sea.miss {
-  background: #183c56;
-  color: #a7c7dc;
+  background: var(--water);
+  color: var(--water-text);
 }
 
 .sea .square-sea.hit {
@@ -1877,7 +1935,7 @@ button {
 }
 
 .sea .square-sea.sunk {
-  background: #6b2427;
+  background: var(--sunk);
 }
 
 .sea .square-sea.last {
@@ -1890,7 +1948,7 @@ button {
 }
 
 .sea.target {
-  background: #1b3550;
+  background: var(--sea-target);
 }
 
 .sea.placing {
@@ -2132,8 +2190,8 @@ button {
   min-height: 5rem;
   padding: 0.5rem 1rem;
   border-radius: 1.5rem 1.5rem 0.6rem 0.6rem;
-  background: var(--wood);
-  color: #1b1b1b;
+  background: var(--cup);
+  color: var(--ink);
 }
 
 .cup .faces {
@@ -2142,7 +2200,7 @@ button {
 }
 
 .cup.open {
-  background: #fbf8f1;
+  background: var(--paper);
 }
 
 .cup .value {
@@ -2549,15 +2607,15 @@ canvas.net-graph.large {
 }
 
 .net[data-quality="good"] .net-ping {
-  color: #6be06b;
+  color: var(--good);
 }
 
 .net[data-quality="fair"] .net-ping {
-  color: #ffcf3f;
+  color: var(--fair);
 }
 
 .net[data-quality="poor"] .net-ping {
-  color: #ff5470;
+  color: var(--poor);
 }
 
 .graph-label {
@@ -2632,5 +2690,5 @@ a.button {
 }
 
 a.button.primary {
-  color: #0d1b24;
+  color: var(--on-accent);
 }

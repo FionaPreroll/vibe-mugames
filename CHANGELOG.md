@@ -52,6 +52,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 - A short buzz when it is your turn, on phones that can; _Buzz when it is my turn_ in the settings switches it off. The app asks Android for vibration, which needs no prompt, and the privacy policy says so.
 - A full-screen button (⛶) at the table and when playing on one device, in browsers that can, such as on a tablet or a laptop.
 - _Played lately_ on top of the game chooser: the three games chosen last on this device, also still in their own group. The privacy policy says the device keeps them.
+- Themes, under _Settings_ → _Theme_: Classic, Light, Black, AMOLED black, Wood, Green felt, Nord, Gruvbox, Neon, High contrast, Night mode in red, and the seasonal Halloween, Winter, Christmas and New Year, with bats round the moon, falling snow, fairy lights and fireworks behind the screens. They colour everything, the boards, cards, dice and the games in real time too. _With the seasons_ changes by itself through the year. The settings show each theme as a small picture of itself, and the one picked applies at once. The privacy policy says the device keeps the theme chosen.
 
 ### Changed
 

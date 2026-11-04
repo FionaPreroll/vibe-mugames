@@ -25,15 +25,8 @@ function hole(spot: Spot, fill: string, stroke: string = INK.woodDark): SVGEleme
 }
 
 /** A seat's colour mixed with the paper of the board, `amount` in a hundred, for its squares. */
-function tint(seat: number, amount: number): string {
-  const channels = (hex: string) => [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16))
-  const seatColour = channels(colour(seat))
-  const paper = channels(INK.paper)
-  const mixed = seatColour.map((value, i) =>
-    Math.round((value * amount + (paper[i] ?? 0) * (100 - amount)) / 100),
-  )
-  return `rgb(${mixed.join(' ')})`
-}
+const tint = (seat: number, amount: number): string =>
+  `color-mix(in srgb, ${colour(seat)} ${amount}%, ${INK.paper})`
 
 /** Pieces on the board: a seat, and where it stands. */
 type Placed = readonly [seat: number, spot: Spot]
@@ -63,7 +56,7 @@ function board(pieces: readonly Placed[], ...extra: SVGElement[]): SVGSVGElement
   return picture(
     SIZE,
     SIZE,
-    rect(0, 0, SIZE, SIZE, INK.lightSquare, 0.4),
+    rect(0, 0, SIZE, SIZE, INK.ludo, 0.4),
     ...middle,
     ...cells,
     ...pieces.map(([seat, spot]) => piece(...centre(spot), seat, 0.32)),

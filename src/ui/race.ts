@@ -11,6 +11,7 @@ import {
   type LiveView,
   Painter,
   pointOn,
+  themeColour,
   typing,
 } from './canvas'
 import { h } from './dom'
@@ -187,9 +188,9 @@ export class RaceView implements LiveView {
     const left = (width - size) / 2
     const top = (height - size) / 2
     const cell = size / COLUMNS
-    context.fillStyle = '#0d1620'
+    context.fillStyle = themeColour('field')
     context.fillRect(left, top, size, size)
-    context.strokeStyle = 'rgb(255 255 255 / 0.05)'
+    context.strokeStyle = themeColour('field-line')
     context.lineWidth = 1
     context.beginPath()
     for (let line = 0; line <= COLUMNS; line += 5) {
@@ -213,7 +214,7 @@ export class RaceView implements LiveView {
         const head = race.riders[mine]?.path.at(-1)
         if (head !== undefined) {
           const { x, y } = centre(head)
-          context.strokeStyle = '#f1ece2'
+          context.strokeStyle = themeColour('text')
           context.lineWidth = 2
           context.beginPath()
           context.arc(x, y, cell * 2.2, 0, 2 * Math.PI)
@@ -255,12 +256,12 @@ function drawRiders(
     context.restore()
     context.save()
     if (rider.alive) {
-      context.fillStyle = '#fff'
+      context.fillStyle = themeColour('rider')
       context.shadowColor = colour(seat)
       context.shadowBlur = cell * 1.5
       context.fillRect(head.x - cell / 2, head.y - cell / 2, cell, cell)
     } else {
-      context.strokeStyle = '#fff'
+      context.strokeStyle = themeColour('rider')
       context.lineWidth = Math.max(1.5, cell / 4)
       const arm = cell * 0.9
       context.beginPath()

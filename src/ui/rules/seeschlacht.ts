@@ -24,7 +24,7 @@ function sea(rows: readonly string[], ...extra: SVGElement[]): SVGSVGElement {
       squares.push(rect(x + 0.06, y + 0.06, 0.88, 0.88, fill, 0.08))
       if (mark === 'x' || mark === '#') squares.push(cross(cx(x), cx(y), 0.4, '#fff', 0.1))
       if (mark === 'o')
-        squares.push(svg('circle', { cx: cx(x), cy: cx(y), r: 0.12, fill: '#a7c7dc' }))
+        squares.push(svg('circle', { cx: cx(x), cy: cx(y), r: 0.12, fill: INK.waterText }))
     })
   })
   return picture(
