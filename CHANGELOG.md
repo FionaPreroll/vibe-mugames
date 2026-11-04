@@ -58,6 +58,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 ### Changed
 
+- The connection details and the debug report say whether a Bluetooth table is still on Bluetooth, or Nearby moved it up to Wi-Fi by itself, and how much it carries.
 - _Smooth out the network_ is on now, also on phones where it was off: it makes Air Hockey over Bluetooth or a busy Wi-Fi feel far less jerky. It can still be switched off in the settings.
 - Over Bluetooth, players of Air Hockey and Light Racers get every state of the game, 30 a second instead of 15, so the puck and the other players show sooner and closer to where they are.
 - On the Air Hockey rink, which covers the screen, the small graph of the ping and its newest value show beside the score, as they do in the top line in other games. Tapping them opens the connection details.

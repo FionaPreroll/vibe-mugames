@@ -182,8 +182,8 @@ importers:
         specifier: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz
         version: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz
       '@fionapreroll/p2p-nearby':
-        specifier: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.3.0/fionapreroll-p2p-nearby-0.3.0.tgz
-        version: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.3.0/fionapreroll-p2p-nearby-0.3.0.tgz(@capacitor/core@8.6.0)(@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz)
+        specifier: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.4.0/fionapreroll-p2p-nearby-0.4.0.tgz
+        version: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.4.0/fionapreroll-p2p-nearby-0.4.0.tgz(@capacitor/core@8.6.0)(@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz)
     devDependencies:
       '@biomejs/biome':
         specifier: 2.6.3
@@ -338,9 +338,9 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@fionapreroll/p2p-nearby@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.3.0/fionapreroll-p2p-nearby-0.3.0.tgz':
-    resolution: {integrity: sha512-ZNpJBY1kB1A22AaoEH41VEwYSJmFIkzO9LNrIGButpcHANCWGUzCfkQYeeaeAdhnFOqmUFCJZc7iGgN2aq0acg==, tarball: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.3.0/fionapreroll-p2p-nearby-0.3.0.tgz}
-    version: 0.3.0
+  '@fionapreroll/p2p-nearby@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.4.0/fionapreroll-p2p-nearby-0.4.0.tgz':
+    resolution: {integrity: sha512-K7S2XBNB7eh6fK524XRSqyQdDbhev3g8/XOI4OnQsEOys0Y8eCSPwF5ynzGrWIsVpiKewTv4Y1X2+RivH2N7Jg==, tarball: https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.4.0/fionapreroll-p2p-nearby-0.4.0.tgz}
+    version: 0.4.0
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
       '@fionapreroll/p2p': ^0.3.0 || ^0.4.0 || ^0.5.0 || ^0.6.0
@@ -1562,7 +1562,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@fionapreroll/p2p-nearby@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.3.0/fionapreroll-p2p-nearby-0.3.0.tgz(@capacitor/core@8.6.0)(@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz)':
+  '@fionapreroll/p2p-nearby@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.4.0/fionapreroll-p2p-nearby-0.4.0.tgz(@capacitor/core@8.6.0)(@fionapreroll/p2p@https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz)':
     dependencies:
       '@capacitor/core': 8.6.0
       '@fionapreroll/p2p': https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz

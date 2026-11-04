@@ -34,7 +34,7 @@
     "@capacitor/core": "^8.6.0",
     "@fionapreroll/app-updates": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/app-updates-v0.1.0/fionapreroll-app-updates-0.1.0.tgz",
     "@fionapreroll/p2p": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-v0.6.0/fionapreroll-p2p-0.6.0.tgz",
-    "@fionapreroll/p2p-nearby": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.3.0/fionapreroll-p2p-nearby-0.3.0.tgz"
+    "@fionapreroll/p2p-nearby": "https://github.com/FionaPreroll/vibe-p2pgame/releases/download/p2p-nearby-v0.4.0/fionapreroll-p2p-nearby-0.4.0.tgz"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
