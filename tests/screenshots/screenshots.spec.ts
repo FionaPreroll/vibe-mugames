@@ -290,6 +290,31 @@ test('Werewolf', async ({ browser }) => {
   await shot(page, 'werwolf')
 })
 
+/** Answers for the letter the seeded game draws first, a row for each player. */
+const WORDS = [
+  ['Oslo', 'Österreich', 'Oder', 'Olga', 'Otter', 'Optikerin'],
+  ['Oldenburg', 'Oman', 'Oker', 'Oskar', 'Okapi', 'Oboist'],
+  ['Oslo', 'Ostfriesland', '', 'Ole', 'Orca', 'Ofensetzer'],
+]
+
+test('City, Country, River', async ({ browser }) => {
+  const page = await device(browser, PHONE)
+  await local(page, NAMES.slice(0, 3))
+  await page.getByRole('button', { name: 'City, Country, River' }).click()
+  for (const [i, answers] of WORDS.entries()) {
+    await page.getByRole('button', { name: /show my letter/ }).click()
+    await expect(page.locator('.letter-card .letter')).toHaveText('O')
+    for (const [c, word] of answers.entries()) {
+      await page.locator('.answer-fields input').nth(c).fill(word)
+    }
+    await page.getByRole('button', { name: 'Done: next one' }).click()
+    if (i < WORDS.length - 1) await page.getByRole('button', { name: /Done: hand over/ }).click()
+  }
+  // Cy's country is not one: the others strike it.
+  await page.locator('.category').nth(1).locator('button.answer-check').nth(2).click()
+  await shot(page, 'stadtlandfluss')
+})
+
 /**
  * Over the network, the host may hear from the other phone a moment earlier or later, which can
  * move the puck by a few pixels: only a larger change takes a new picture of Air Hockey.
