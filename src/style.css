@@ -2184,6 +2184,16 @@ button {
   padding: 0.25rem 0.75rem;
 }
 
+/* The connection at a glance, beside the score, while the rink covers the table's top line. */
+.rink-net {
+  display: flex;
+  margin-left: auto;
+}
+
+.rink-net[hidden] {
+  display: none;
+}
+
 .pane .race-field {
   height: calc(100cqh - 9rem);
   max-height: none;

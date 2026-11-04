@@ -69,35 +69,69 @@
   },
   "bluetooth": {
     "arrival": {
-      "clockRoughness": 12.91,
-      "lagMean": 60.26,
-      "lagSpread": 15.98,
-      "puckRms": 1.38,
-      "puck95": 2.7,
+      "clockRoughness": 15.55,
+      "lagMean": 42.15,
+      "lagSpread": 16.44,
+      "puckRms": 1.5,
+      "puck95": 2.98,
       "settle": null
     },
     "kalman": {
-      "clockRoughness": 1.09,
-      "lagMean": 61.08,
-      "lagSpread": 3.96,
-      "puckRms": 0.88,
-      "puck95": 1.51,
+      "clockRoughness": 1.1,
+      "lagMean": 42.15,
+      "lagSpread": 3.36,
+      "puckRms": 0.53,
+      "puck95": 0.81,
       "settle": null
     },
     "quick": {
-      "clockRoughness": 2.9,
-      "lagMean": 61.1,
-      "lagSpread": 6.66,
+      "clockRoughness": 3,
+      "lagMean": 41.93,
+      "lagSpread": 6.02,
+      "puckRms": 0.65,
+      "puck95": 1.33,
+      "settle": null
+    },
+    "steady": {
+      "clockRoughness": 0.36,
+      "lagMean": 42.22,
+      "lagSpread": 1.67,
+      "puckRms": 0.48,
+      "puck95": 0.51,
+      "settle": null
+    }
+  },
+  "bluetooth15": {
+    "arrival": {
+      "clockRoughness": 12.25,
+      "lagMean": 42,
+      "lagSpread": 15.26,
+      "puckRms": 1.29,
+      "puck95": 3.11,
+      "settle": null
+    },
+    "kalman": {
+      "clockRoughness": 1.11,
+      "lagMean": 44.47,
+      "lagSpread": 3.94,
+      "puckRms": 0.88,
+      "puck95": 1.64,
+      "settle": null
+    },
+    "quick": {
+      "clockRoughness": 3.06,
+      "lagMean": 44.47,
+      "lagSpread": 6.96,
       "puckRms": 0.97,
-      "puck95": 1.96,
+      "puck95": 2,
       "settle": null
     },
     "steady": {
       "clockRoughness": 0.37,
-      "lagMean": 60.81,
-      "lagSpread": 2.26,
+      "lagMean": 44.24,
+      "lagSpread": 2.1,
       "puckRms": 0.85,
-      "puck95": 1.35,
+      "puck95": 1.43,
       "settle": null
     }
   },

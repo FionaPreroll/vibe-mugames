@@ -98,6 +98,11 @@ export interface LiveOptions {
   readonly local: boolean
   /** Stops the game, for whoever keeps the table; on a phone's own half of the rink. */
   readonly stop?: () => void
+  /**
+   * The connection at a glance (a small graph of the ping), for a field that covers the screen
+   * and with it the table's top line, which shows it otherwise.
+   */
+  readonly net?: HTMLElement
 }
 
 export interface LiveView {

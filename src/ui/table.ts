@@ -25,11 +25,36 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
   const screen = h('div', { class: 'screen table' })
   const actions = h('div', { class: 'buttons' })
   const picker = new Picker()
+  /**
+   * The connection at a glance: a small graph of the ping, and its newest value, which opens
+   * the connection view. One sits in the top line; air hockey's rink, which covers the screen
+   * on a player's phone, shows the other.
+   */
+  const netBadge = () => {
+    const canvas = h('canvas', { class: 'net-graph' })
+    const text = h('span', { class: 'net-ping' })
+    const button = h(
+      'button',
+      {
+        type: 'button',
+        class: 'net',
+        ariaLabel: t('connOpen'),
+        title: t('connOpen'),
+        hidden: true,
+        onclick: () => connectionDialog(seat, peerName),
+      },
+      canvas,
+      text,
+    )
+    return { button, canvas, text }
+  }
+  const badges = [netBadge(), netBadge()]
   const live = new LiveSlot({
     steers: [seat.id],
     send: (_, values) => seat.input(values),
     local: false,
     stop: seat instanceof HostSeat ? () => seat.lobby() : undefined,
+    net: badges[1]?.button,
   })
   let gone = false
   /** A phone whose screen goes dark stops answering, and drops out of the table. */
@@ -49,31 +74,17 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     return peer === 0 ? t('connHost', { name }) : name
   }
 
-  // The connection at a glance: a small graph of the ping, and its newest value.
-  const netCanvas = h('canvas', { class: 'net-graph' })
-  const netText = h('span', { class: 'net-ping' })
-  const net = h(
-    'button',
-    {
-      type: 'button',
-      class: 'net',
-      ariaLabel: t('connOpen'),
-      title: t('connOpen'),
-      hidden: true,
-      onclick: () => connectionDialog(seat, peerName),
-    },
-    netCanvas,
-    netText,
-  )
-  /** The small graph and the newest ping; for the host, the worst of its players'. */
+  /** The small graphs and the newest ping; for the host, the worst of its players'. */
   const showNet = () => {
     const now = performance.now()
     const latest = seat.peers().length > 0 ? worstLatest(seat.net, now) : null
-    net.hidden = latest === null
-    if (latest === null) return
-    drawNetGraph(netCanvas, seat.net, now, 30, { color: netColor(seat.net.self) })
-    netText.textContent = latest.ping === null ? '…' : t('pingMs', { ms: latest.ping })
-    net.dataset.quality = pingQuality(latest.ping, latest.gap >= STALL_MS)
+    for (const { button, canvas, text } of badges) {
+      button.hidden = latest === null
+      if (latest === null) continue
+      drawNetGraph(canvas, seat.net, now, 30, { color: netColor(seat.net.self) })
+      text.textContent = latest.ping === null ? '…' : t('pingMs', { ms: latest.ping })
+      button.dataset.quality = pingQuality(latest.ping, latest.gap >= STALL_MS)
+    }
   }
   // The room samples its connections once a second.
   const netTimer = setInterval(showNet, 1000)
@@ -176,7 +187,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
       onclick: leave,
     }),
     h('h1', {}, t('title')),
-    net,
+    badges[0]?.button,
     fullscreenButton(),
     seat instanceof HostSeat
       ? h('button', {

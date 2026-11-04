@@ -12,7 +12,7 @@ describe('settings from storage', () => {
       localNames: [],
       localSplit: false,
       hockeyWhole: true,
-      hockeySmooth: false,
+      hockeySmoothing: true,
       vibrate: true,
       recentGames: [],
       theme: 'seasons',
@@ -49,15 +49,20 @@ describe('settings from storage', () => {
     expect(parseSettings({ recentGames: 'ludo' }).recentGames).toEqual([])
   })
 
-  it('shows the whole rink unless told not to, and smooths only when told to', () => {
-    expect(parseSettings({ hockeyWhole: false, hockeySmooth: true })).toMatchObject({
+  it('shows the whole rink and smooths, unless told not to', () => {
+    expect(parseSettings({ hockeyWhole: false, hockeySmoothing: false })).toMatchObject({
       hockeyWhole: false,
-      hockeySmooth: true,
+      hockeySmoothing: false,
     })
-    expect(parseSettings({ hockeyWhole: 'no', hockeySmooth: 'yes' })).toMatchObject({
+    expect(parseSettings({ hockeyWhole: 'no', hockeySmoothing: 'no' })).toMatchObject({
       hockeyWhole: true,
-      hockeySmooth: false,
+      hockeySmoothing: true,
     })
+  })
+
+  it('smooths on every phone once, whatever the old setting, kept off at first, said', () => {
+    expect(parseSettings({ hockeySmooth: false }).hockeySmoothing).toBe(true)
+    expect('hockeySmooth' in parseSettings({ hockeySmooth: false })).toBe(false)
   })
 
   it('keeps who last played on this device, cleaned, and at most six of them', () => {

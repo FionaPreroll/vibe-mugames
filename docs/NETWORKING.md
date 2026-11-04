@@ -62,7 +62,7 @@ P1~<o|a>~<setup>~<ufrag>~<pwd>~<fingerprint>~<address>,<port>!<address>,<port>�
 
 In the Android app, `@fionapreroll/p2p-nearby` offers Google's Nearby Connections, which connects over Bluetooth and may move up to Wi-Fi by itself for more speed. Phones advertise and discover the Spielekiste's own service id (`src/bluetooth.ts`), with the `P2P_STAR` strategy: one host, many players. A player asks to join; both phones show the same short code (Nearby's authentication digits), and the host lets the player in only after seeing that the codes match. At most four requests wait at once (`MAX_REQUESTS`); an accepted player who never connects is given up on after 30 s.
 
-Each message travels as one Nearby byte payload: a byte for the channel (`c` control, `f` fast) and the text in UTF-8, 32 KB at most. The native side (`NearbyRules.java`) takes at most 120 messages a second from each phone, and keeps at most two `fast` messages in flight to each, dropping newer ones while the radio is busy, as WebRTC's unreliable channel would. `packetConnection` turns this into the same two-channel `Connection` as WebRTC, so the room knows nothing of Bluetooth, and one table can hold players over both. A Bluetooth player gets the table at most 15 times a second (`STATE_INTERVAL_MS`): the radio carries less, and air hockey's drawing fills the gaps.
+Each message travels as one Nearby byte payload: a byte for the channel (`c` control, `f` fast) and the text in UTF-8, 32 KB at most. The native side (`NearbyRules.java`) takes at most 120 messages a second from each phone, and keeps at most two `fast` messages in flight to each, dropping newer ones while the radio is busy, as WebRTC's unreliable channel would. `packetConnection` turns this into the same two-channel `Connection` as WebRTC, so the room knows nothing of Bluetooth, and one table can hold players over both. The library sends a Bluetooth player at most 15 states a second by default (`STATE_INTERVAL_MS`), as a radio may carry less; the Spielekiste sends every state instead (`BLUETOOTH_STATE_INTERVAL_MS`, `src/bluetooth.ts`), as air hockey's 30 states of about 500 bytes, 15 kB a second, are far below what Bluetooth carries, and each state skipped makes the game drawn later. When the radio is busy anyway, the fast lanes drop states instead of queueing them.
 
 ## The room
 
@@ -95,7 +95,7 @@ The host's phone keeps the table (`src/core/table.ts`) and runs the rules; playe
 
 ### Rates
 
-The host ticks 30 times a second (`TICK_MS`). It sends the table every tick while a game in real time is on, and every third tick otherwise: 10 times a second, plenty for turns and quick to show who joined. A Bluetooth player gets it at most 15 times a second.
+The host ticks 30 times a second (`TICK_MS`). It sends the table every tick while a game in real time is on, and every third tick otherwise: 10 times a second, plenty for turns and quick to show who joined. Bluetooth players get the same.
 
 ### The table: `TableState`
 
@@ -139,7 +139,7 @@ Air hockey is the only game where how a state arrives shows: the puck crosses th
 
 **Without smoothing**, a phone draws the newest state from the moment it arrived, gliding the puck on in a straight line (bouncing off the boards) for up to 0.15 s. A state that arrives late is drawn as if it were new, so the puck jumps back; one that arrives early makes it jump on. The drawn host time follows the arrival of each state, jitter and all (the blue lines in the plots below).
 
-**With _Smooth out the network_** (`hockeySmooth` in the settings, off by default for now), the phone draws by the host's clock as a Kalman filter reads it.
+**With _Smooth out the network_** (`hockeySmoothing` in the settings, on unless switched off), the phone draws by the host's clock as a Kalman filter reads it. It was off at first, until a game over Bluetooth on real phones felt laggy; the setting was renamed with it, so that every phone, which kept the old one as off when it saved any setting, starts smoothed once.
 
 ### What the filter estimates
 
@@ -188,7 +188,7 @@ K &= P^- / (P^- + R) && \text{gain}\\
 - **The jitter is learned, not assumed.** `R` is an exponential average of the squared innovation (`λ` = `learn`, 0.05: about the last 20 states), within 10⁻⁶ s² (1 ms) and 0.05 s² (220 ms). It starts at 10⁻³ s² (32 ms). A quiet network thus gets a quick filter, a busy one a steady one. In the steady state the gain is about `√(q Δt / R)`: on busy Wi-Fi, where it learns `R` ≈ (17 ms)², about 0.1, so a state moves the offset by a tenth of its surprise, and a jitter of tens of milliseconds becomes a few.
 - **The drawn time stays near the newest state.** `RinkSmoother.time` keeps the filtered time between 50 ms behind and 150 ms ahead of the newest state's `clock`, the same 150 ms that unsmoothed drawing glides at most; the filter never draws further from the host's word than drawing without it does.
 - **Corrections fade in.** When a new state changes where the puck was meant to be at the time drawn, as when it shows a hit the phone could not know of, the difference fades out over about 80 ms (`Eased`) instead of jumping; a jump of more than 0.3 rink widths, such as the puck put back after a goal, is drawn at once.
-- **The player's own mallet does not wait,** with or without smoothing. A mallet steered on this phone moves to the finger at once by the host's own rule (`OwnMallet`: `slide`, at most the host's speed and within the player's half), instead of a round trip later. Drawn from the host's state, it would lag by the whole loop: the finger's place waits for the next input (up to 33 ms), crosses to the host, waits for its tick (up to 33 ms) and for the next state to this player (up to 67 ms over Bluetooth), and crosses back; over Bluetooth, with a round trip of about 80 ms, that is 100 to 250 ms. The host slides its mallet towards the same places a moment later, so both come to rest at the same point; only the puck's bounces off it are the host's, and come that moment later.
+- **The player's own mallet does not wait,** with or without smoothing. A mallet steered on this phone moves to the finger at once by the host's own rule (`OwnMallet`: `slide`, at most the host's speed and within the player's half), instead of a round trip later. Drawn from the host's state, it would lag by the whole loop: the finger's place waits for the next input (up to 33 ms), crosses to the host, waits for its tick (up to 33 ms) and for the next state to this player (up to 33 ms; up to 67 ms over Bluetooth before it got every state), and crosses back; over Bluetooth, with a round trip of about 80 ms, that is 100 to 250 ms. The host slides its mallet towards the same places a moment later, so both come to rest at the same point; only the puck's bounces off it are the host's, and come that moment later.
 - **Starting anew.** The filter resets at its first state, at a new game (`round`), when the host's clock goes back by more than 0.5 s, and when a measurement is more than 0.5 s off the estimate, such as a page that was in the background. A state older than the newest, overtaken on the fast channel, is ignored.
 
 ### Limits
@@ -196,7 +196,6 @@ K &= P^- / (P^- + R) && \text{gain}\\
 - **Delay is not Gaussian.** It has a floor and a long tail: spikes pull the estimate a little (a 120 ms spike on busy Wi-Fi moves it by some 10 ms, the small bumps in the plots). A filter that gated or down-weighted large innovations, or one that followed the least delay rather than the mean, could draw sooner and steadier.
 - **A lasting change of delay is first taken for jitter.** The learned `R` grows, which slows the gain while the offset is off: the default follows a step of 100 ms within about 2.4 s. A larger `q` follows sooner but passes on more jitter; see the delay step below.
 - **The puck after a hit.** The phone learns of a hit only from the next state, so the eased correction lags the true path for a few frames. On a quiet network, where drawing by arrival is already close, this costs a little: see the quiet Wi-Fi numbers.
-- **Not yet tried on real phones**, which is why the setting is off by default.
 
 ## The benchmark
 
@@ -207,12 +206,13 @@ K &= P^- / (P^- + R) && \text{gain}\\
 - **The phone** draws 60 frames a second: the host time it draws, and where it draws the puck.
 - **Everything comes from fixed seeds**, so every run, on every computer, gives the same numbers and the same plots.
 
-| Network     | Delay | Jitter (up to) | Spikes         | States a second | Else                          |
-| ----------- | ----- | -------------- | -------------- | --------------- | ----------------------------- |
-| Quiet Wi-Fi | 8 ms  | 6 ms           | 1 % of +30 ms  | 30              |                               |
-| Busy Wi-Fi  | 20 ms | 60 ms          | 5 % of +120 ms | 30              |                               |
-| Bluetooth   | 40 ms | 40 ms          | 3 % of +80 ms  | 15              |                               |
-| Delay step  | 20 ms | 30 ms          | 2 % of +80 ms  | 30              | 100 ms more from second 12 on |
+| Network         | Delay | Jitter (up to) | Spikes         | States a second | Else                           |
+| --------------- | ----- | -------------- | -------------- | --------------- | ------------------------------ |
+| Quiet Wi-Fi     | 8 ms  | 6 ms           | 1 % of +30 ms  | 30              |                                |
+| Busy Wi-Fi      | 20 ms | 60 ms          | 5 % of +120 ms | 30              |                                |
+| Bluetooth       | 20 ms | 45 ms          | 4 % of +60 ms  | 30              | as a Fairphone 4 measured it   |
+| Bluetooth, 15/s | 20 ms | 45 ms          | 4 % of +60 ms  | 15              | as the library's default sends |
+| Delay step      | 20 ms | 30 ms          | 2 % of +80 ms  | 30              | 100 ms more from second 12 on  |
 
 | Method                     | `HostClock` options                        |
 | -------------------------- | ------------------------------------------ |
@@ -234,24 +234,28 @@ The first 4 s are left out, while the filter learns.
 
 <!-- smoothing:results -->
 
-| Network     | Method                     | Clock roughness (ms) | Lag (ms) | Lag spread (ms) | Puck error, RMS (%) | Puck error, 95th (%) | Settles (ms) |
-| ----------- | -------------------------- | -------------------: | -------: | --------------: | ------------------: | -------------------: | -----------: |
-| Quiet Wi-Fi | Unfiltered                 |                 1.76 |    11.05 |            1.75 |                0.23 |                 0.45 |            – |
-| Quiet Wi-Fi | Kalman (default, q = 10⁻⁴) |                 0.74 |    11.24 |            1.10 |                0.35 |                 0.51 |            – |
-| Quiet Wi-Fi | Kalman, q = 10⁻³           |                 1.50 |    11.27 |            1.77 |                0.37 |                 0.65 |            – |
-| Quiet Wi-Fi | Kalman, q = 10⁻⁵           |                 0.29 |    11.20 |            0.63 |                0.34 |                 0.46 |            – |
-| Busy Wi-Fi  | Unfiltered                 |                30.35 |    54.03 |           30.77 |                2.70 |                 4.49 |            – |
-| Busy Wi-Fi  | Kalman (default, q = 10⁻⁴) |                 1.16 |    48.05 |            4.34 |                0.60 |                 0.98 |            – |
-| Busy Wi-Fi  | Kalman, q = 10⁻³           |                 3.24 |    47.58 |            7.52 |                0.80 |                 1.51 |            – |
-| Busy Wi-Fi  | Kalman, q = 10⁻⁵           |                 0.38 |    48.13 |            2.25 |                0.54 |                 0.67 |            – |
-| Bluetooth   | Unfiltered                 |                12.91 |    60.26 |           15.98 |                1.38 |                 2.70 |            – |
-| Bluetooth   | Kalman (default, q = 10⁻⁴) |                 1.09 |    61.08 |            3.96 |                0.88 |                 1.51 |            – |
-| Bluetooth   | Kalman, q = 10⁻³           |                 2.90 |    61.10 |            6.66 |                0.97 |                 1.96 |            – |
-| Bluetooth   | Kalman, q = 10⁻⁵           |                 0.37 |    60.81 |            2.26 |                0.85 |                 1.35 |            – |
-| Delay step  | Unfiltered                 |                14.05 |    84.60 |           13.10 |                1.02 |                 2.01 |        never |
-| Delay step  | Kalman (default, q = 10⁻⁴) |                 1.07 |    84.70 |            3.66 |                0.44 |                 0.81 |         2400 |
-| Delay step  | Kalman, q = 10⁻³           |                 2.94 |    85.28 |            4.52 |                0.52 |                 1.12 |          550 |
-| Delay step  | Kalman, q = 10⁻⁵           |                 0.35 |    70.10 |           22.46 |                0.61 |                 1.38 |        never |
+| Network         | Method                     | Clock roughness (ms) | Lag (ms) | Lag spread (ms) | Puck error, RMS (%) | Puck error, 95th (%) | Settles (ms) |
+| --------------- | -------------------------- | -------------------: | -------: | --------------: | ------------------: | -------------------: | -----------: |
+| Quiet Wi-Fi     | Unfiltered                 |                 1.76 |    11.05 |            1.75 |                0.23 |                 0.45 |            – |
+| Quiet Wi-Fi     | Kalman (default, q = 10⁻⁴) |                 0.74 |    11.24 |            1.10 |                0.35 |                 0.51 |            – |
+| Quiet Wi-Fi     | Kalman, q = 10⁻³           |                 1.50 |    11.27 |            1.77 |                0.37 |                 0.65 |            – |
+| Quiet Wi-Fi     | Kalman, q = 10⁻⁵           |                 0.29 |    11.20 |            0.63 |                0.34 |                 0.46 |            – |
+| Busy Wi-Fi      | Unfiltered                 |                30.35 |    54.03 |           30.77 |                2.70 |                 4.49 |            – |
+| Busy Wi-Fi      | Kalman (default, q = 10⁻⁴) |                 1.16 |    48.05 |            4.34 |                0.60 |                 0.98 |            – |
+| Busy Wi-Fi      | Kalman, q = 10⁻³           |                 3.24 |    47.58 |            7.52 |                0.80 |                 1.51 |            – |
+| Busy Wi-Fi      | Kalman, q = 10⁻⁵           |                 0.38 |    48.13 |            2.25 |                0.54 |                 0.67 |            – |
+| Bluetooth       | Unfiltered                 |                15.55 |    42.15 |           16.44 |                1.50 |                 2.98 |            – |
+| Bluetooth       | Kalman (default, q = 10⁻⁴) |                 1.10 |    42.15 |            3.36 |                0.53 |                 0.81 |            – |
+| Bluetooth       | Kalman, q = 10⁻³           |                 3.00 |    41.93 |            6.02 |                0.65 |                 1.33 |            – |
+| Bluetooth       | Kalman, q = 10⁻⁵           |                 0.36 |    42.22 |            1.67 |                0.48 |                 0.51 |            – |
+| Bluetooth, 15/s | Unfiltered                 |                12.25 |    42.00 |           15.26 |                1.29 |                 3.11 |            – |
+| Bluetooth, 15/s | Kalman (default, q = 10⁻⁴) |                 1.11 |    44.47 |            3.94 |                0.88 |                 1.64 |            – |
+| Bluetooth, 15/s | Kalman, q = 10⁻³           |                 3.06 |    44.47 |            6.96 |                0.97 |                 2.00 |            – |
+| Bluetooth, 15/s | Kalman, q = 10⁻⁵           |                 0.37 |    44.24 |            2.10 |                0.85 |                 1.43 |            – |
+| Delay step      | Unfiltered                 |                14.05 |    84.60 |           13.10 |                1.02 |                 2.01 |        never |
+| Delay step      | Kalman (default, q = 10⁻⁴) |                 1.07 |    84.70 |            3.66 |                0.44 |                 0.81 |         2400 |
+| Delay step      | Kalman, q = 10⁻³           |                 2.94 |    85.28 |            4.52 |                0.52 |                 1.12 |          550 |
+| Delay step      | Kalman, q = 10⁻⁵           |                 0.35 |    70.10 |           22.46 |                0.61 |                 1.38 |        never |
 
 <!-- /smoothing:results -->
 
@@ -260,6 +264,8 @@ The first 4 s are left out, while the filter learns.
 ![How far the drawn puck is from an even drawing, for each network and method](networking/summary-puck.svg)
 
 **Reading them.** Where the network shakes, the filter draws the host's time 12 to 26 times more evenly, and the puck one and a half to four and a half times closer to an even drawing, at about the same lag. Of the settings, q = 10⁻⁵ is steadiest but takes far too long to follow a lasting change of delay, and q = 10⁻³ follows within half a second but passes on nearly three times as much jitter; the default sits between. On a quiet Wi-Fi there is little to smooth: the clock is still steadier, but the puck is a little further off, by a fraction of a millimetre on a phone's screen, as corrections after a hit are faded in rather than drawn at once.
+
+**Bluetooth, 15 or 30 states a second.** The Bluetooth network is calibrated from a debug report of a game of air hockey between two phones over Nearby: round trips of 82 ms in the middle, 95 % under 137 ms, from 43 to 190 ms. With the filter, every state instead of every other draws the puck about 40 % closer to an even drawing, as it glides on for half as long between states, and a hit shows a state sooner; the drawn time is about as late, as the puck glides on in between either way.
 
 ### The host's time, drawn
 
@@ -285,6 +291,8 @@ How far along the rink each method draws the puck ahead of (+) or behind (−) a
 
 ![Bluetooth: the drawn puck against an even drawing](networking/puck-bluetooth.svg)
 
+![Bluetooth, 15 states a second: the drawn puck against an even drawing](networking/puck-bluetooth15.svg)
+
 ![Delay step: the drawn puck against an even drawing](networking/puck-step.svg)
 
 And the puck itself, over half a second of busy Wi-Fi:
@@ -297,6 +305,7 @@ And the puck itself, over half a second of busy Wi-Fi:
 
 - the filter no longer draws the host's time at least five times more evenly than arrival on busy Wi-Fi, Bluetooth and the delay step, or no more evenly on quiet Wi-Fi, or its lag spreads more than 8 ms on busy Wi-Fi;
 - it no longer draws the puck at least twice as close on busy Wi-Fi, and a fifth closer on Bluetooth and the delay step, or the puck error grows past 0.6 % (quiet), 1 % (busy, step) or 1.2 % (Bluetooth);
+- with every state over Bluetooth, it no longer draws the puck a fifth closer than with every other;
 - it lags more than 15 ms behind drawing by arrival;
 - it no longer follows the delay step within 3 s, or the settings no longer sit in order (q = 10⁻³ sooner, q = 10⁻⁵ later);
 - the numbers, the table above or the plots in `docs/networking/` are not what the code gives now.

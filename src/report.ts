@@ -55,7 +55,7 @@ export async function debugReport(sources: ReportSources): Promise<string> {
     `- Can do: ${Object.entries(sources.browser.features)
       .map(([feature, ok]) => `${feature} ${yes(ok)}`)
       .join(', ')}`,
-    `- Settings: language ${s.language}, app updates ${on(s.checkUpdates)} (asked ${yes(s.updatesAsked)}), website updates ${on(s.webUpdates)}, on this device ${s.localNames.length} player(s) ${s.localSplit ? 'on a split screen' : 'taking turns'}, air hockey ${s.hockeyWhole ? 'whole rink' : 'own half'}, smoothing ${on(s.hockeySmooth)}`,
+    `- Settings: language ${s.language}, app updates ${on(s.checkUpdates)} (asked ${yes(s.updatesAsked)}), website updates ${on(s.webUpdates)}, on this device ${s.localNames.length} player(s) ${s.localSplit ? 'on a split screen' : 'taking turns'}, air hockey ${s.hockeyWhole ? 'whole rink' : 'own half'}, smoothing ${on(s.hockeySmoothing)}`,
   )
   if (sources.bluetooth) {
     lines.push('', '### Bluetooth', '')

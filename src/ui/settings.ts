@@ -87,8 +87,8 @@ export function hockeySettings(): HTMLElement {
     ...toggle(now.hockeyWhole, t('hockeyWholeSetting'), t('hockeyWholeNote'), (on) =>
       updateSettings({ hockeyWhole: on }),
     ),
-    ...toggle(now.hockeySmooth, t('hockeySmoothSetting'), t('hockeySmoothNote'), (on) =>
-      updateSettings({ hockeySmooth: on }),
+    ...toggle(now.hockeySmoothing, t('hockeySmoothSetting'), t('hockeySmoothNote'), (on) =>
+      updateSettings({ hockeySmoothing: on }),
     ),
   )
 }

@@ -39,11 +39,12 @@ test('two phones race at Light Racers: Bo turns into the edge, Ada wins', async 
 test('two phones play air hockey: the whole rink, or one half, smoothed', async ({ browser }) => {
   const ada = await phone(browser, 'Ada')
   const bo = await phone(browser, 'Bo')
-  // Ada keeps the settings as they come: the whole rink, drawn as states arrive. Bo chooses
-  // his own half, for phones laid top edge to top edge, smoothed by the host's clock.
+  // Ada keeps the settings as they come: the whole rink, smoothed by the host's clock. Bo
+  // chooses his own half, for phones laid top edge to top edge, drawn as states arrive.
   await bo.getByRole('button', { name: 'Settings' }).click()
   await bo.getByLabel('Show the whole rink').uncheck()
-  await bo.getByLabel('Smooth out the network').check()
+  await expect(bo.getByLabel('Smooth out the network')).toBeChecked()
+  await bo.getByLabel('Smooth out the network').uncheck()
   await bo.getByRole('button', { name: 'Back' }).click()
   const errors: Error[] = []
   for (const page of [ada, bo]) page.on('pageerror', (error) => errors.push(error))
@@ -57,6 +58,11 @@ test('two phones play air hockey: the whole rink, or one half, smoothed', async 
   await expect(bo.locator('.rink-score')).toHaveText('Bo 0 : 0 Ada · First to 7 goals wins.')
   await expect(ada.locator('.rink-help')).toContainText('Your goal is at the bottom')
   await expect(bo.locator('.rink-help')).toContainText('top edge to top edge')
+  // The rink covers the top line, so the ping's small graph shows beside the score.
+  for (const page of [ada, bo]) {
+    await expect(page.locator('.rink-bar .net')).toBeVisible({ timeout: 5000 })
+  }
+  if (process.env.SCREENSHOTS) await bo.screenshot({ path: `${process.env.SCREENSHOTS}/rink-bo.png` })
 
   // After the countdown, Bo's finger sweeps his mallet up through the puck in the middle,
   // at the top of his screen, and Ada's drags hers about.

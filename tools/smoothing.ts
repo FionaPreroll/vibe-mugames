@@ -56,13 +56,26 @@ export const SCENARIOS: readonly Scenario[] = [
     spike: 0.12,
     every: 1 / 30,
   },
+  // Bluetooth as a Fairphone 4 measured it, playing air hockey through Nearby: round trips of
+  // 82 ms in the middle, 95 % under 137 ms, from 43 to 190; so each way 20 ms, and up to 45 ms
+  // more, and now and then 60 ms more again. The Spielekiste sends Bluetooth players every state
+  // (see src/bluetooth.ts); the library's 15 a second, sent before, are here to compare.
   {
     id: 'bluetooth',
     name: 'Bluetooth',
-    delay: 0.04,
-    jitter: 0.04,
-    spikes: 0.03,
-    spike: 0.08,
+    delay: 0.02,
+    jitter: 0.045,
+    spikes: 0.04,
+    spike: 0.06,
+    every: 1 / 30,
+  },
+  {
+    id: 'bluetooth15',
+    name: 'Bluetooth, 15/s',
+    delay: 0.02,
+    jitter: 0.045,
+    spikes: 0.04,
+    spike: 0.06,
     every: 1 / 15,
   },
   {

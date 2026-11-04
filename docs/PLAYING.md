@@ -64,7 +64,7 @@ Updates are opt-in, in the settings (⚙ on the start screen):
 
 ## The connection
 
-At a table with other phones, the top line shows a small graph of the ping, and its newest value, green, yellow or red; on the host's phone, the worst of the players'. Tapping it opens _Connection details_: the last minute's pings, and for each connection its ping, pings lost, stalls, messages and data, and how it is carried (Wi-Fi or Bluetooth, both ends' addresses and protocols, round trip, packets, bytes, encryption, channels). Addresses show hidden until _Show addresses_.
+At a table with other phones, the top line shows a small graph of the ping, and its newest value, green, yellow or red; on the host's phone, the worst of the players'. In Air Hockey, whose rink covers the screen, they show beside the score. Tapping it opens _Connection details_: the last minute's pings, and for each connection its ping, pings lost, stalls, messages and data, and how it is carried (Wi-Fi or Bluetooth, both ends' addresses and protocols, round trip, packets, bytes, encryption, channels). Addresses show hidden until _Show addresses_.
 
 The host can _Test connections_: for five seconds the phones send as much as the connections take, beside the game, and every player's ping under load and kilobytes a second each way appear on both phones.
 

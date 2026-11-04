@@ -119,6 +119,8 @@ export class RinkView implements LiveView {
   private readonly score: HTMLElement
   private readonly help: HTMLElement
   private readonly stopButton: HTMLButtonElement | null
+  /** The connection at a glance, while the rink covers the screen's top line. */
+  private readonly net: HTMLElement
   private readonly painter: Painter
   private state: TableState | null = null
   /** When the newest state came, for drawing the puck gliding on between states. */
@@ -154,7 +156,8 @@ export class RinkView implements LiveView {
     this.stopButton = options.stop
       ? h('button', { type: 'button', textContent: t('stopGame'), onclick: options.stop })
       : null
-    const bar = h('div', { class: 'rink-bar' }, this.score, this.help, this.stopButton)
+    this.net = h('span', { class: 'rink-net', hidden: true }, options.net)
+    const bar = h('div', { class: 'rink-bar' }, this.score, this.net, this.help, this.stopButton)
     this.element = h('div', { class: 'live rink' }, this.canvas, bar)
     this.canvas.addEventListener('pointerdown', this.down)
     this.canvas.addEventListener('pointermove', this.moved)
@@ -193,7 +196,7 @@ export class RinkView implements LiveView {
 
   /** Whether to draw by the host's filtered clock: on a phone of its own, if chosen. */
   private smooth(): boolean {
-    return !this.options.local && settings().hockeySmooth
+    return !this.options.local && settings().hockeySmoothing
   }
 
   update(state: TableState): void {
@@ -224,6 +227,7 @@ export class RinkView implements LiveView {
     }
     this.help.hidden = this.options.local ? this.aims.size === 0 : !arena
     if (this.stopButton) this.stopButton.hidden = !arena
+    this.net.hidden = !arena
   }
 
   /** The goals, the viewer's first, with a word of what to do. */

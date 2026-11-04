@@ -46,26 +46,31 @@
 <text class="text" x="56" y="160.5" text-anchor="end">20</text>
 <line class="grid" x1="64" y1="78.7" x2="720" y2="78.7"/>
 <text class="text" x="56" y="82.7" text-anchor="end">30</text>
-<path class="s1" d="M95.0,312.0 V302.3 Q95.0,298.3 99.0,298.3 H115.0 Q119.0,298.3 119.0,302.3 V312.0 Z"><title>Quiet Wi-Fi, Unfiltered: 1.8</title></path>
-<path class="s2" d="M121.0,312.0 V310.2 Q121.0,306.2 125.0,306.2 H141.0 Q145.0,306.2 145.0,310.2 V312.0 Z"><title>Quiet Wi-Fi, Kalman (default, q = 10⁻⁴): 0.74</title></path>
-<path class="s3" d="M147.0,312.0 V304.3 Q147.0,300.3 151.0,300.3 H167.0 Q171.0,300.3 171.0,304.3 V312.0 Z"><title>Quiet Wi-Fi, Kalman, q = 10⁻³: 1.5</title></path>
-<path class="s4" d="M173.0,312.0 V312.0 Q173.0,309.7 175.3,309.7 H194.7 Q197.0,309.7 197.0,312.0 V312.0 Z"><title>Quiet Wi-Fi, Kalman, q = 10⁻⁵: 0.29</title></path>
-<text class="text" x="146.0" y="330" text-anchor="middle">Quiet Wi-Fi</text>
-<path class="s1" d="M259.0,312.0 V80.0 Q259.0,76.0 263.0,76.0 H279.0 Q283.0,76.0 283.0,80.0 V312.0 Z"><title>Busy Wi-Fi, Unfiltered: 30.4</title></path>
-<path class="s2" d="M285.0,312.0 V307.0 Q285.0,303.0 289.0,303.0 H305.0 Q309.0,303.0 309.0,307.0 V312.0 Z"><title>Busy Wi-Fi, Kalman (default, q = 10⁻⁴): 1.2</title></path>
-<path class="s3" d="M311.0,312.0 V290.8 Q311.0,286.8 315.0,286.8 H331.0 Q335.0,286.8 335.0,290.8 V312.0 Z"><title>Busy Wi-Fi, Kalman, q = 10⁻³: 3.2</title></path>
-<path class="s4" d="M337.0,312.0 V312.0 Q337.0,309.0 340.0,309.0 H358.0 Q361.0,309.0 361.0,312.0 V312.0 Z"><title>Busy Wi-Fi, Kalman, q = 10⁻⁵: 0.38</title></path>
-<text class="text" x="310.0" y="330" text-anchor="middle">Busy Wi-Fi</text>
-<path class="s1" d="M423.0,312.0 V215.6 Q423.0,211.6 427.0,211.6 H443.0 Q447.0,211.6 447.0,215.6 V312.0 Z"><title>Bluetooth, Unfiltered: 12.9</title></path>
-<path class="s2" d="M449.0,312.0 V307.5 Q449.0,303.5 453.0,303.5 H469.0 Q473.0,303.5 473.0,307.5 V312.0 Z"><title>Bluetooth, Kalman (default, q = 10⁻⁴): 1.1</title></path>
-<path class="s3" d="M475.0,312.0 V293.4 Q475.0,289.4 479.0,289.4 H495.0 Q499.0,289.4 499.0,293.4 V312.0 Z"><title>Bluetooth, Kalman, q = 10⁻³: 2.9</title></path>
-<path class="s4" d="M501.0,312.0 V312.0 Q501.0,309.1 503.9,309.1 H522.1 Q525.0,309.1 525.0,312.0 V312.0 Z"><title>Bluetooth, Kalman, q = 10⁻⁵: 0.37</title></path>
-<text class="text" x="474.0" y="330" text-anchor="middle">Bluetooth</text>
-<path class="s1" d="M587.0,312.0 V206.7 Q587.0,202.7 591.0,202.7 H607.0 Q611.0,202.7 611.0,206.7 V312.0 Z"><title>Delay step, Unfiltered: 14.1</title></path>
-<path class="s2" d="M613.0,312.0 V307.7 Q613.0,303.7 617.0,303.7 H633.0 Q637.0,303.7 637.0,307.7 V312.0 Z"><title>Delay step, Kalman (default, q = 10⁻⁴): 1.1</title></path>
-<path class="s3" d="M639.0,312.0 V293.1 Q639.0,289.1 643.0,289.1 H659.0 Q663.0,289.1 663.0,293.1 V312.0 Z"><title>Delay step, Kalman, q = 10⁻³: 2.9</title></path>
-<path class="s4" d="M665.0,312.0 V312.0 Q665.0,309.3 667.7,309.3 H686.3 Q689.0,309.3 689.0,312.0 V312.0 Z"><title>Delay step, Kalman, q = 10⁻⁵: 0.35</title></path>
-<text class="text" x="638.0" y="330" text-anchor="middle">Delay step</text>
+<path class="s1" d="M84.7,312.0 V302.3 Q84.7,298.3 88.7,298.3 H101.6 Q105.6,298.3 105.6,302.3 V312.0 Z"><title>Quiet Wi-Fi, Unfiltered: 1.8</title></path>
+<path class="s2" d="M107.6,312.0 V310.2 Q107.6,306.2 111.6,306.2 H124.6 Q128.6,306.2 128.6,310.2 V312.0 Z"><title>Quiet Wi-Fi, Kalman (default, q = 10⁻⁴): 0.74</title></path>
+<path class="s3" d="M130.6,312.0 V304.3 Q130.6,300.3 134.6,300.3 H147.6 Q151.6,300.3 151.6,304.3 V312.0 Z"><title>Quiet Wi-Fi, Kalman, q = 10⁻³: 1.5</title></path>
+<path class="s4" d="M153.6,312.0 V312.0 Q153.6,309.7 155.8,309.7 H172.3 Q174.5,309.7 174.5,312.0 V312.0 Z"><title>Quiet Wi-Fi, Kalman, q = 10⁻⁵: 0.29</title></path>
+<text class="text" x="129.6" y="330" text-anchor="middle">Quiet Wi-Fi</text>
+<path class="s1" d="M215.9,312.0 V80.0 Q215.9,76.0 219.9,76.0 H232.8 Q236.8,76.0 236.8,80.0 V312.0 Z"><title>Busy Wi-Fi, Unfiltered: 30.4</title></path>
+<path class="s2" d="M238.8,312.0 V307.0 Q238.8,303.0 242.8,303.0 H255.8 Q259.8,303.0 259.8,307.0 V312.0 Z"><title>Busy Wi-Fi, Kalman (default, q = 10⁻⁴): 1.2</title></path>
+<path class="s3" d="M261.8,312.0 V290.8 Q261.8,286.8 265.8,286.8 H278.8 Q282.8,286.8 282.8,290.8 V312.0 Z"><title>Busy Wi-Fi, Kalman, q = 10⁻³: 3.2</title></path>
+<path class="s4" d="M284.8,312.0 V312.0 Q284.8,309.0 287.7,309.0 H302.8 Q305.7,309.0 305.7,312.0 V312.0 Z"><title>Busy Wi-Fi, Kalman, q = 10⁻⁵: 0.38</title></path>
+<text class="text" x="260.8" y="330" text-anchor="middle">Busy Wi-Fi</text>
+<path class="s1" d="M347.1,312.0 V195.1 Q347.1,191.1 351.1,191.1 H364.0 Q368.0,191.1 368.0,195.1 V312.0 Z"><title>Bluetooth, Unfiltered: 15.6</title></path>
+<path class="s2" d="M370.0,312.0 V307.4 Q370.0,303.4 374.0,303.4 H387.0 Q391.0,303.4 391.0,307.4 V312.0 Z"><title>Bluetooth, Kalman (default, q = 10⁻⁴): 1.1</title></path>
+<path class="s3" d="M393.0,312.0 V292.7 Q393.0,288.7 397.0,288.7 H410.0 Q414.0,288.7 414.0,292.7 V312.0 Z"><title>Bluetooth, Kalman, q = 10⁻³: 3</title></path>
+<path class="s4" d="M416.0,312.0 V312.0 Q416.0,309.2 418.8,309.2 H434.1 Q436.9,309.2 436.9,312.0 V312.0 Z"><title>Bluetooth, Kalman, q = 10⁻⁵: 0.36</title></path>
+<text class="text" x="392.0" y="330" text-anchor="middle">Bluetooth</text>
+<path class="s1" d="M478.3,312.0 V220.7 Q478.3,216.7 482.3,216.7 H495.2 Q499.2,216.7 499.2,220.7 V312.0 Z"><title>Bluetooth, 15/s, Unfiltered: 12.3</title></path>
+<path class="s2" d="M501.2,312.0 V307.4 Q501.2,303.4 505.2,303.4 H518.2 Q522.2,303.4 522.2,307.4 V312.0 Z"><title>Bluetooth, 15/s, Kalman (default, q = 10⁻⁴): 1.1</title></path>
+<path class="s3" d="M524.2,312.0 V292.2 Q524.2,288.2 528.2,288.2 H541.2 Q545.2,288.2 545.2,292.2 V312.0 Z"><title>Bluetooth, 15/s, Kalman, q = 10⁻³: 3.1</title></path>
+<path class="s4" d="M547.2,312.0 V312.0 Q547.2,309.1 550.0,309.1 H565.2 Q568.1,309.1 568.1,312.0 V312.0 Z"><title>Bluetooth, 15/s, Kalman, q = 10⁻⁵: 0.37</title></path>
+<text class="text" x="523.2" y="330" text-anchor="middle">Bluetooth, 15/s</text>
+<path class="s1" d="M609.5,312.0 V206.7 Q609.5,202.7 613.5,202.7 H626.4 Q630.4,202.7 630.4,206.7 V312.0 Z"><title>Delay step, Unfiltered: 14.1</title></path>
+<path class="s2" d="M632.4,312.0 V307.7 Q632.4,303.7 636.4,303.7 H649.4 Q653.4,303.7 653.4,307.7 V312.0 Z"><title>Delay step, Kalman (default, q = 10⁻⁴): 1.1</title></path>
+<path class="s3" d="M655.4,312.0 V293.1 Q655.4,289.1 659.4,289.1 H672.4 Q676.4,289.1 676.4,293.1 V312.0 Z"><title>Delay step, Kalman, q = 10⁻³: 2.9</title></path>
+<path class="s4" d="M678.4,312.0 V312.0 Q678.4,309.3 681.1,309.3 H696.6 Q699.3,309.3 699.3,312.0 V312.0 Z"><title>Delay step, Kalman, q = 10⁻⁵: 0.35</title></path>
+<text class="text" x="654.4" y="330" text-anchor="middle">Delay step</text>
 <line class="axis" x1="64" y1="312" x2="720" y2="312"/>
 <text class="text" transform="translate(16 194) rotate(-90)" text-anchor="middle">roughness (ms RMS per frame)</text>
 </svg>

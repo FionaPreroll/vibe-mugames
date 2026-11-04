@@ -30,8 +30,13 @@ export interface Settings {
   readonly localSplit: boolean
   /** Air hockey: a player sees the whole rink (true), or only their own half (false). */
   readonly hockeyWhole: boolean
-  /** Air hockey: smooth what the network shakes up (see src/net/clock.ts), or draw it as it comes. */
-  readonly hockeySmooth: boolean
+  /**
+   * Air hockey: smooth what the network shakes up (see src/net/clock.ts), or draw it as it comes.
+   * On unless switched off. It was kept as `hockeySmooth`, off at first, until phones showed it
+   * was needed: that one, written by every phone that saved any setting, is no longer read, so
+   * every phone starts smoothed once.
+   */
+  readonly hockeySmoothing: boolean
   /** A buzz when it is the player's turn, on phones that can (see src/ui/attention.ts). */
   readonly vibrate: boolean
   /** The games this device chose last, newest first, which the chooser shows on top. */
@@ -55,7 +60,7 @@ const DEFAULTS: Settings = {
   localNames: [],
   localSplit: false,
   hockeyWhole: true,
-  hockeySmooth: false,
+  hockeySmoothing: true,
   vibrate: true,
   recentGames: [],
   theme: DEFAULT_THEME,
@@ -90,7 +95,7 @@ export function parseSettings(value: unknown): Settings {
     localNames,
     localSplit,
     hockeyWhole,
-    hockeySmooth,
+    hockeySmoothing,
     vibrate,
     recentGames,
     theme,
@@ -108,7 +113,7 @@ export function parseSettings(value: unknown): Settings {
       : [],
     localSplit: localSplit === true,
     hockeyWhole: hockeyWhole !== false,
-    hockeySmooth: hockeySmooth === true,
+    hockeySmoothing: hockeySmoothing !== false,
     vibrate: vibrate !== false,
     recentGames: Array.isArray(recentGames)
       ? [...new Set(recentGames.filter(isGameId))].slice(0, MAX_RECENT)

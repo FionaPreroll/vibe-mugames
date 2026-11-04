@@ -235,6 +235,12 @@ describe('air hockey’s smoothing, against the unfiltered drawing', () => {
     expect(metrics('step', 'kalman').puckRms).toBeLessThan(metrics('step', 'arrival').puckRms * 0.8)
   })
 
+  it('draws the puck closer over Bluetooth with every state than with every other', () => {
+    expect(metrics('bluetooth', 'kalman').puckRms).toBeLessThan(
+      metrics('bluetooth15', 'kalman').puckRms * 0.8,
+    )
+  })
+
   it('stays close on a quiet network, where there is little to smooth', () => {
     expect(metrics('quiet', 'kalman').puckRms).toBeLessThan(0.6)
     expect(metrics('busy', 'kalman').puckRms).toBeLessThan(1)
