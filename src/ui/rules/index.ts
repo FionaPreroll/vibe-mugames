@@ -4,6 +4,7 @@ import { t } from '../../i18n'
 import { h } from '../dom'
 import { airHockeyGuide } from './airhockey'
 import { dameGuide } from './dame'
+import { echoGuide } from './echo'
 import { fourInARowGuide } from './fourinarow'
 import type { GameGuide } from './guide'
 import { kaesekaestchenGuide } from './kaesekaestchen'
@@ -12,9 +13,11 @@ import { ludoGuide } from './ludo'
 import { maexchenGuide } from './maexchen'
 import { miauMiauGuide } from './miaumiau'
 import { muehleGuide } from './muehle'
+import { reactionGuide } from './reaction'
 import { reversiGuide } from './reversi'
 import { schwimmenGuide } from './schwimmen'
 import { seeschlachtGuide } from './seeschlacht'
+import { snakesGuide } from './snakes'
 import { stadtLandFlussGuide } from './stadtlandfluss'
 import { sternhalmaGuide } from './sternhalma'
 import { ticTacToeGuide } from './tictactoe'
@@ -39,6 +42,9 @@ export const GUIDES: Record<GameId, GameGuide> = {
   seeschlacht: seeschlachtGuide,
   lichtrenner: lichtrennerGuide,
   airhockey: airHockeyGuide,
+  snakes: snakesGuide,
+  reaction: reactionGuide,
+  echo: echoGuide,
   ludo: ludoGuide,
   maexchen: maexchenGuide,
   werwolf: werwolfGuide,

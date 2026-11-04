@@ -143,6 +143,9 @@ describe('the game chooser', () => {
     expect($$('.game-choice', skill).map((choice) => choice.textContent)).toEqual([
       'Light Racers',
       'Air Hockey',
+      'Snakes',
+      'Reaction',
+      'Colour Echo',
     ])
     expect($$('.game-card')).toHaveLength(GAME_IDS.length)
     const werewolf = $$('.game-card').find((card) => card.ariaLabel === 'Werewolf') ?? document

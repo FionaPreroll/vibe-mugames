@@ -1,8 +1,11 @@
 import { type GameId, isLiveGame } from '../core/board'
 import type { TableState } from '../core/table'
 import type { LiveOptions, LiveView } from './canvas'
+import { EchoField } from './echo'
 import { RaceView } from './race'
+import { ReactionField } from './reaction'
 import { RinkView } from './rink'
+import { SnakesField } from './snakes'
 
 /**
  * Games in real time on the screen: a field drawn many times a second, which stays in place
@@ -56,7 +59,17 @@ export class LiveSlot {
 }
 
 function make(game: GameId, viewer: number, shared: boolean, options: LiveOptions): LiveView {
-  return game === 'lichtrenner'
-    ? new RaceView(viewer, shared, options)
-    : new RinkView(viewer, shared, options)
+  if (game === 'lichtrenner') return new RaceView(viewer, shared, options)
+  if (game === 'snakes') return new SnakesField(viewer, shared, options)
+  if (game === 'reaction') return new ReactionField(viewer, shared, options)
+  if (game === 'echo') return new EchoField(viewer, shared, options)
+  return new RinkView(viewer, shared, options)
+}
+
+/**
+ * The table without the games in real time, which change many times a second and draw
+ * themselves: what a screen around their field redraws for.
+ */
+export function withoutLive(state: TableState): TableState {
+  return { ...state, race: null, rink: null, snakes: null, reaction: null, echo: null }
 }

@@ -12,7 +12,7 @@ import { connectionDialog } from './connection'
 import { failureText, h, show, toast } from './dom'
 import { gameChoices, gameView, nextButtons, playerItems, staged } from './game'
 import { replaceKeeping } from './keep'
-import { LiveSlot } from './live'
+import { LiveSlot, withoutLive } from './live'
 import { netColor } from './report'
 import { gameTitle } from './rules'
 
@@ -101,7 +101,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
     if (gone) return
     const state = seat.state()
     if (!state) return
-    const drawn = JSON.stringify([{ ...state, race: null, rink: null }, picker.shown(state)])
+    const drawn = JSON.stringify([withoutLive(state), picker.shown(state)])
     live.update(state)
     if (drawn === shown) return
     shown = drawn

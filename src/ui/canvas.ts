@@ -19,6 +19,10 @@ const CLASSIC: Record<string, string> = {
   rink: '#16324a',
   'rink-line': 'rgb(241 236 226 / 0.35)',
   puck: '#f1ece2',
+  apple: '#ff8c42',
+  'apple-leaf': '#8fc75b',
+  signal: '#6be06b',
+  poor: '#ff5470',
 }
 
 let colours = new Map<string, string>()

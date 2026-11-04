@@ -1,7 +1,15 @@
 import { type Conditions, linkPair, seededRandom } from '@fionapreroll/p2p/testing'
 import fc from 'fast-check'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { BOARD_GAME_IDS, type GameId, isBoardGame, LIVE_GAME_IDS, type Move } from '../core/board'
+import {
+  BOARD_GAME_IDS,
+  type GameId,
+  isBoardGame,
+  LIVE_GAME_IDS,
+  type LiveGameId,
+  type Move,
+} from '../core/board'
+import * as echo from '../core/echo'
 import { GAMES, seatRange } from '../core/games'
 import * as ludo from '../core/ludo'
 import * as maex from '../core/maexchen'
@@ -218,18 +226,15 @@ describe('every game over a weak connection', () => {
             const { host, guests, sent } = await table(2, { loss, delayMs: [10, 150], seed })
             expect(host.choose(game)).toBe(true)
             const phones: Seat[] = [host, ...guests]
+            const reached = new Set<number>()
             for (let step = 0; step < 60 && host.state().outcome === null; step++) {
               for (const phone of phones) {
-                const round = phone.state()?.round ?? 0
-                // Lichtrenner: a heading; air hockey: where the mallet should go.
-                phone.input(
-                  game === 'lichtrenner'
-                    ? [round, Math.floor(random() * 4)]
-                    : [round, random() - 0.5, random() * 1.4],
-                )
+                const seen = phone.state()
+                if (seen) phone.input(liveInput(game, seen, random))
               }
               await later(100 + Math.floor(random() * 200))
               const state = host.state()
+              heard(game, state, reached)
               if (state.outcome !== null) break
               // From the second second on: the first states may still be on their way.
               if (step < 5) continue
@@ -241,11 +246,8 @@ describe('every game over a weak connection', () => {
               }
             }
             // Both players' input got through: the host's game moved for both.
-            const state = host.state()
-            if (game === 'lichtrenner')
-              for (const rider of state.race?.riders ?? [])
-                expect(rider.path.length).toBeGreaterThan(1)
-            else expect(state.rink?.mallets.every((m) => m.x !== 0 || m.y !== 0)).toBe(true)
+            heard(game, host.state(), reached)
+            expect([...reached].sort()).toEqual([0, 1])
             host.lobby()
             await agree(host, guests)
             host.close()
@@ -256,3 +258,36 @@ describe('every game over a weak connection', () => {
     })
   }
 })
+
+/**
+ * What a phone's player wants now in a game in real time, from the table as it last heard of
+ * it: a heading in Lichtrenner and Snakes, where the mallet should go in air hockey, a time
+ * once the signal shows in Reaction, and a colour or two in Colour Echo.
+ */
+function liveInput(game: LiveGameId, state: TableState, random: () => number): number[] {
+  const round = state.round
+  if (game === 'lichtrenner' || game === 'snakes') return [round, Math.floor(random() * 4)]
+  if (game === 'airhockey') return [round, random() - 0.5, random() * 1.4]
+  if (game === 'reaction') {
+    const signal = state.reaction?.signal ?? 1
+    return [round, Math.max(1, signal), 150 + Math.floor(random() * 300)]
+  }
+  const length = state.echo?.length ?? 1
+  const taps = Array.from({ length: 1 + Math.floor(random() * 2) }, () => Math.floor(random() * 4))
+  return [round, length, ...echo.packTaps(taps)]
+}
+
+/** Notes the seats whose input the host's game shows it took. */
+function heard(game: LiveGameId, state: TableState, seats: Set<number>): void {
+  const took = (seat: number): boolean => {
+    if (game === 'lichtrenner') return (state.race?.riders[seat]?.path.length ?? 0) > 1
+    if (game === 'airhockey') {
+      const mallet = state.rink?.mallets[seat]
+      return mallet !== undefined && (mallet.x !== 0 || mallet.y !== 0)
+    }
+    if (game === 'snakes') return state.snakes?.snakes[seat]?.heading !== (seat % 2 === 0 ? 1 : 3)
+    if (game === 'reaction') return state.reaction?.answers[seat] !== null
+    return (state.echo?.progress[seat] ?? 0) > 0 || state.echo?.out[seat] !== null
+  }
+  for (const seat of state.seats.keys()) if (state.game === game && took(seat)) seats.add(seat)
+}

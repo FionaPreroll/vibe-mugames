@@ -8,13 +8,16 @@ import {
   type Outcome,
   type Position,
 } from './board'
+import * as echo from './echo'
 import { GAMES, seatRange } from './games'
 import * as licht from './lichtrenner'
 import * as ludo from './ludo'
 import * as maex from './maexchen'
 import * as miau from './miaumiau'
+import * as react from './reaction'
 import * as swim from './schwimmen'
 import * as sea from './seeschlacht'
+import * as snakes from './snakes'
 import * as words from './stadtlandfluss'
 import * as wolf from './werwolf'
 
@@ -33,7 +36,7 @@ import * as wolf from './werwolf'
  * In Miau-Miau and Schwimmen, the host alone knows every hand, in Sea Battle every fleet, in Mäxchen the dice
  * under the cup and in Werwolf every role: `state(id)` shows each player only their own.
  *
- * Games in real time (Lichtrenner, air hockey) have no moves in turn: each player at the board
+ * Games in real time (Lichtrenner, air hockey, Snakes, Reaction, Colour Echo) have no moves in turn: each player at the board
  * says what they want many times a second (`input`), such as where to head, and the host runs
  * the game on by the time that has passed (`tick`). Time runs out in some party games too, such
  * as the writing in Stadt, Land, Fluss.
@@ -75,6 +78,12 @@ export interface TableState {
   readonly race: licht.LichtView | null
   /** Air hockey as it stands; null in every other game. */
   readonly rink: hockey.HockeyView | null
+  /** Snakes as it stands; null in every other game. */
+  readonly snakes: snakes.SnakesView | null
+  /** Reaction as it stands, without when the next signal comes; null in every other game. */
+  readonly reaction: react.ReactionView | null
+  /** Colour Echo as the player this state is for sees it; null in every other game. */
+  readonly echo: echo.EchoView | null
   /**
    * Games started at this table so far. A player's input names the game it is meant for, so
    * what they wanted in the last one does not steer the next.
@@ -142,6 +151,9 @@ export class Table {
   private phaseFrom = 0
   private race: licht.LichtState | null = null
   private rink: hockey.HockeyState | null = null
+  private snakes: snakes.SnakesState | null = null
+  private reaction: react.ReactionState | null = null
+  private echo: echo.EchoState | null = null
   /** What each seat wants now in a game in real time, by seat: see `input`. */
   private wants: (readonly number[] | null)[] = []
   private round = 0
@@ -209,20 +221,17 @@ export class Table {
   /**
    * What a player at the board of a game in real time wants now: the round it is meant for,
    * then the game's numbers. In Lichtrenner, a heading (`licht.Want`); in air hockey, where
-   * the mallet should go, as the player sees their half (`hockey.Target`). It holds until the
-   * next input. Returns whether it was taken.
+   * the mallet should go, as the player sees their half (`hockey.Target`); in Snakes, a
+   * heading as in Lichtrenner; in Reaction, the signal and the time of the tap
+   * (`react.isAnswer`); in Colour Echo, the length of the row and every colour tapped in it so
+   * far (`echo.packTaps`). It holds until the next input. Returns whether it was taken.
    */
   input(id: number, values: readonly number[]): boolean {
     if (this.game === null || !isLiveGame(this.game) || this.outcome !== null) return false
     const seat = this.seats.indexOf(id)
     const [round, ...wanted] = values
     if (seat < 0 || round !== this.round) return false
-    const [a, b] = wanted
-    const fits =
-      this.game === 'lichtrenner'
-        ? wanted.length === 1 && a !== undefined && licht.isWant(a)
-        : wanted.length === 2 && a !== undefined && b !== undefined && hockey.isTarget(a, b)
-    if (!fits) return false
+    if (!fitsInput(this.game, wanted)) return false
     this.wants[seat] = wanted
     return true
   }
@@ -255,6 +264,28 @@ export class Table {
       this.rink = hockey.advance(this.rink, targets, seconds)
       const winner = hockey.outcome(this.rink)
       this.outcome = winner === null ? null : { winner, line: [] }
+    } else if (this.snakes) {
+      const wants = this.seats.map((_, seat) => this.wants[seat]?.[0] ?? null)
+      this.snakes = snakes.advance(this.snakes, wants, seconds, this.random)
+      this.outcome = endOf(snakes.outcome(this.snakes))
+    } else if (this.reaction) {
+      let game = this.reaction
+      for (const [seat, wanted] of this.wants.entries()) {
+        const [signal, time] = wanted ?? []
+        if (signal !== undefined && time !== undefined)
+          game = react.answer(game, seat, signal, time)
+      }
+      this.reaction = react.advance(game, seconds, this.random)
+      this.outcome = endOf(react.outcome(this.reaction))
+    } else if (this.echo) {
+      let game = this.echo
+      for (const [seat, wanted] of this.wants.entries()) {
+        const [length, ...packed] = wanted ?? []
+        const taps = echo.unpackTaps(packed)
+        if (length !== undefined && taps) game = echo.enter(game, seat, length, taps)
+      }
+      this.echo = echo.advance(game, seconds, this.random)
+      this.outcome = endOf(this.echo.winner)
     } else return false
     this.score()
     return true
@@ -294,6 +325,9 @@ export class Table {
     this.words = null
     this.race = null
     this.rink = null
+    this.snakes = null
+    this.reaction = null
+    this.echo = null
     this.last = null
     this.outcome = null
   }
@@ -317,6 +351,9 @@ export class Table {
       words: this.words && words.view(this.words, this.seats.indexOf(viewer)),
       race: this.race && licht.view(this.race),
       rink: this.rink && hockey.view(this.rink),
+      snakes: this.snakes && snakes.view(this.snakes),
+      reaction: this.reaction && react.view(this.reaction),
+      echo: this.echo && echo.view(this.echo, this.seats.indexOf(viewer)),
       round: this.round,
       moveNo: this.moveNo,
       last: this.last,
@@ -477,10 +514,29 @@ export class Table {
     this.phaseWas = this.phaseKey()
     this.race = game === 'lichtrenner' ? licht.start(this.seats.length) : null
     this.rink = game === 'airhockey' ? hockey.start() : null
+    const players = this.seats.length
+    this.snakes = game === 'snakes' ? snakes.start(players, this.random) : null
+    this.reaction = game === 'reaction' ? react.start(players) : null
+    this.echo = game === 'echo' ? echo.start(players, this.random) : null
     this.wants = []
     this.round++
     this.moveNo = 0
     this.last = null
     this.outcome = null
   }
+}
+
+/** Whether input fits the game in real time on the table: see `Table.input`. */
+function fitsInput(game: GameId, wanted: readonly number[]): boolean {
+  const [a, b] = wanted
+  if (a === undefined) return false
+  if (game === 'lichtrenner' || game === 'snakes') return wanted.length === 1 && licht.isWant(a)
+  if (game === 'airhockey') return wanted.length === 2 && b !== undefined && hockey.isTarget(a, b)
+  if (game === 'reaction') return wanted.length === 2 && b !== undefined && react.isAnswer(a, b)
+  return Number.isInteger(a) && echo.unpackTaps(wanted.slice(1)) !== null
+}
+
+/** A game's end as the table keeps it. */
+function endOf(end: number | 'draw' | null): Outcome | null {
+  return end === null || end === 'draw' ? end : { winner: end, line: [] }
 }

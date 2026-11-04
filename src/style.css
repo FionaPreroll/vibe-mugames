@@ -53,13 +53,16 @@
   --water-text: #a7c7dc;
   --ship: #8a97a6;
   --sunk: #6b2427;
-  /* The fields of Light Racers and Air Hockey. */
+  /* The fields of Light Racers, Air Hockey, Snakes and Reaction. */
   --field: #0d1620;
   --field-line: rgb(255 255 255 / 0.05);
   --rider: #ffffff;
   --rink: #16324a;
   --rink-line: rgb(241 236 226 / 0.35);
   --puck: #f1ece2;
+  --apple: #ff8c42;
+  --apple-leaf: #8fc75b;
+  --signal: #6be06b;
   /* Notes, and the connection's quality. */
   --warning-text: #ffc9a3;
   --good: #6be06b;
@@ -2209,6 +2212,33 @@ button {
 .pane .turns .turn-button {
   min-height: 2.5rem;
   font-size: 1.4rem;
+}
+
+/* Reaction's buttons and Colour Echo's pads: square for one player, side by side for more. */
+.zone-field {
+  aspect-ratio: 1;
+  max-height: 70dvh;
+  border-radius: 0.75rem;
+}
+
+.pane .zone-field {
+  height: calc(100cqh - 6rem);
+  max-height: none;
+}
+
+/* How long each snake is, and Reaction's points, above or below the field. */
+.snake-lengths,
+.reaction-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  margin: 0.25rem 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.snake-length.out {
+  opacity: 0.5;
+  text-decoration: line-through;
 }
 
 /* Hidden must win over every display rule above. */

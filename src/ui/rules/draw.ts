@@ -47,6 +47,10 @@ export const INK = {
   coin: 'var(--coin)',
   night: 'var(--field)',
   rink: 'var(--rink)',
+  apple: 'var(--apple)',
+  leaf: 'var(--apple-leaf)',
+  signal: 'var(--signal)',
+  poor: 'var(--poor)',
 } as const
 
 /** An SVG element: `svg('circle', { cx: 1, cy: 1, r: 0.4 })`. */

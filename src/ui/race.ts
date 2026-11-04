@@ -25,33 +25,46 @@ interface Want {
   left: boolean
 }
 
+/** What a field steered like Lichtrenner's needs of each of its seats. */
+export interface Steered {
+  readonly heading: number
+  readonly alive: boolean
+}
+
 /**
- * Lichtrenner's field: the grid with every rider's wall of light, and the turns of the riders
- * this screen steers, by swipes on the field, by the ⟲ and ⟳ buttons and by keys.
+ * A field whose seats steer a heading, as Lichtrenner's riders and the snakes do: by swipes on
+ * the field, by the ⟲ and ⟳ buttons and by keys. Each game draws its own field.
  */
-export class RaceView implements LiveView {
+export abstract class SteeredField implements LiveView {
   readonly element: HTMLElement
-  private readonly canvas: HTMLCanvasElement
+  protected readonly canvas: HTMLCanvasElement
   private readonly controls: HTMLElement
   private readonly painter: Painter
-  private state: TableState | null = null
+  protected state: TableState | null = null
   private round = -1
   /** The seats steered here, and what each wants. */
   private readonly wants = new Map<number, Want>()
   private swipe: { x: number; y: number; pointer: number } | null = null
 
   constructor(
-    private readonly viewer: number,
-    private readonly shared: boolean,
+    protected readonly viewer: number,
+    protected readonly shared: boolean,
     private readonly options: LiveOptions,
+    label: string,
+    kind: string,
   ) {
     this.canvas = h('canvas', {
-      class: 'live-field race-field',
+      class: `live-field race-field${kind ? ` ${kind}-field` : ''}`,
       role: 'img',
-      ariaLabel: t('lichtrenner'),
+      ariaLabel: label,
     } as Partial<HTMLCanvasElement>)
     this.controls = h('div', { class: 'race-controls' })
-    this.element = h('div', { class: 'live race' }, this.canvas, this.controls)
+    this.element = h(
+      'div',
+      { class: `live race${kind ? ` ${kind}` : ''}` },
+      this.canvas,
+      this.controls,
+    )
     this.canvas.addEventListener('pointerdown', this.down)
     this.canvas.addEventListener('pointermove', this.moved)
     this.canvas.addEventListener('pointerup', this.up)
@@ -64,6 +77,12 @@ export class RaceView implements LiveView {
     )
   }
 
+  /** The heading of each seat's rider or snake, and whether it is still in. */
+  protected abstract steered(state: TableState): readonly Steered[] | null
+
+  /** Draws the field, in CSS pixels. */
+  protected abstract draw(context: CanvasRenderingContext2D, width: number, height: number): void
+
   get stopped(): boolean {
     return this.painter.stopped
   }
@@ -74,13 +93,13 @@ export class RaceView implements LiveView {
 
   update(state: TableState): void {
     this.state = state
-    const race = state.race
-    if (!race || state.round === this.round) return
-    // A new race: every seat steered here starts with the heading it has.
+    const steered = this.steered(state)
+    if (!steered || state.round === this.round) return
+    // A new game: every seat steered here starts with the heading it has.
     this.round = state.round
     this.wants.clear()
     for (const [seat, id] of state.seats.entries()) {
-      const rider = race.riders[seat]
+      const rider = steered[seat]
       if (rider && this.options.steers.includes(id)) {
         this.wants.set(seat, { heading: rider.heading, left: false })
       }
@@ -123,8 +142,8 @@ export class RaceView implements LiveView {
   /** A seat steered here turns left or right, or heads a way, if its rider still rides. */
   private want(seat: number, turn: 'left' | 'right' | Direction): void {
     const want = this.wants.get(seat)
-    const race = this.state?.race
-    if (!want || !race?.riders[seat]?.alive || this.state?.outcome !== null) return
+    const steered = this.state && this.steered(this.state)
+    if (!want || !steered?.[seat]?.alive || this.state?.outcome !== null) return
     if (turn === 'left') {
       want.heading = (want.heading + 3) % 4
       want.left = true
@@ -178,8 +197,19 @@ export class RaceView implements LiveView {
     event.preventDefault()
     this.want(pressed.seat, pressed.direction)
   }
+}
 
-  private draw(context: CanvasRenderingContext2D, width: number, height: number): void {
+/** Lichtrenner's field: the grid with every rider's wall of light. */
+export class RaceView extends SteeredField {
+  constructor(viewer: number, shared: boolean, options: LiveOptions) {
+    super(viewer, shared, options, t('lichtrenner'), '')
+  }
+
+  protected steered(state: TableState): readonly Steered[] | null {
+    return state.race?.riders ?? null
+  }
+
+  protected draw(context: CanvasRenderingContext2D, width: number, height: number): void {
     const state = this.state
     const race = state?.race
     context.clearRect(0, 0, width, height)
