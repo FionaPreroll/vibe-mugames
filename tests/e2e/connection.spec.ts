@@ -56,6 +56,31 @@ test('the table shows the connection, the host tests it, and the report holds it
   await expect(ada.locator('.modal')).toHaveCount(0)
 })
 
+test('the table’s top line fits a narrow phone, with the connection and Add player', async ({
+  browser,
+}) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await expect(ada.locator('header button.net')).toContainText(/\d+ ms/, { timeout: 5000 })
+  for (const width of [320, 360, 390]) {
+    await ada.setViewportSize({ width, height: 800 })
+    for (const element of await ada.locator('header > *').all()) {
+      const box = await element.boundingBox()
+      // Hidden ones, such as full screen where the browser has none, take no room.
+      if (box)
+        expect(
+          box.x + box.width,
+          await element.evaluate((e) => e.outerHTML.slice(0, 40)),
+        ).toBeLessThanOrEqual(width)
+    }
+    expect(await ada.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width,
+    )
+  }
+})
+
 test('the settings make a debug report, to read before sending it', async ({ browser }) => {
   const ada = await phone(browser, 'Ada')
   await ada.getByRole('button', { name: 'Settings' }).click()

@@ -61,8 +61,46 @@ header {
   margin-bottom: 1rem;
 }
 
+/* On a narrow phone, the title gives way to the buttons beside it, which keep their size. */
 header h1 {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+header > button {
+  flex: none;
+}
+
+header > button.add {
+  flex: 0 1 auto;
+}
+
+/* At a table on a phone, the connection takes the title's place; screen readers keep it. */
+@media (max-width: 32rem) {
+  header:has(> button.net:not([hidden])) h1 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  header:has(> button.net:not([hidden])) > button.net {
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 24rem) {
+  header {
+    gap: 0.4rem;
+  }
+
+  header > button.add {
+    padding-inline: 0.55rem;
+  }
 }
 
 button,

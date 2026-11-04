@@ -65,6 +65,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 ### Fixed
 
+- At a table on a narrow phone, the top line no longer sticks out past the right edge: the connection takes the title's place, and _Add player_ fits beside it.
 - A name typed on the start screen stays when you visit the settings or change the language, instead of being forgotten.
 - A Bluetooth player the host let in whose phone never connects no longer stays on _Connecting…_ in the host's list: after 30 seconds, the list says the other phone did not answer in time.
 - Over a weak Wi-Fi, a player's phone no longer goes back to an older table for a moment when the host's messages arrive out of order.
