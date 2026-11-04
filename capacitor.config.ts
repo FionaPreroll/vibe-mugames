@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 /**
  * The Android app: the web build (`dist`) packed into a native app, which shows it in Android's
- * WebView. See "Android app" in the README.
+ * WebView. See "The Android app" in docs/DEVELOPMENT.md.
  */
 const config: CapacitorConfig = {
   appId: 'io.github.fionapreroll.spielekiste',

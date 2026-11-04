@@ -1,6 +1,6 @@
 # Notes for Claude
 
-The README describes the Spielekiste, its layout and its conventions. These rules hold in every session:
+The README describes the Spielekiste in short; `docs/` holds the details, among them `docs/DEVELOPMENT.md` (its conventions) and `docs/ARCHITECTURE.md` (its layout). These rules hold in every session:
 
 ## Branches
 
@@ -10,8 +10,8 @@ The README describes the Spielekiste, its layout and its conventions. These rule
 ## Changelog and README
 
 - A change that players see adds that change to `CHANGELOG.md`, under `## [Unreleased]`, in the section it belongs to (`### Added`, `### Changed`, `### Fixed` or `### Removed`), in the same branch. Write it for players, in English. Changes only developers notice need no entry.
-- A new version is made only when asked: see "Changelog and versions" in the README.
-- A change that players or developers notice updates the README in the same branch. The README starts with its badges (CI, Coverage, Android) and keeps them.
+- A new version is made only when asked: see "Changelog and versions" in `docs/DEVELOPMENT.md`.
+- A change that players or developers notice updates the README, or the page of `docs/` it belongs to, in the same branch. The README starts with its badges (CI, Coverage, Android) and keeps them.
 
 ## Privacy
 
@@ -25,7 +25,7 @@ The README describes the Spielekiste, its layout and its conventions. These rule
 
 ## The library
 
-- `@fionapreroll/p2p`, `@fionapreroll/p2p-nearby` (Bluetooth) and `@fionapreroll/app-updates` (the app's updates) come from the files on their releases in `FionaPreroll/vibe-p2pgame` (see the README). `src/ui/bluetooth.ts` only draws `p2p-nearby`'s flow (`NearbyHosting`, `NearbySearch`): what any game would do over Bluetooth belongs in the library. They are developed there, not here: what a game needs from them goes into that repository, with a new version.
+- `@fionapreroll/p2p`, `@fionapreroll/p2p-nearby` (Bluetooth) and `@fionapreroll/app-updates` (the app's updates) come from the files on their releases in `FionaPreroll/vibe-p2pgame` (see "The libraries" in `docs/DEVELOPMENT.md`). `src/ui/bluetooth.ts` only draws `p2p-nearby`'s flow (`NearbyHosting`, `NearbySearch`): what any game would do over Bluetooth belongs in the library. They are developed there, not here: what a game needs from them goes into that repository, with a new version.
 - Use the newest version of the library: when it gets a new one, move `package.json` to it in a branch of its own.
 
 ## Code

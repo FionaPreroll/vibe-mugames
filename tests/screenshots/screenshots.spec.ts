@@ -133,6 +133,34 @@ test('themes', async ({ browser }) => {
   await shot(page, 'themes')
 })
 
+/** Picks a theme in the settings, as a player does, and goes back to the start screen. */
+async function theme(page: Page, name: string): Promise<void> {
+  await page.getByRole('button', { name: 'Settings' }).click()
+  await page.getByRole('radiogroup', { name: 'Theme' }).getByText(name, { exact: true }).click()
+  await page.getByRole('button', { name: 'Back' }).click()
+}
+
+/** The README's showcase of the themes: a game in each of a few of them, on a phone. */
+const SHOWCASE: { theme: string; file: string; game: string; clicks: number }[] = [
+  { theme: 'Wood', file: 'wood', game: 'Nine Men’s Morris', clicks: 15 },
+  { theme: 'Green felt', file: 'felt', game: 'Draughts', clicks: 30 },
+  { theme: 'Light', file: 'light', game: 'Four in a Row', clicks: 14 },
+  { theme: 'Neon', file: 'neon', game: 'Reversi', clicks: 18 },
+  { theme: 'Nord', file: 'nord', game: 'Dots and Boxes', clicks: 30 },
+  { theme: 'Chinese New Year', file: 'chinesenewyear', game: 'Tic Tac Toe', clicks: 4 },
+]
+
+for (const look of SHOWCASE) {
+  test(`${look.game} in the theme ${look.theme}`, async ({ browser }) => {
+    const page = await device(browser, PHONE)
+    await theme(page, look.theme)
+    await local(page, NAMES.slice(0, 2))
+    await page.getByRole('button', { name: look.game }).click()
+    await play(page, look.clicks)
+    await shot(page, `theme-${look.file}`)
+  })
+}
+
 test('game chooser', async ({ browser }) => {
   const page = await device(browser, LAPTOP)
   await local(page, NAMES.slice(0, 2))

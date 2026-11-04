@@ -65,6 +65,6 @@ Halloween, Winter and Christmas take their colours from the night looks of the [
 2. Give it a name in `src/i18n.ts`, in English and German, and in `NAMES` in `src/ui/theme.ts`.
 3. Give it its tokens in `src/themes.css`. Check every board with it: Mühle and Sternhalma lie on `--wood` with `--board-line`, Ludo's squares are `--paper` on `--ludo`, and pieces in seat colours must stand out on them.
 4. Decorations, if any, go into `DECORATIONS` in `src/ui/theme.ts`, with their CSS in `src/themes.css`, still under `prefers-reduced-motion`.
-5. Add it to this page, the changelog and the README.
+5. Add it to this page and the changelog.
 
 A new colour on a board is a new token in `src/style.css`, with a value in each theme that needs another.
