@@ -27,6 +27,8 @@ describe('the themes on the page', () => {
     expect(root.style.colorScheme).toBe('dark')
     expect(applyTheme('light')).toBe('light')
     expect(root.style.colorScheme).toBe('light')
+    applyTheme('spring')
+    expect(root.style.colorScheme).toBe('light')
     expect(applyTheme('classic')).toBe('classic')
     expect(root.dataset.theme).toBeUndefined()
   })
@@ -43,6 +45,16 @@ describe('the themes on the page', () => {
     expect(document.querySelectorAll('.decor-christmas .bulb').length).toBeGreaterThan(10)
     applyTheme('newyear')
     expect(document.querySelectorAll('.decor-newyear .firework')).toHaveLength(4)
+    for (const [theme, part] of [
+      ['chinesenewyear', 'lantern'],
+      ['spring', 'petal'],
+      ['easter', 'egg'],
+      ['summer', 'sun'],
+      ['forest', 'firs'],
+    ] as const) {
+      applyTheme(theme)
+      expect(document.querySelectorAll(`.decor-${theme} .${part}`).length).toBeGreaterThan(0)
+    }
     applyTheme('wood')
     expect(document.querySelector('.decor')).toBeNull()
   })
@@ -50,7 +62,7 @@ describe('the themes on the page', () => {
   it('offer every theme in the settings, and apply and keep the one picked', () => {
     document.body.append(themeSettings())
     expect(document.querySelectorAll('.theme-option')).toHaveLength(THEME_CHOICES.length)
-    expect(option('Classic')?.querySelector('input')?.checked).toBe(true)
+    expect(option('With the seasons')?.querySelector('input')?.checked).toBe(true)
     // Each shows a picture of itself.
     expect(option('Green felt')?.querySelector<HTMLElement>('.swatch')?.dataset.theme).toBe('felt')
     expect(option('Classic')?.querySelector<HTMLElement>('.swatch')?.dataset.theme).toBe('classic')
@@ -59,6 +71,9 @@ describe('the themes on the page', () => {
     expect(settings().theme).toBe('nightred')
     expect(root.dataset.theme).toBe('nightred')
 
+    option('Classic')?.querySelector('input')?.click()
+    expect(settings().theme).toBe('classic')
+    expect(root.dataset.theme).toBeUndefined()
     option('With the seasons')?.querySelector('input')?.click()
     expect(settings().theme).toBe('seasons')
     expect(option('With the seasons')?.textContent).toMatch(/now: /)

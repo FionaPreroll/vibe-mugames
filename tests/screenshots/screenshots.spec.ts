@@ -38,6 +38,12 @@ async function device(
   clock = true,
 ): Promise<Page> {
   const context = await browser.newContext({ locale: 'en-US', ...options })
+  // The pictures show the classic look, whatever the season; the themes have a picture of their own.
+  await context.addInitScript(() => {
+    if (!localStorage.getItem('spielekiste.settings')) {
+      localStorage.setItem('spielekiste.settings', JSON.stringify({ theme: 'classic' }))
+    }
+  })
   await context.addInitScript((seed) => {
     let state = seed >>> 0
     const next = () => {

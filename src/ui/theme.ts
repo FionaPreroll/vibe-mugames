@@ -12,11 +12,16 @@ const NAMES: Record<ThemeChoice, TextKey> = {
   amoled: 'themeAmoled',
   wood: 'themeWood',
   felt: 'themeFelt',
+  forest: 'themeForest',
   nord: 'themeNord',
   gruvbox: 'themeGruvbox',
   neon: 'themeNeon',
   contrast: 'themeContrast',
   nightred: 'themeNightRed',
+  chinesenewyear: 'themeChineseNewYear',
+  spring: 'themeSpring',
+  easter: 'themeEaster',
+  summer: 'themeSummer',
   halloween: 'themeHalloween',
   winter: 'themeWinter',
   christmas: 'themeChristmas',
@@ -95,9 +100,10 @@ export function themeSettings(): HTMLElement {
 }
 
 /**
- * The seasonal decorations, behind every screen: bats round the moon at Halloween, snow in winter,
- * fairy lights at Christmas and fireworks at New Year, in the spirit of the puzzles' own. They hold
- * still for players who ask for less motion (src/themes.css).
+ * The decorations, behind every screen: lanterns at Chinese New Year, blossom in spring, eggs at
+ * Easter, the sun in summer, bats round the moon at Halloween, snow in winter, fairy lights at
+ * Christmas, fireworks at New Year (the last four in the spirit of the puzzles' own), and firs in the
+ * forest. They hold still for players who ask for less motion (src/themes.css).
  */
 function decorate(theme: Theme): void {
   document.querySelector('.decor')?.remove()
@@ -131,6 +137,103 @@ function bits(className: string, count: number, place: (i: number) => Record<str
 }
 
 const DECORATIONS: Partial<Record<Theme, () => Element[]>> = {
+  chinesenewyear: () => [
+    ...[0, 1, 2, 3].map((i) =>
+      svg(
+        'svg',
+        { class: `lantern lantern-${i}`, viewBox: '0 0 40 84' },
+        svg('path', { class: 'cord', d: 'M20 0V14' }),
+        svg('rect', { class: 'cap', x: 12, y: 12, width: 16, height: 5, rx: 1.5 }),
+        svg('ellipse', { class: 'body', cx: 20, cy: 36, rx: 18, ry: 20 }),
+        svg('path', { class: 'ribs', d: 'M20 16V56M11 18Q4 36 11 54M29 18Q36 36 29 54' }),
+        svg('rect', { class: 'cap', x: 12, y: 55, width: 16, height: 5, rx: 1.5 }),
+        svg('path', { class: 'tassel', d: 'M20 60V82M16 64V80M24 64V80' }),
+      ),
+    ),
+    ...bits('sparkle', 12, (i) => ({
+      '--x': `${(i * 29 + 13) % 100}%`,
+      '--y': `${(i * 17 + 8) % 35}%`,
+      '--d': `${-((i * 0.8) % 3)}s`,
+    })),
+  ],
+  spring: () =>
+    bits('petal', 22, (i) => ({
+      '--x': `${(i * 37 + 11) % 100}%`,
+      '--s': `${[9, 12, 10, 14, 8][i % 5]}px`,
+      '--d': `${-((i * 1.9) % 16)}s`,
+      '--t': `${13 + ((i * 3) % 9)}s`,
+      '--dx': `${((i * 29) % 81) - 40}px`,
+      '--o': `${[0.9, 0.7, 0.8, 0.6][i % 4]}`,
+    })),
+  easter: () => [
+    svg(
+      'svg',
+      { class: 'meadow', viewBox: '0 0 400 60', preserveAspectRatio: 'none' },
+      svg('path', {
+        class: 'grass',
+        d: 'M0 60V34Q20 18 34 32Q52 12 70 30Q92 16 108 32Q130 14 150 30Q170 18 190 32Q214 12 232 30Q252 18 270 32Q292 14 310 30Q332 18 350 32Q372 14 400 28V60Z',
+      }),
+    ),
+    ...[0, 1, 2, 3].map((i) =>
+      svg(
+        'svg',
+        { class: `egg egg-${i}`, viewBox: '0 0 40 52' },
+        svg('path', {
+          class: 'shell',
+          d: 'M20 2C8 2 2 22 2 32C2 44 10 50 20 50C30 50 38 44 38 32C38 22 32 2 20 2Z',
+        }),
+        svg('path', { class: 'band', d: 'M3 28Q11 22 20 28T37 28' }),
+        svg('path', { class: 'band', d: 'M5 38Q12 33 20 38T35 38' }),
+        svg('circle', { class: 'dot', cx: 20, cy: 16, r: 3 }),
+      ),
+    ),
+  ],
+  summer: () => [
+    svg(
+      'svg',
+      { class: 'sun', viewBox: '-60 -60 120 120' },
+      svg(
+        'g',
+        { class: 'rays' },
+        ...Array.from({ length: 12 }, (_, ray) =>
+          svg('path', { d: 'M0 -34V-54', transform: `rotate(${ray * 30})` }),
+        ),
+      ),
+      svg('circle', { class: 'disc', r: 26 }),
+    ),
+    ...[0, 1].map((i) =>
+      svg(
+        'svg',
+        { class: `cloud cloud-${i}`, viewBox: '0 0 120 50' },
+        svg('path', {
+          d: 'M18 46C6 46 2 38 6 31C10 24 20 24 24 27C26 14 40 8 52 14C60 4 82 6 86 20C100 18 112 26 112 36C112 44 104 46 98 46Z',
+        }),
+      ),
+    ),
+  ],
+  forest: () => [
+    svg(
+      'svg',
+      { class: 'firs', viewBox: '0 0 400 80', preserveAspectRatio: 'xMidYMax slice' },
+      ...[
+        [10, 46],
+        [42, 64],
+        [78, 40],
+        [118, 70],
+        [160, 50],
+        [196, 74],
+        [236, 44],
+        [270, 66],
+        [312, 52],
+        [350, 72],
+        [388, 42],
+      ].map(([x, height]) =>
+        svg('path', {
+          d: `M${x} ${80 - (height ?? 50)}L${(x ?? 0) - 14} 80H${(x ?? 0) + 14}Z`,
+        }),
+      ),
+    ),
+  ],
   halloween: () => [
     svg(
       'svg',

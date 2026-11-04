@@ -3,7 +3,7 @@ import { type CameraChoice, parseCameraChoice } from '@fionapreroll/p2p/qr'
 import { isToken, randomToken } from '@fionapreroll/p2p/room'
 import { type GameId, isGameId } from './core/board'
 import type { Language } from './i18n'
-import { isThemeChoice, type ThemeChoice } from './theme'
+import { DEFAULT_THEME, isThemeChoice, type ThemeChoice } from './theme'
 
 /**
  * What this phone remembers, in the browser's local storage: the player's name, the language,
@@ -58,7 +58,7 @@ const DEFAULTS: Settings = {
   hockeySmooth: false,
   vibrate: true,
   recentGames: [],
-  theme: 'classic',
+  theme: DEFAULT_THEME,
 }
 
 function read(key: string): unknown {
@@ -113,7 +113,7 @@ export function parseSettings(value: unknown): Settings {
     recentGames: Array.isArray(recentGames)
       ? [...new Set(recentGames.filter(isGameId))].slice(0, MAX_RECENT)
       : [],
-    theme: isThemeChoice(theme) ? theme : 'classic',
+    theme: isThemeChoice(theme) ? theme : DEFAULT_THEME,
   }
 }
 

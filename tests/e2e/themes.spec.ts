@@ -3,13 +3,16 @@ import { expect, test } from './coverage'
 /** The themes: picked in the settings, applied at once, and kept for the next start. */
 
 test('a theme picked in the settings colours the page and stays', async ({ page }) => {
+  // In July, the seasons say summer, the theme of a device that never chose one.
+  await page.clock.install({ time: new Date('2026-07-15T12:00:00') })
   await page.goto('./')
   const root = page.locator('html')
-  await expect(root).not.toHaveAttribute('data-theme')
+  await expect(root).toHaveAttribute('data-theme', 'summer')
+  await expect(page.locator('.decor-summer .sun')).toBeAttached()
   await page.getByRole('button', { name: 'Settings' }).click()
   const themes = page.getByRole('radiogroup', { name: 'Theme' })
-  await expect(themes.getByRole('radio')).toHaveCount(16)
-  await expect(themes.getByRole('radio', { name: 'Classic' })).toBeChecked()
+  await expect(themes.getByRole('radio')).toHaveCount(21)
+  await expect(themes.getByRole('radio', { name: /^With the seasons/ })).toBeChecked()
 
   await themes.getByText('Green felt', { exact: true }).click()
   await expect(root).toHaveAttribute('data-theme', 'felt')

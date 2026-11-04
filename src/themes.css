@@ -562,6 +562,171 @@
   --backdrop: radial-gradient(ellipse 80% 50% at 50% -10%, rgb(230 192 104 / 0.12), transparent);
 }
 
+/* Forest: deep woods, moss and bark. */
+[data-theme="forest"] {
+  --bg: #142019;
+  --panel: #1e2f24;
+  --panel-deep: #18271e;
+  --line: #34503c;
+  --text: #eef0e2;
+  --muted: #a9b8a0;
+  --accent: #9ccc6e;
+  --on-accent: #142019;
+  --seat-0: #e8604c;
+  --seat-1: #f2c94c;
+  --seat-2: #56c2c8;
+  --seat-3: #b08cf0;
+  --seat-4: #f09ac0;
+  --seat-5: #c5e06b;
+  --wood: #a87843;
+  --board-line: #2a1a0c;
+  --board-light: #e4d3a8;
+  --board-dark: #6f4a26;
+  --board-edge: #4d3419;
+  --frame: #2f5e3c;
+  --felt: #2f6b3f;
+  --felt-deep: #142019;
+  --cup: #8a5a2b;
+  --field: #0b140e;
+  --field-line: rgb(156 204 110 / 0.07);
+  --rink: #1c3326;
+  --rink-line: rgb(238 240 226 / 0.35);
+  --backdrop: radial-gradient(ellipse 90% 50% at 50% 0%, rgb(156 204 110 / 0.08), transparent);
+}
+
+/* What the light seasonal themes share with Light: dark ink, and fields that stay readable. */
+[data-theme="spring"],
+[data-theme="easter"],
+[data-theme="summer"] {
+  --on-accent: #ffffff;
+  --field: #18222e;
+  --rink: #dfe9f1;
+  --rink-line: rgb(29 43 58 / 0.35);
+  --puck: #1d2b3a;
+  --warning-text: #8a3a00;
+  --good: #1d8a2e;
+  --fair: #9a6c00;
+  --poor: #c8243f;
+}
+
+/* Chinese New Year: lacquer red and gold, with lanterns. */
+[data-theme="chinesenewyear"] {
+  --bg: #3a0a0c;
+  --panel: #561418;
+  --panel-deep: #48100f;
+  --line: #7d2428;
+  --text: #fff1d6;
+  --muted: #e6b98d;
+  --accent: #f6c344;
+  --on-accent: #3a0a0c;
+  --seat-0: #ff6e5f;
+  --seat-1: #f6c344;
+  --seat-2: #3ccf91;
+  --seat-3: #74a9ff;
+  --seat-4: #ff9ad5;
+  --seat-5: #c7e86b;
+  --wood: #d9a35b;
+  --board-line: #4a0c0e;
+  --board-light: #f7e3bd;
+  --board-dark: #8f2a22;
+  --board-edge: #4a0c0e;
+  --ludo: #f0d39b;
+  --frame: #9e1b1f;
+  --felt: #1f6b47;
+  --felt-deep: #2a0607;
+  --dots-paper: #fff6e3;
+  --dots-line: #e6c99a;
+  --dot: #3a0a0c;
+  --paper: #fffaf0;
+  --paper-edge: #e6c99a;
+  --ink: #2a0607;
+  --card-red: #c0161c;
+  --card-blue: #9e1b1f;
+  --card-blue-deep: #7a1216;
+  --card-edge: #f6c344;
+  --cup: #c0161c;
+  --field: #1f0405;
+  --field-line: rgb(246 195 68 / 0.08);
+  --rink: #48100f;
+  --rink-line: rgb(246 195 68 / 0.45);
+  --puck: #fff1d6;
+  --warning-text: #ffd27a;
+  --backdrop: radial-gradient(ellipse 80% 45% at 50% -5%, rgb(246 195 68 / 0.14), transparent);
+}
+
+/* Spring: a fresh morning, young green and cherry blossom. */
+[data-theme="spring"] {
+  --bg: #f2f7ec;
+  --panel: #ffffff;
+  --panel-deep: #e6efdc;
+  --line: #c7d9b8;
+  --text: #22311d;
+  --muted: #5b6e52;
+  --accent: #c93d7e;
+  --seat-0: #d8383c;
+  --seat-1: #d99a00;
+  --seat-2: #23927f;
+  --seat-3: #6b57d1;
+  --seat-4: #d0569c;
+  --seat-5: #4f9a26;
+  --wood: #e2b77a;
+  --board-light: #f4e6c8;
+  --frame: #3f7f3a;
+  --felt: #3f8f4f;
+  --felt-deep: #2a5f34;
+  --backdrop: radial-gradient(ellipse 80% 40% at 50% -5%, rgb(247 182 207 / 0.35), transparent);
+}
+
+/* Easter: pastel eggs on a meadow. */
+[data-theme="easter"] {
+  --bg: #fbf6ea;
+  --panel: #fffdf7;
+  --panel-deep: #f2ead6;
+  --line: #e2d6bb;
+  --text: #3a3224;
+  --muted: #776b55;
+  --accent: #7d5cc0;
+  --seat-0: #e0525e;
+  --seat-1: #d99a00;
+  --seat-2: #2a9c8c;
+  --seat-3: #7d5cc0;
+  --seat-4: #d6609f;
+  --seat-5: #5c9e2e;
+  --wood: #e8c28a;
+  --board-light: #f7ead0;
+  --ludo: #efe0bd;
+  --frame: #7d5cc0;
+  --felt: #5aa36a;
+  --felt-deep: #2f6b3e;
+  --card-blue: #7d5cc0;
+  --card-blue-deep: #6849a8;
+  --card-edge: #c9b6ec;
+  --backdrop: linear-gradient(180deg, #fbf6ea 60%, #eef5df);
+}
+
+/* Summer: a blue sky and the sun. */
+[data-theme="summer"] {
+  --bg: #e8f5fb;
+  --panel: #ffffff;
+  --panel-deep: #d8edf7;
+  --line: #b6d8e8;
+  --text: #12324a;
+  --muted: #4d6a80;
+  --accent: #e8661c;
+  --seat-0: #e0393f;
+  --seat-1: #e0a000;
+  --seat-2: #1495a8;
+  --seat-3: #6a55d4;
+  --seat-4: #d9569e;
+  --seat-5: #4c9a22;
+  --wood: #e6bb7c;
+  --board-light: #f6e7c6;
+  --frame: #1878b8;
+  --felt: #2f8f5a;
+  --felt-deep: #1d5e3a;
+  --backdrop: linear-gradient(180deg, #d4ecf8, #e8f5fb 18rem, #f7efdc);
+}
+
 /* More than colours. */
 
 :root[data-theme="contrast"] button,
@@ -617,7 +782,8 @@
 }
 
 :root[data-theme="christmas"] h1,
-:root[data-theme="newyear"] h1 {
+:root[data-theme="newyear"] h1,
+:root[data-theme="chinesenewyear"] h1 {
   color: var(--accent);
 }
 
@@ -975,6 +1141,238 @@
   }
 }
 
+/* Chinese New Year: red lanterns swaying from the top. */
+.decor-chinesenewyear .lantern {
+  position: absolute;
+  top: 0;
+  width: 2.6rem;
+  transform-origin: 50% 0;
+  animation: decor-sway 6s ease-in-out infinite;
+}
+
+.decor-chinesenewyear .lantern-0 {
+  left: 4%;
+}
+
+.decor-chinesenewyear .lantern-1 {
+  left: 28%;
+  width: 2rem;
+  animation-delay: -2s;
+}
+
+.decor-chinesenewyear .lantern-2 {
+  right: 26%;
+  width: 2.2rem;
+  animation-delay: -4s;
+}
+
+.decor-chinesenewyear .lantern-3 {
+  right: 3%;
+  animation-delay: -1s;
+}
+
+.decor-chinesenewyear .cord,
+.decor-chinesenewyear .tassel {
+  stroke: #f6c344;
+  stroke-width: 1.6;
+  fill: none;
+}
+
+.decor-chinesenewyear .cap {
+  fill: #f6c344;
+}
+
+.decor-chinesenewyear .body {
+  fill: #e0251f;
+  filter: drop-shadow(0 0 8px rgb(255 120 60 / 0.6));
+}
+
+.decor-chinesenewyear .ribs {
+  stroke: rgb(120 10 10 / 0.55);
+  stroke-width: 1.2;
+  fill: none;
+}
+
+.decor-chinesenewyear .sparkle {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #f6c344;
+  animation: decor-twinkle 3.5s ease-in-out var(--d) infinite;
+}
+
+@keyframes decor-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+/* Spring: cherry blossom petals drifting down. */
+.decor .petal {
+  position: absolute;
+  top: -16px;
+  left: var(--x);
+  width: var(--s);
+  height: calc(var(--s) * 0.7);
+  border-radius: 80% 0 80% 0;
+  background: #f7b6cf;
+  opacity: calc(var(--o) * 0.8);
+  animation: decor-petal var(--t) linear var(--d) infinite;
+}
+
+@keyframes decor-petal {
+  0% {
+    transform: translate(0, 0) rotate(0);
+  }
+  50% {
+    transform: translate(var(--dx), 50vh) rotate(200deg);
+  }
+  100% {
+    transform: translate(0, calc(100vh + 32px)) rotate(400deg);
+  }
+}
+
+/* Easter: a meadow along the bottom, with painted eggs in it. */
+.decor-easter .meadow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3rem;
+}
+
+.decor-easter .grass {
+  fill: #b9dc8f;
+}
+
+.decor-easter .egg {
+  position: absolute;
+  bottom: 0.6rem;
+  width: 1.8rem;
+}
+
+.decor-easter .egg-0 {
+  left: 5%;
+}
+
+.decor-easter .egg-1 {
+  left: 15%;
+  width: 1.4rem;
+  transform: rotate(-12deg);
+}
+
+.decor-easter .egg-2 {
+  right: 14%;
+  width: 1.5rem;
+  transform: rotate(10deg);
+}
+
+.decor-easter .egg-3 {
+  right: 5%;
+}
+
+.decor-easter .egg-0 .shell,
+.decor-easter .egg-3 .band {
+  fill: #c9b6ec;
+}
+
+.decor-easter .egg-1 .shell,
+.decor-easter .egg-2 .band {
+  fill: #f7b6cf;
+}
+
+.decor-easter .egg-2 .shell,
+.decor-easter .egg-0 .band {
+  fill: #fde68a;
+}
+
+.decor-easter .egg-3 .shell,
+.decor-easter .egg-1 .band {
+  fill: #a7dfd0;
+}
+
+.decor-easter .band {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 3;
+}
+
+.decor-easter .dot {
+  fill: #ffffff;
+}
+
+/* Summer: the sun in the corner, its rays turning slowly, and clouds passing. */
+.decor-summer .sun {
+  position: absolute;
+  top: -1.5rem;
+  right: -1.5rem;
+  width: 9rem;
+}
+
+.decor-summer .disc {
+  fill: #ffd35c;
+  filter: drop-shadow(0 0 18px rgb(255 200 60 / 0.7));
+}
+
+.decor-summer .rays {
+  stroke: #ffc53d;
+  stroke-width: 5;
+  stroke-linecap: round;
+  animation: decor-turn 60s linear infinite;
+}
+
+.decor-summer .cloud {
+  position: absolute;
+  fill: #ffffff;
+  opacity: 0.85;
+  animation: decor-pass 70s linear infinite;
+}
+
+.decor-summer .cloud-0 {
+  top: 4rem;
+  width: 7rem;
+}
+
+.decor-summer .cloud-1 {
+  top: 9rem;
+  width: 5rem;
+  animation-duration: 95s;
+  animation-delay: -40s;
+}
+
+@keyframes decor-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes decor-pass {
+  from {
+    transform: translateX(-8rem);
+  }
+  to {
+    transform: translateX(calc(100vw + 8rem));
+  }
+}
+
+/* Forest: firs along the bottom. */
+.decor-forest .firs {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 6rem;
+  fill: #0d1712;
+  opacity: 0.8;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root .decor *,
   :root .decor .bat .wings {
@@ -986,8 +1384,17 @@
     transform: none;
   }
 
-  .decor .flake {
+  .decor .flake,
+  .decor .petal {
     top: auto;
     bottom: calc(var(--x) / 2);
+  }
+
+  .decor-summer .cloud-0 {
+    left: 10%;
+  }
+
+  .decor-summer .cloud-1 {
+    left: 45%;
   }
 }
