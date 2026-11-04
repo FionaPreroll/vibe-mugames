@@ -246,14 +246,29 @@ function transSymbol(): SVGElement {
   )
 }
 
-/** A candle with a quiet glow, for the Day of Remembrance. */
+/** A candle with a quiet glow, for the Day of Remembrance, outlined in black to stand out. */
 function candle(): SVGElement {
   return svg(
     'g',
     {},
     svg('circle', { class: 'candle-glow', cx: 0, cy: -0.45, r: 0.5, fill: '#ffd36b' }),
-    rect(-0.22, -0.2, 0.44, 0.85, '#fdf6e3', 0.06),
-    svg('path', { d: 'M0 -0.78Q0.2 -0.5 0 -0.28Q-0.2 -0.5 0 -0.78Z', fill: '#f59e0b' }),
+    svg('rect', {
+      x: -0.22,
+      y: -0.2,
+      width: 0.44,
+      height: 0.85,
+      rx: 0.06,
+      fill: '#fdf6e3',
+      stroke: '#000000',
+      'stroke-width': 0.07,
+    }),
+    svg('path', {
+      d: 'M0 -0.78Q0.2 -0.5 0 -0.28Q-0.2 -0.5 0 -0.78Z',
+      fill: '#f59e0b',
+      stroke: '#000000',
+      'stroke-width': 0.06,
+      'stroke-linejoin': 'round',
+    }),
   )
 }
 
