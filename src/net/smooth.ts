@@ -1,4 +1,4 @@
-import { clampMallet, type Disc, glide, type HockeyView } from '../core/airhockey'
+import { clampMallet, type Disc, glide, type HockeyView, slide } from '../core/airhockey'
 import { Eased, HostClock, type HostClockOptions } from './clock'
 
 /**
@@ -97,4 +97,33 @@ function clamp(seconds: number): number {
 function drift(mallet: Disc, seconds: number): Disc {
   const s = clamp(seconds)
   return { ...mallet, x: mallet.x + mallet.vx * s, y: mallet.y + mallet.vy * s }
+}
+
+/**
+ * A mallet steered on this phone, drawn where the host is going to move it: towards the finger
+ * at once, by the host's own rule (`slide`: at most the host's speed, within the seat's half),
+ * instead of where the host's last state had it. That state is a whole round trip old: the
+ * finger's place goes to the host, waits for its next tick, and comes back with a state, which
+ * over Bluetooth takes 100 to 250 ms. As the host slides its mallet towards the same places, a
+ * moment later, both come to rest at the same point; only the puck's bounces off it are the
+ * host's, and come that moment later.
+ */
+export class OwnMallet {
+  private drawn: Disc | null = null
+
+  constructor(private readonly seat: number) {}
+
+  /**
+   * Where to draw the mallet `seconds` after the last frame, with the finger at `aim` on the
+   * rink; `host` is where the host's newest state has it, where drawing starts.
+   */
+  at(host: Disc, aim: { x: number; y: number }, seconds: number): Disc {
+    this.drawn = slide(this.seat, this.drawn ?? host, aim, Math.max(0, seconds))
+    return this.drawn
+  }
+
+  /** Starts again from the host's mallet, for a new game. */
+  reset(): void {
+    this.drawn = null
+  }
 }

@@ -481,7 +481,7 @@ const en = {
     'Off, each phone shows only its player’s half: lay both phones on the table, top edge to top edge, and the puck slides from one screen to the other.',
   hockeySmoothSetting: 'Smooth out the network',
   hockeySmoothNote:
-    'Draws the puck and the other mallet at an even pace, however unevenly the host’s word arrives, and your own mallet where your finger is, at once. Try it when the puck stutters.',
+    'Draws the puck and the other mallet at an even pace, however unevenly the host’s word arrives. Try it when the puck stutters.',
   hockeyFirstTo: 'First to {n} goals wins.',
   hockeyGoal: 'Goal for {name}!',
   hockeyScore: '{a} {goalsA} : {goalsB} {b}',
@@ -1197,7 +1197,7 @@ const de: Texts = {
     'Aus zeigt jedes Handy nur die Hälfte seines Spielers: Legt beide Handys auf den Tisch, oberer Rand an oberem Rand, und der Puck gleitet von einem Bildschirm auf den anderen.',
   hockeySmoothSetting: 'Netzwerk glätten',
   hockeySmoothNote:
-    'Zeichnet den Puck und den anderen Schläger gleichmäßig, wie ungleichmäßig die Nachrichten des Gastgebers auch ankommen, und deinen eigenen Schläger sofort dort, wo dein Finger ist. Probier es, wenn der Puck ruckelt.',
+    'Zeichnet den Puck und den anderen Schläger gleichmäßig, wie ungleichmäßig die Nachrichten des Gastgebers auch ankommen. Probier es, wenn der Puck ruckelt.',
   hockeyFirstTo: 'Wer zuerst {n} Tore schießt, gewinnt.',
   hockeyGoal: 'Tor für {name}!',
   hockeyScore: '{a} {goalsA} : {goalsB} {b}',

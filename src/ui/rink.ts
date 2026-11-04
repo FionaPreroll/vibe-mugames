@@ -9,13 +9,12 @@ import {
   LENGTH,
   MALLET,
   PUCK,
-  slide,
   toRink,
   WIDTH,
 } from '../core/airhockey'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
-import { arrivalPuck, RinkSmoother } from '../net/smooth'
+import { arrivalPuck, OwnMallet, RinkSmoother } from '../net/smooth'
 import { settings } from '../storage'
 import {
   banner,
@@ -135,8 +134,8 @@ export class RinkView implements LiveView {
   private last = 0
   /** The host's clock, filtered, and what it draws by it, for smoothing (src/net/smooth.ts). */
   private readonly smoother = new RinkSmoother()
-  /** The mallets steered here, drawn where the host will have them, for smoothing. */
-  private readonly ahead = new Map<number, Disc>()
+  /** The mallets steered here, drawn where the host is going to have them. */
+  private readonly own = new Map<number, OwnMallet>()
 
   constructor(
     private readonly viewer: number,
@@ -215,7 +214,7 @@ export class RinkView implements LiveView {
       this.round = state.round
       this.aims.clear()
       this.fingers.clear()
-      this.ahead.clear()
+      this.own.clear()
       this.smoother.reset()
       for (const [seat, id] of state.seats.entries()) {
         const mallet = rink.mallets[seat]
@@ -374,8 +373,9 @@ export class RinkView implements LiveView {
     }
 
     const smooth = this.smooth() && this.smoother.clock.started()
+    const over = state.outcome !== null
     for (const [seat, mallet] of rink.mallets.entries()) {
-      const at = frame.toScreen(smooth ? this.mallet(seat, mallet, now / 1000, seconds) : mallet)
+      const at = frame.toScreen(this.mallet(seat, mallet, smooth, over, now / 1000, seconds))
       context.save()
       context.fillStyle = colour(seat)
       context.shadowColor = 'rgb(0 0 0 / 0.5)'
@@ -389,7 +389,6 @@ export class RinkView implements LiveView {
       context.arc(at.x, at.y, MALLET * k * 0.45, 0, 2 * Math.PI)
       context.fill()
     }
-    const over = state.outcome !== null
     const glided =
       (smooth ? this.smoother.puck(now / 1000, seconds) : null) ??
       arrivalPuck(rink, over, (now - this.since) / 1000)
@@ -413,17 +412,30 @@ export class RinkView implements LiveView {
   }
 
   /**
-   * Where to draw a seat's mallet, smoothed: one steered here moves to its finger at once, as the
-   * host will move it; the other glides on from the host's word, its corrections faded in.
+   * Where to draw a seat's mallet. On a phone of its own, one steered here moves to its finger at
+   * once, as the host is going to move it, with or without smoothing (`OwnMallet`). Another
+   * glides on from the host's word when smoothed, its corrections faded in, and is drawn where
+   * the host's newest state has it otherwise; so is every mallet on one device, whose table has
+   * no network to wait for, and once the game is over.
    */
-  private mallet(seat: number, mallet: Disc, local: number, seconds: number): Disc {
+  private mallet(
+    seat: number,
+    mallet: Disc,
+    smooth: boolean,
+    over: boolean,
+    local: number,
+    seconds: number,
+  ): Disc {
     const aim = this.aims.get(seat)
-    if (aim) {
-      const next = slide(seat, this.ahead.get(seat) ?? mallet, aim, seconds)
-      this.ahead.set(seat, next)
-      return next
+    if (aim && !this.options.local && !over) {
+      let own = this.own.get(seat)
+      if (!own) {
+        own = new OwnMallet(seat)
+        this.own.set(seat, own)
+      }
+      return own.at(mallet, aim, seconds)
     }
-    return this.smoother.mallet(seat, local, seconds) ?? mallet
+    return (smooth ? this.smoother.mallet(seat, local, seconds) : null) ?? mallet
   }
 
   /** The keys of each seat steered here, for one device. */
