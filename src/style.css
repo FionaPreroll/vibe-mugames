@@ -1,9 +1,11 @@
 /*
  * The colours, as tokens: this is the classic look. src/themes.css gives each other theme its own
  * values, on <html data-theme="…">, and nothing else in the style sheet names a colour of its own.
- * The fields of the games in real time read them too (themeColour in src/ui/theme.ts).
+ * The fields of the games in real time read them too (themeColour in src/ui/canvas.ts). Every
+ * element with a theme of its own, such as a swatch in the settings, starts from these too.
  */
-:root {
+:root,
+[data-theme] {
   color-scheme: dark;
   --bg: #1d2b3a;
   --panel: #26384b;

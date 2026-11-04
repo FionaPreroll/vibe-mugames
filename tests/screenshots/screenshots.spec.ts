@@ -123,6 +123,7 @@ test('themes', async ({ browser }) => {
   await page.getByRole('button', { name: 'Settings' }).click()
   await page.getByRole('radiogroup', { name: 'Theme' }).getByText('With the seasons').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'halloween')
+  await page.evaluate(() => window.scrollTo(0, 0))
   await shot(page, 'themes')
 })
 

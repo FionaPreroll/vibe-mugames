@@ -53,6 +53,7 @@ describe('the themes on the page', () => {
     expect(option('Classic')?.querySelector('input')?.checked).toBe(true)
     // Each shows a picture of itself.
     expect(option('Green felt')?.querySelector<HTMLElement>('.swatch')?.dataset.theme).toBe('felt')
+    expect(option('Classic')?.querySelector<HTMLElement>('.swatch')?.dataset.theme).toBe('classic')
 
     option('Night mode, red')?.querySelector('input')?.click()
     expect(settings().theme).toBe('nightred')

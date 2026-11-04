@@ -71,7 +71,7 @@ export function themeSettings(): HTMLElement {
         ...[0, 1, 2, 3].map((seat) => h('span', { class: `swatch-seat seat-${seat}` })),
       ),
     )
-    if (shown !== 'classic') swatch.dataset.theme = shown
+    swatch.dataset.theme = shown
     return h(
       'label',
       { class: `theme-option${choice === 'seasons' ? ' seasons' : ''}` },
