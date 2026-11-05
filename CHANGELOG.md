@@ -58,7 +58,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 ### Changed
 
-- The connection details and the debug report say whether a Bluetooth table is still on Bluetooth, or Nearby moved it up to Wi-Fi by itself, and how much it carries.
+- The connection details and the debug report say whether a Bluetooth table is still on Bluetooth, or Nearby moved it up to Wi-Fi by itself, and how much it carries. The debug report also says how many messages the Bluetooth plugin dropped.
 - _Smooth out the network_ is on now, also on phones where it was off: it makes Air Hockey over Bluetooth or a busy Wi-Fi feel far less jerky. It can still be switched off in the settings.
 - Over Bluetooth, players of Air Hockey and Light Racers get every state of the game, 30 a second instead of 15, so the puck and the other players show sooner and closer to where they are.
 - On the Air Hockey rink, which covers the screen, the small graph of the ping and its newest value show beside the score, as they do in the top line in other games. Tapping them opens the connection details.
@@ -73,6 +73,8 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 
 ### Fixed
 
+- At a table over Bluetooth that Nearby moved up to Wi-Fi, the connection test measures the connection again: before, the data from players was dropped whole on the way, and half the test's pings went missing, while the game itself came through. Such a table also has more room for the game's messages.
+- The host's connection graph no longer turns red, and the log no longer notes a stall, for the second between the pings of a player who is waiting in the lobby or at a board game.
 - In Air Hockey, your own mallet follows your finger at once, also without _Smooth out the network_, instead of waiting for the host's answer. Over Bluetooth that wait felt like lag: a tenth to a quarter of a second.
 - At a table on a narrow phone, the top line no longer sticks out past the right edge: the connection takes the title's place, and _Add player_ fits beside it.
 - A name typed on the start screen stays when you visit the settings or change the language, instead of being forgotten.

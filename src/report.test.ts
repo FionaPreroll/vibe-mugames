@@ -85,12 +85,15 @@ describe('the debug report', () => {
             android: '15',
             sdk: 35,
             permissions: { BLUETOOTH_SCAN: 'granted' },
+            droppedBusy: 12,
+            droppedOverRate: 0,
             log: ['connected to aa:bb:cc:dd:ee:ff'],
           }),
       }),
     )
     expect(report).toContain('- Phone: Fair Phone 5, Android 15 (SDK 35)')
     expect(report).toContain('BLUETOOTH_SCAN granted')
+    expect(report).toContain('- Dropped by the plugin: 12 fast messages while busy, 0 over the rate')
     expect(report).not.toContain('aa:bb:cc:dd:ee:ff')
   })
 })

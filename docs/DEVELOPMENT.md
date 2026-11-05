@@ -40,7 +40,7 @@ Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of
 
 ## The libraries
 
-`@fionapreroll/p2p`, `@fionapreroll/p2p-nearby` and `@fionapreroll/app-updates` are developed in [vibe-p2pgame](https://github.com/FionaPreroll/vibe-p2pgame), and installed here from the files on their releases, [`p2p-v0.6.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.6.0), [`p2p-nearby-v0.4.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-nearby-v0.4.0) and [`app-updates-v0.1.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/app-updates-v0.1.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
+`@fionapreroll/p2p`, `@fionapreroll/p2p-nearby` and `@fionapreroll/app-updates` are developed in [vibe-p2pgame](https://github.com/FionaPreroll/vibe-p2pgame), and installed here from the files on their releases, [`p2p-v0.6.1`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-v0.6.1), [`p2p-nearby-v0.5.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/p2p-nearby-v0.5.0) and [`app-updates-v0.1.0`](https://github.com/FionaPreroll/vibe-p2pgame/releases/tag/app-updates-v0.1.0), so no login to GitHub's npm registry is needed. To use a newer version, change the address in `package.json` to that version's release, run `pnpm install`, and read its changelog.
 
 ## Screenshots
 

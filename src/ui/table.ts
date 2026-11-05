@@ -1,4 +1,4 @@
-import { drawNetGraph, pingQuality, STALL_MS, worstLatest } from '@fionapreroll/p2p/debug'
+import { drawNetGraph, pingQuality, worstLatest } from '@fionapreroll/p2p/debug'
 import { type GameId, isLiveGame } from '../core/board'
 import type { TableState } from '../core/table'
 import { t } from '../i18n'
@@ -83,7 +83,7 @@ export function tableScreen(seat: Seat, onLeave: () => void): void {
       if (latest === null) continue
       drawNetGraph(canvas, seat.net, now, 30, { color: netColor(seat.net.self) })
       text.textContent = latest.ping === null ? '…' : t('pingMs', { ms: latest.ping })
-      button.dataset.quality = pingQuality(latest.ping, latest.gap >= STALL_MS)
+      button.dataset.quality = pingQuality(latest.ping, latest.stalled)
     }
   }
   // The room samples its connections once a second.
