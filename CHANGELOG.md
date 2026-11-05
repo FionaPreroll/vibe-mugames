@@ -74,7 +74,7 @@ All changes players can notice are listed here. The format follows [Keep a Chang
 ### Fixed
 
 - At a table over Bluetooth that Nearby moved up to Wi-Fi, the connection test measures the connection again: before, the data from players was dropped whole on the way, and half the test's pings went missing, while the game itself came through. Such a table also has more room for the game's messages.
-- The host's connection graph no longer turns red, and the log no longer notes a stall, for the second between the pings of a player who is waiting in the lobby or at a board game.
+- The host's connection graph no longer turns red, and the log no longer notes a stall, for the second between the pings of a player who is waiting in the lobby or at a board game, nor right after a player joined.
 - In Air Hockey, your own mallet follows your finger at once, also without _Smooth out the network_, instead of waiting for the host's answer. Over Bluetooth that wait felt like lag: a tenth to a quarter of a second.
 - At a table on a narrow phone, the top line no longer sticks out past the right edge: the connection takes the title's place, and _Add player_ fits beside it.
 - A name typed on the start screen stays when you visit the settings or change the language, instead of being forgotten.
