@@ -502,7 +502,8 @@ test('Reaction for two on one laptop', async ({ browser }) => {
   await page.clock.runFor(90)
   await page.keyboard.press('KeyW')
   await page.clock.runFor(100)
-  await shot(page, 'reaction')
+  // The times depend on the frame that first showed the signal, which moves by a few ms.
+  await shot(page, 'reaction', { maxDiffPixelRatio: 0.005 })
 })
 
 test('Colour Echo for two on one laptop', async ({ browser }) => {
