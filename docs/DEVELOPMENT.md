@@ -25,7 +25,7 @@ pnpm test:e2e     # builds, and plays in Chromium over real WebRTC
 
 Attacks on the connection itself, over Wi-Fi and Bluetooth, are fuzzed in the library.
 
-`pnpm test:e2e` builds the app and plays it in Chromium over real WebRTC (`tests/e2e/`, listed in [ARCHITECTURE.md](ARCHITECTURE.md#layout)). On real phones, `pnpm dev:phone` serves over HTTPS with a self-signed certificate, as phones open the camera only on HTTPS pages.
+`pnpm test:e2e` builds the app and plays it in Chromium over real WebRTC (`tests/e2e/`, listed in [ARCHITECTURE.md](ARCHITECTURE.md#layout)). In CI the tests run one at a time, as most open two to four phones and two of them at once overload the machine. On real phones, `pnpm dev:phone` serves over HTTPS with a self-signed certificate, as phones open the camera only on HTTPS pages.
 
 ## Coverage
 
