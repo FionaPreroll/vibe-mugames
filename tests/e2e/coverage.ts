@@ -6,8 +6,6 @@ import MCR, { type CoverageReportOptions } from 'monocart-coverage-reports'
  * records which code of the game runs in Chromium, from before its first navigation, and the
  * records go to coverage/e2e, mapped through the build's source maps back to the TypeScript in
  * src/. tests/e2e/coverage-teardown.ts writes coverage/e2e/lcov.info from them.
- *
- * The specs import `test` from here instead of from Playwright, which makes this automatic.
  */
 
 export const coverageOptions: CoverageReportOptions = {
@@ -23,10 +21,17 @@ export const coverageOptions: CoverageReportOptions = {
 
 export const covering = Boolean(process.env.COVERAGE)
 
-export const test = base.extend<{ jsCoverage: void }>({
-  jsCoverage: [
+/**
+ * The specs import `test` from here, which does two things for every test on its own: it
+ * closes the phones the test opened with `browser.newContext` (Playwright closes only its own
+ * `page` and `context`), so that their tables stop running once the test is over and do not
+ * slow down every test after it in the same browser; and, when `COVERAGE` is set, it records
+ * each page's coverage before closing it.
+ */
+export const test = base.extend<{ phones: void }>({
+  phones: [
     async ({ browser }, use) => {
-      if (!covering) return use()
+      const contexts: BrowserContext[] = []
       const recording = new Set<Page>()
       const collected: unknown[] = []
       const stop = async (page: Page) => {
@@ -34,6 +39,8 @@ export const test = base.extend<{ jsCoverage: void }>({
         collected.push(...(await page.coverage.stopJSCoverage().catch(() => [])))
       }
       const watch = (context: BrowserContext) => {
+        contexts.push(context)
+        if (!covering) return context
         const newPage = context.newPage.bind(context)
         context.newPage = async () => {
           const page = await newPage()
@@ -56,6 +63,7 @@ export const test = base.extend<{ jsCoverage: void }>({
       } finally {
         browser.newContext = newContext
         for (const page of [...recording]) await stop(page)
+        for (const context of contexts) await context.close().catch(() => {})
         if (collected.length > 0) await MCR(coverageOptions).add(collected as never)
       }
     },

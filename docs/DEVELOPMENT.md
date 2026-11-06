@@ -25,7 +25,7 @@ pnpm test:e2e     # builds, and plays in Chromium over real WebRTC
 
 Attacks on the connection itself, over Wi-Fi and Bluetooth, are fuzzed in the library.
 
-`pnpm test:e2e` builds the app and plays it in Chromium over real WebRTC (`tests/e2e/`, listed in [ARCHITECTURE.md](ARCHITECTURE.md#layout)). In CI the tests run one at a time, as most open two to four phones and two of them at once overload the machine. On real phones, `pnpm dev:phone` serves over HTTPS with a self-signed certificate, as phones open the camera only on HTTPS pages.
+`pnpm test:e2e` builds the app and plays it in Chromium over real WebRTC (`tests/e2e/`, listed in [ARCHITECTURE.md](ARCHITECTURE.md#layout)). On real phones, `pnpm dev:phone` serves over HTTPS with a self-signed certificate, as phones open the camera only on HTTPS pages.
 
 ## Coverage
 
@@ -36,7 +36,7 @@ Coverage comes from two kinds of tests, which CI uploads to [Codecov](https://co
 | `unit` | Vitest, in Node, and happy-dom for the screens    | `src/`                                                                                                   | `pnpm test:coverage` → `coverage/lcov.info`         |
 | `e2e`  | Playwright, in Chromium (`tests/e2e/coverage.ts`) | the same TypeScript as the browser runs it, through the build's source maps: the screens, WebRTC, camera | `pnpm test:e2e:coverage` → `coverage/e2e/lcov.info` |
 
-Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of `@playwright/test`, so every page they open is measured. Coverage never fails a pull request (`codecov.yml`).
+Browser tests import `test` and `expect` from `tests/e2e/coverage.ts` instead of `@playwright/test`, so every page they open is measured, and every phone they open with `phone()` is closed when the test ends: tables left running would slow down every later test in the same browser. Coverage never fails a pull request (`codecov.yml`).
 
 ## The libraries
 

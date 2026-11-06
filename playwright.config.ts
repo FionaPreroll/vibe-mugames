@@ -10,10 +10,6 @@ export default defineConfig({
   globalSetup: './tests/e2e/coverage-setup.ts',
   globalTeardown: './tests/e2e/coverage-teardown.ts',
   forbidOnly: Boolean(process.env.CI),
-  // Most tests open two to four phones, each a page of its own. Two such tests at once overload
-  // the CI machine, with coverage on, until some run past their time; one at a time takes about
-  // as long in all.
-  workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: `http://localhost:${port}/`,
