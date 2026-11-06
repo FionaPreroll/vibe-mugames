@@ -94,6 +94,21 @@ The games in real time, between phones:
   </tr>
 </table>
 
+More games in real time, here on one device:
+
+<table>
+  <tr>
+    <td width="26%"><img src="docs/screenshots/snakes.png" alt="Snakes for three on one phone: three snakes and five apples on the grid, each snake's length above it, and each player's turn buttons below"></td>
+    <td width="37%"><img src="docs/screenshots/reaction.png" alt="Reaction for two on one laptop: each player's own button, Bo's saying Fastest! at 337 ms, Ada's 427 ms"></td>
+    <td width="37%"><img src="docs/screenshots/echo.png" alt="Colour Echo for two on one laptop: a pad of four colours for each player, Ada one colour into the row, Bo out with a wrong colour"></td>
+  </tr>
+  <tr>
+    <td>Snakes: eat apples and grow, or be the last one crawling</td>
+    <td>Reaction: tap first once the field lights up</td>
+    <td>Colour Echo: tap back a growing row of colours</td>
+  </tr>
+</table>
+
 ## Playing
 
 Play in the browser at **[fionapreroll.github.io/vibe-mugames](https://fionapreroll.github.io/vibe-mugames/)**, or download the Android app, [`spielekiste.apk`](https://github.com/FionaPreroll/vibe-mugames/releases/latest/download/spielekiste.apk), and open it on the phone.

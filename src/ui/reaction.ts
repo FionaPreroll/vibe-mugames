@@ -75,6 +75,8 @@ export class ReactionField extends ZoneField {
       this.shownSignal = game.signal
       this.shownAt = now
     }
+    // What the field shows, once drawn, for tests and tools that cannot see the canvas.
+    this.element.dataset.phase = game.phase
     const { seat } = zone
     const mine = seat >= 0 ? game.answers[seat] : null
     const go = game.phase === 'go' && mine === null

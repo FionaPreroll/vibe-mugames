@@ -150,3 +150,68 @@ test('two race on one keyboard, and play air hockey on a split screen', async ({
   await page.keyboard.up('KeyW')
   await expect(ada.locator('.rink-score')).toHaveText(/^Ada \d : \d Bo/)
 })
+
+test('two phones play Snakes and Reaction: steered by keys, timed on each phone', async ({
+  browser,
+}) => {
+  const [ada, bo] = await table(browser)
+  const errors: Error[] = []
+  for (const page of [ada, bo]) page.on('pageerror', (error) => errors.push(error))
+  await ada.getByRole('button', { name: 'Snakes', exact: true }).click()
+  for (const page of [ada, bo]) {
+    await expect(page.getByRole('img', { name: 'Snakes' })).toBeVisible()
+    await expect(page.locator('.snake-lengths')).toContainText('Ada 3')
+  }
+  // Bo crawls left from the right; turning up takes him into the top edge long before Ada,
+  // crawling right along her row, reaches the other side.
+  await bo.keyboard.press('ArrowUp')
+  await expect(ada.locator('.status.turn')).toHaveText('You win!', { timeout: 15_000 })
+  await expect(bo.locator('.status.turn')).toHaveText('Ada wins.')
+
+  await ada.getByRole('button', { name: 'Other game' }).click()
+  await ada.getByRole('button', { name: 'Reaction', exact: true }).click()
+  await expect(bo.locator('.status.turn')).toContainText('Wait for the field to light up')
+  // Both wait for the signal on their own screen, then tap it.
+  for (const page of [ada, bo]) {
+    await expect(page.locator('.live.reaction')).toHaveAttribute('data-phase', 'go', {
+      timeout: 10_000,
+    })
+    await page.getByRole('img', { name: 'Reaction' }).click()
+  }
+  await expect(ada.locator('.live.reaction')).toHaveAttribute('data-phase', 'result')
+  await expect(ada.locator('.reaction-points')).toContainText(/Ada 1|Bo 1/)
+  await expect(bo.locator('.reaction-points')).toContainText(/Ada 1|Bo 1/)
+  expect(errors).toEqual([])
+})
+
+test('two play Colour Echo on a split screen: Ada taps the row back, Bo a wrong colour', async ({
+  browser,
+}) => {
+  const page = await phone(browser, 'Ada')
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.getByRole('button', { name: 'Play on this device' }).click()
+  await page.getByLabel('Name of player 2').fill('Bo')
+  await page.getByLabel('Split screen').check()
+  await page.getByRole('button', { name: 'Start' }).click()
+  await page.getByRole('button', { name: 'Colour Echo' }).click()
+  const ada = page.getByRole('region', { name: 'Ada' }).locator('.live.echo')
+  // Ada watches the row light up, a colour at a time.
+  const row: number[] = []
+  for (let i = 0; i < 200 && (await ada.getAttribute('data-phase')) !== 'repeat'; i++) {
+    const lit = await ada.getAttribute('data-lit')
+    if (lit && Number(lit) !== row.at(-1)) row.push(Number(lit))
+    else if (!lit && row.length > 0 && row.at(-1) !== -1) row.push(-1)
+    await page.waitForTimeout(40)
+  }
+  const colours = row.filter((c) => c >= 0)
+  expect(colours.length).toBeGreaterThanOrEqual(1)
+  // Ada's keys are W D S A for the colours at the top, right, bottom and left.
+  for (const colour of colours)
+    await page.keyboard.press(['KeyW', 'KeyD', 'KeyS', 'KeyA'][colour] ?? '')
+  await page.keyboard.press(
+    ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'][colours[0] ?? 0] ?? '',
+  )
+  await expect(page.locator('.pane .status.turn').first()).toHaveText(/You win!|Ada wins/, {
+    timeout: 10_000,
+  })
+})

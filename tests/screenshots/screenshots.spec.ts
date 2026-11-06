@@ -474,6 +474,61 @@ test('Air Hockey on a phone, the whole rink', async ({ browser }) => {
   await phones(browser, 'airhockey', [{ src: await screen(ada) }], PUCK_NOISE)
 })
 
+test('Snakes for three on one phone', async ({ browser }) => {
+  const page = await device(browser, PHONE)
+  await local(page, NAMES.slice(0, 3))
+  // The game's time moves on only by the steps below.
+  await freeze(page)
+  await page.getByRole('button', { name: 'Snakes', exact: true }).click({ force: true })
+  // The countdown, then Ada turns down and back right, Bo down too, and Cy crawls on.
+  await page.clock.runFor(3200)
+  await steer(page, ['KeyS', 'ArrowDown'], 300)
+  await steer(page, ['KeyD'], 500)
+  await shot(page, 'snakes')
+})
+
+test('Reaction for two on one laptop', async ({ browser }) => {
+  const page = await device(browser, LAPTOP)
+  await local(page, NAMES.slice(0, 2))
+  await freeze(page)
+  await page.getByRole('button', { name: 'Reaction', exact: true }).click({ force: true })
+  const field = page.locator('.live.reaction')
+  for (let i = 0; i < 100 && (await field.getAttribute('data-phase')) !== 'go'; i++) {
+    await page.clock.runFor(100)
+  }
+  // Bo taps first, then Ada.
+  await page.clock.runFor(240)
+  await page.keyboard.press('ArrowUp')
+  await page.clock.runFor(90)
+  await page.keyboard.press('KeyW')
+  await page.clock.runFor(100)
+  await shot(page, 'reaction')
+})
+
+test('Colour Echo for two on one laptop', async ({ browser }) => {
+  const page = await device(browser, LAPTOP)
+  await local(page, NAMES.slice(0, 2))
+  await freeze(page)
+  await page.getByRole('button', { name: 'Colour Echo' }).click({ force: true })
+  const field = page.locator('.live.echo')
+  // The row lights up, a colour at a time.
+  const row: number[] = []
+  let dark = true
+  for (let i = 0; i < 200 && (await field.getAttribute('data-phase')) !== 'repeat'; i++) {
+    const lit = await field.getAttribute('data-lit')
+    if (lit && dark) row.push(Number(lit))
+    dark = !lit
+    await page.clock.runFor(50)
+  }
+  // Ada taps the row's first colour; Bo a wrong one, and is out.
+  const keys = ['KeyW', 'KeyD', 'KeyS', 'KeyA']
+  const arrows = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft']
+  await page.keyboard.press(keys[row[0] ?? 0] ?? '')
+  await page.keyboard.press(arrows[((row[0] ?? 0) + 1) % 4] ?? '')
+  await page.clock.runFor(100)
+  await shot(page, 'echo')
+})
+
 test('adding a player', async ({ browser }) => {
   const host = await device(browser, PHONE)
   await host.getByRole('button', { name: 'Open a table' }).click()

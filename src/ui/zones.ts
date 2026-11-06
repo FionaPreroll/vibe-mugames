@@ -123,7 +123,7 @@ export abstract class ZoneField implements LiveView {
     )
     if (!zone || zone.seat < 0) return
     event.preventDefault()
-    this.tap(zone.seat, { x: at.x - zone.x, y: at.y - zone.y, zone }, event.timeStamp)
+    this.tap(zone.seat, { x: at.x - zone.x, y: at.y - zone.y, zone }, performance.now())
   }
 
   private readonly key = (event: KeyboardEvent) => {
@@ -133,7 +133,7 @@ export abstract class ZoneField implements LiveView {
     const seat = pressed?.seat ?? (event.code === 'Space' || event.code === 'Enter' ? own : null)
     if (seat === null || !this.seats.includes(seat)) return
     event.preventDefault()
-    this.tap(seat, { direction: pressed?.direction ?? null }, event.timeStamp)
+    this.tap(seat, { direction: pressed?.direction ?? null }, performance.now())
   }
 }
 

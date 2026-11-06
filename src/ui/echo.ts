@@ -32,6 +32,8 @@ export class EchoField extends ZoneField {
     this.since = performance.now()
     const game = state.echo
     if (!game) return
+    // What the field shows, for tests and tools that cannot see the canvas.
+    this.element.dataset.phase = game.phase
     const row = `${state.round}:${game.length}`
     if (row !== this.row) {
       this.row = row
@@ -73,6 +75,7 @@ export class EchoField extends ZoneField {
     const cx = zone.x + x
     const cy = zone.y + y
     const lit = this.lit(game, seat, now)
+    if (game.phase === 'show') this.element.dataset.lit = lit === null ? '' : String(lit)
     const out = seat >= 0 && game.out[seat] !== null
     for (let wedge = 0; wedge < COLOURS; wedge++) {
       // Wedge 0 points up; the others follow clockwise.
