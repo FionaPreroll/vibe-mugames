@@ -396,9 +396,9 @@ export function takeOverText(game: GameId, name: string): string {
         ? 'takeOverRole'
         : game === 'schwimmen'
           ? 'takeOverCards'
-        : game === 'stadtlandfluss'
-          ? 'takeOverWords'
-          : 'takeOver'
+          : game === 'stadtlandfluss'
+            ? 'takeOverWords'
+            : 'takeOver'
   return t(key, { name })
 }
 
