@@ -7,6 +7,7 @@
 
 /* Light: paper white, for daylight. */
 [data-theme="light"] {
+  --coin: #a87a10;
   --bg: #f4f1ea;
   --panel: #ffffff;
   --panel-deep: #ebe6dc;
@@ -598,6 +599,7 @@
 [data-theme="spring"],
 [data-theme="easter"],
 [data-theme="summer"] {
+  --coin: #a87a10;
   --on-accent: #ffffff;
   --field: #18222e;
   --rink: #dfe9f1;

@@ -15,6 +15,7 @@ import { MAX_DICE_SEATS, MIN_DICE_SEATS } from './maexchen'
 import { MAX_SEATS, MIN_SEATS } from './miaumiau'
 import { muehle } from './muehle'
 import { reversi } from './reversi'
+import { MAX_SWIM, MIN_SWIM } from './schwimmen'
 import { SEA_SEATS } from './seeschlacht'
 import { sternhalma } from './sternhalma'
 import { ticTacToe } from './tictactoe'
@@ -46,7 +47,7 @@ export const GAME_GROUPS: readonly {
   readonly games: readonly GameId[]
 }[] = [
   { group: 'tactics', games: BOARD_GAME_IDS },
-  { group: 'luck', games: ['ludo', 'miaumiau', 'seeschlacht', 'maexchen', 'werwolf'] },
+  { group: 'luck', games: ['ludo', 'miaumiau', 'schwimmen', 'seeschlacht', 'maexchen', 'werwolf'] },
   { group: 'skill', games: LIVE_GAME_IDS },
 ]
 
@@ -61,6 +62,7 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (game === 'airhockey') return { min: 2, max: 2 }
   if (game === 'ludo') return { min: MIN_LUDO, max: MAX_LUDO }
   if (game === 'maexchen') return { min: MIN_DICE_SEATS, max: MAX_DICE_SEATS }
+  if (game === 'schwimmen') return { min: MIN_SWIM, max: MAX_SWIM }
   if (game === 'werwolf') return { min: MIN_VILLAGE, max: MAX_VILLAGE }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
@@ -77,11 +79,16 @@ export function hasHiddenCards(game: GameId): boolean {
 }
 
 /** Games in which each player's view is theirs alone, and the device hides it from the others. */
-const HANDED_OVER: ReadonlySet<GameId> = new Set<GameId>(['seeschlacht', 'maexchen', 'werwolf'])
+const HANDED_OVER: ReadonlySet<GameId> = new Set<GameId>([
+  'seeschlacht',
+  'maexchen',
+  'werwolf',
+  'schwimmen',
+])
 
 /**
  * Whether a game is hidden on one device instead of played open, such as the fleets of Sea
- * Battle, the dice under Mäxchen's cup or the roles of Werwolf: taking turns on one screen, the
+ * Battle, the dice under Mäxchen's cup, the roles of Werwolf or the hands of Schwimmen: taking turns on one screen, the
  * device is handed over between the players, and shows nothing of a player's own until they say
  * they hold it; on a split screen, each part hides its player's own until they ask to see it.
  */

@@ -82,13 +82,14 @@ export type LiveGameId = (typeof LIVE_GAME_IDS)[number]
 
 /**
  * Every game, in the order the lobby shows them: the board games, the game of dice, the card
- * game, the game of hidden fleets, the party games of dice and of hidden roles, then the games
+ * games, the game of hidden fleets, the party games of dice and of hidden roles, then the games
  * in real time.
  */
 export const GAME_IDS = [
   ...BOARD_GAME_IDS,
   'ludo',
   'miaumiau',
+  'schwimmen',
   'seeschlacht',
   'maexchen',
   'werwolf',

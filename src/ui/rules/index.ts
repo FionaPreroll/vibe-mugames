@@ -13,6 +13,7 @@ import { maexchenGuide } from './maexchen'
 import { miauMiauGuide } from './miaumiau'
 import { muehleGuide } from './muehle'
 import { reversiGuide } from './reversi'
+import { schwimmenGuide } from './schwimmen'
 import { seeschlachtGuide } from './seeschlacht'
 import { sternhalmaGuide } from './sternhalma'
 import { ticTacToeGuide } from './tictactoe'
@@ -33,6 +34,7 @@ export const GUIDES: Record<GameId, GameGuide> = {
   reversi: reversiGuide,
   sternhalma: sternhalmaGuide,
   miaumiau: miauMiauGuide,
+  schwimmen: schwimmenGuide,
   seeschlacht: seeschlachtGuide,
   lichtrenner: lichtrennerGuide,
   airhockey: airHockeyGuide,

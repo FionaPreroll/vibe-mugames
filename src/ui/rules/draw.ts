@@ -44,6 +44,7 @@ export const INK = {
   dot: 'var(--dot)',
   ludo: 'var(--ludo)',
   cup: 'var(--cup)',
+  coin: 'var(--coin)',
   night: 'var(--field)',
   rink: 'var(--rink)',
 } as const
@@ -202,10 +203,17 @@ export const CARD_WIDTH = 2
 export const CARD_HEIGHT = 2.8
 
 /**
- * A card with its top left corner at (x, y): its rank, its suit and the mark of a card that does
- * something, as the table shows them; `back` for one face down, `dim` for one that does not fit.
+ * A card with its top left corner at (x, y): its rank, its suit and, in Miau-Miau (`marks`), the
+ * mark of a card that does something, as the table shows them; `back` for one face down, `dim`
+ * for one that does not fit.
  */
-export function card(x: number, y: number, which: Card | 'back', dim = false): SVGGElement {
+export function card(
+  x: number,
+  y: number,
+  which: Card | 'back',
+  dim = false,
+  marks = true,
+): SVGGElement {
   if (which === 'back') {
     return svg(
       'g',
@@ -226,7 +234,7 @@ export function card(x: number, y: number, which: Card | 'back', dim = false): S
   }
   const red = suitOf(which) >= 2
   const ink = red ? INK.red : INK.black
-  const mark = specialMark(rankOf(which))
+  const mark = marks ? specialMark(rankOf(which)) : ''
   return svg(
     'g',
     { opacity: dim ? 0.45 : 1 },

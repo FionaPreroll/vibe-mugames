@@ -40,10 +40,13 @@ export function specialMark(rank: number): string {
   return rank === SEVEN ? '+2' : rank === EIGHT ? '»' : rank === JACK ? '★' : ''
 }
 
-/** One card's face: its rank and suit, red or black, and the mark of a card that does something. */
-function face(card: Card): Node[] {
+/**
+ * One card's face: its rank and suit, red or black, and in Miau-Miau the mark of a card that does
+ * something (`marks`).
+ */
+export function face(card: Card, marks = true): Node[] {
   const red = suitOf(card) >= 2
-  const mark = specialMark(rankOf(card))
+  const mark = marks ? specialMark(rankOf(card)) : ''
   return [
     h('span', { class: `rank${red ? ' red' : ''}` }, rankMark(card)),
     h('span', { class: `suit${red ? ' red' : ''}` }, suitSymbol(suitOf(card))),

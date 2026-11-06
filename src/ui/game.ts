@@ -14,6 +14,7 @@ import type { LiveSlot } from './live'
 import { ludoHints, ludoView } from './ludo'
 import { playersText, rulesButton, thumbnail } from './rules'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
+import { swimHints, swimStatus, swimView } from './swim'
 import { villageStatus, villageToMove, villageView } from './village'
 
 /**
@@ -171,6 +172,23 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
       statusLine(diceStatus(state, dice, viewer, shared), toMove),
       ...hints(revealText(state, dice.reveal, dice), diceHint(state, dice, viewer, hidden)),
       ...diceView(state, dice, {
+        viewer,
+        picker,
+        move: toMove ? (move) => options.move(game, state.moveNo, move) : null,
+        shared,
+        hideOwn: options.hideOwn ?? false,
+      }),
+    ]
+  }
+  if (state.swim) {
+    const swim = state.swim
+    const mine = state.seats.indexOf(viewer)
+    const toMove = state.outcome === null && mine >= 0 && swim.turn === mine && !swim.out[mine]
+    const picked = toMove && picker.current(state).length > 0
+    return [
+      statusLine(swimStatus(state, swim, viewer, shared), toMove),
+      ...hints(...swimHints(state, swim, viewer, picked)),
+      ...swimView(state, swim, {
         viewer,
         picker,
         move: toMove ? (move) => options.move(game, state.moveNo, move) : null,
@@ -350,18 +368,25 @@ const HAND_OVER_NOTICES: Partial<Record<GameId, readonly [TextKey, TextKey]>> = 
   seeschlacht: ['handOverNotice', 'hiddenFleetNotice'],
   maexchen: ['handOverDice', 'hiddenDiceNotice'],
   werwolf: ['handOverRoles', 'hiddenRoleNotice'],
+  schwimmen: ['handOverCards', 'hiddenCardsNotice'],
 }
 
 /** What a player taps once they hold the device, in a game handed over on one device. */
 export function takeOverText(game: GameId, name: string): string {
   const key: TextKey =
-    game === 'maexchen' ? 'takeOverDice' : game === 'werwolf' ? 'takeOverRole' : 'takeOver'
+    game === 'maexchen'
+      ? 'takeOverDice'
+      : game === 'werwolf'
+        ? 'takeOverRole'
+        : game === 'schwimmen'
+          ? 'takeOverCards'
+          : 'takeOver'
   return t(key, { name })
 }
 
 /**
  * The notice for a game that hides something, played on one device: that its cards are open, or
- * how Sea Battle, Mäxchen and Werwolf keep each player's own hidden there (`split` on a split
+ * how Sea Battle, Mäxchen, Werwolf and Schwimmen keep each player's own hidden there (`split` on a split
  * screen). Null for other games.
  */
 export function openCardsNotice(game: GameId | null, split = false): HTMLElement | null {

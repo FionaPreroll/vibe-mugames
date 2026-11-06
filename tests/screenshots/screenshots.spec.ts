@@ -240,6 +240,24 @@ test('Miau-Miau on a split screen', async ({ browser }) => {
   await shot(page, 'miaumiau-split')
 })
 
+test('Schwimmen on a split screen', async ({ browser }) => {
+  const page = await device(browser, LAPTOP)
+  await local(page, NAMES.slice(0, 3), true)
+  await page.getByRole('button', { name: 'Schwimmen' }).click()
+  // Two turns played, then Cy looks at her cards and picks one to swap.
+  for (const name of ['Ada', 'Bo']) {
+    const pane = page.getByRole('region', { name })
+    await pane.getByRole('button', { name: 'Show my cards' }).click()
+    await pane.getByRole('group', { name: 'Your cards' }).getByRole('button').first().click()
+    await pane.getByRole('group', { name: 'The middle' }).getByRole('button').nth(1).click()
+    await pane.getByRole('button', { name: 'Hide my cards' }).click()
+  }
+  const cy = page.getByRole('region', { name: 'Cy' })
+  await cy.getByRole('button', { name: 'Show my cards' }).click()
+  await cy.getByRole('group', { name: 'Your cards' }).getByRole('button').nth(2).click()
+  await shot(page, 'schwimmen-split')
+})
+
 test('Sea Battle', async ({ browser }) => {
   const page = await device(browser, PHONE)
   await local(page, NAMES.slice(0, 2))

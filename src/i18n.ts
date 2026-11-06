@@ -286,6 +286,52 @@ const en = {
   hiddenDiceNotice:
     'Your dice stay hidden until you tap “Show my dice”: the others look away while you do.',
   takeOverDice: 'I am {name}: show my turn',
+  schwimmen: 'Schwimmen',
+  swimMiddle: 'The middle',
+  swimPoints: '{n} in {suit}',
+  swimThree: '30½: three of a rank',
+  swimSwapAll: 'Swap all three',
+  swimPass: 'Pass',
+  swimKnock: 'Knock',
+  swimHint:
+    'Tap one of your cards, then the card in the middle to take for it. Or swap all three, pass, or knock if your hand is good.',
+  swimTakeHint: 'Now tap the card in the middle to take for it, or your card again to keep it.',
+  swimYouAreOut: 'You are out: {name}’s turn.',
+  swimLastTurn: '{name} knocked: this is your last turn before the hands are shown.',
+  swimKnocked: '{name} knocked: everyone else has one more turn.',
+  swimSwapped: '{name} gave {gave} for {took}.',
+  swimSwappedAll: '{name} swapped all three cards.',
+  swimPassed: '{name} passed.',
+  swimNewMiddle: 'Everyone passed after {name}: three new cards lie in the middle.',
+  swimEndKnock: '{name} knocked, and the hands were shown.',
+  swimEndSchnauz: '{name} showed 31!',
+  swimEndPasses: 'Everyone passed, and the cards ran out: the hands were shown.',
+  swimNobodyLoses: 'All held as many points: nobody loses a coin.',
+  swimLoses: '{names} held the fewest points, {n}, and loses a coin.',
+  swimLoseAll: '{names} held the fewest points, {n}, and lose a coin each.',
+  swimOut: 'out',
+  swimSwimming: 'swimming: no coin left',
+  swimCoins: '{n} coins',
+  swimDealer: '(deals)',
+  swimKnockMark: '(knocked)',
+  swimLastRound: 'The last round’s hands',
+  showCards: 'Show my cards',
+  hideCards: 'Hide my cards',
+  swimHelp: 'How Schwimmen works',
+  swimHelpPoints:
+    'Your hand counts the cards of one suit, the best one: an ace 11, a king, queen, jack or ten 10, the others their number. The most is 31: an ace with two tens or faces of its suit.',
+  swimHelpThree: 'Three cards of the same rank, such as three eights, count 30½.',
+  swimHelpMoves:
+    'On your turn, swap one of your cards for one in the middle, swap all three, or pass. When everyone has passed, three new cards are laid out.',
+  swimHelpKnock:
+    'Knock when your hand is good: everyone else has one more turn, then all hands are shown. Whoever gets 31 shows it at once.',
+  swimHelpLose:
+    'The fewest points lose a coin. Everyone starts with {coins}; without one left you swim, and if you lose again you are out. The last one still in wins.',
+  handOverCards:
+    'Schwimmen on one device: hand the device over when it asks, and look only at your own cards while it is your turn.',
+  hiddenCardsNotice:
+    'Your cards stay hidden until you tap “Show my cards”: the others look away while you do.',
+  takeOverCards: 'I am {name}: show my cards',
   werwolf: 'Werewolf',
   roleWolf: 'werewolf',
   roleSeer: 'seer',
@@ -361,6 +407,16 @@ const en = {
     'Three in a row win a small board for you. A board that is won or full takes no more marks: whoever is sent there may play in any open board.',
   rulesUltimate4:
     'Three small boards won in a row, across, down or diagonally, win the game. Once every board is closed without such a row, it is a draw.',
+  rulesSchwimmen1:
+    'Each player gets three cards only they see, and three more lie open in the middle. Everyone starts with three coins.',
+  rulesSchwimmen2:
+    'Your hand counts the cards of its best suit: an ace 11, a king, queen, jack or ten 10, the others their number. Three of a rank count 30½, and 31 is the most.',
+  rulesSchwimmen3:
+    'On your turn, swap one card with the middle, swap all three, or pass. When everyone has passed, three new cards are laid out.',
+  rulesSchwimmen4:
+    'Knock when your hand is good: everyone else has one more turn, then all hands are shown. Whoever gets 31 shows it at once.',
+  rulesSchwimmen5:
+    'The fewest points lose a coin. Without a coin you swim, and if you lose again you are out. The last one still in wins.',
   rulesFourinarow1:
     'Take turns dropping a disc into a column of the upright board: it falls down to the lowest free hole.',
   rulesFourinarow2:
@@ -997,6 +1053,53 @@ const de: Texts = {
   hiddenDiceNotice:
     'Deine Würfel bleiben verborgen, bis du auf „Meine Würfel zeigen“ tippst: Die anderen schauen dann weg.',
   takeOverDice: 'Ich bin {name}: meinen Zug zeigen',
+  schwimmen: 'Schwimmen',
+  swimMiddle: 'Die Mitte',
+  swimPoints: '{n} in {suit}',
+  swimThree: '30½: drei gleiche',
+  swimSwapAll: 'Alle drei tauschen',
+  swimPass: 'Schieben',
+  swimKnock: 'Klopfen',
+  swimHint:
+    'Tippe eine deiner Karten an, dann die Karte in der Mitte, die du dafür nimmst. Oder tausche alle drei, schiebe, oder klopfe, wenn deine Hand gut ist.',
+  swimTakeHint:
+    'Tippe jetzt die Karte in der Mitte an, die du dafür nimmst, oder deine Karte noch einmal, um sie zu behalten.',
+  swimYouAreOut: 'Du bist raus: {name} ist dran.',
+  swimLastTurn: '{name} hat geklopft: Das ist dein letzter Zug, dann wird aufgedeckt.',
+  swimKnocked: '{name} hat geklopft: Alle anderen sind noch einmal dran.',
+  swimSwapped: '{name} gab {gave} für {took}.',
+  swimSwappedAll: '{name} hat alle drei Karten getauscht.',
+  swimPassed: '{name} hat geschoben.',
+  swimNewMiddle: 'Nach {name} haben alle geschoben: Drei neue Karten liegen in der Mitte.',
+  swimEndKnock: '{name} hat geklopft, und es wurde aufgedeckt.',
+  swimEndSchnauz: '{name} hat 31 aufgedeckt!',
+  swimEndPasses: 'Alle haben geschoben, und die Karten sind aus: Es wurde aufgedeckt.',
+  swimNobodyLoses: 'Alle hatten gleich viele Punkte: Niemand verliert eine Münze.',
+  swimLoses: '{names} hatte die wenigsten Punkte, {n}, und verliert eine Münze.',
+  swimLoseAll: '{names} hatten die wenigsten Punkte, {n}, und verlieren je eine Münze.',
+  swimOut: 'raus',
+  swimSwimming: 'schwimmt: keine Münze mehr',
+  swimCoins: '{n} Münzen',
+  swimDealer: '(gibt)',
+  swimKnockMark: '(hat geklopft)',
+  swimLastRound: 'Die Karten der letzten Runde',
+  showCards: 'Meine Karten zeigen',
+  hideCards: 'Meine Karten verbergen',
+  swimHelp: 'So geht Schwimmen',
+  swimHelpPoints:
+    'Deine Hand zählt die Karten einer Farbe, der besten: ein Ass 11, König, Dame, Bube oder Zehn 10, die anderen ihre Zahl. Am meisten sind 31: ein Ass mit zwei Zehnen oder Bildern seiner Farbe.',
+  swimHelpThree: 'Drei Karten mit gleichem Wert, etwa drei Achten, zählen 30½.',
+  swimHelpMoves:
+    'Wenn du dran bist, tauschst du eine deiner Karten gegen eine aus der Mitte, tauschst alle drei, oder schiebst. Haben alle geschoben, kommen drei neue Karten in die Mitte.',
+  swimHelpKnock:
+    'Klopfe, wenn deine Hand gut ist: Alle anderen sind noch einmal dran, dann wird aufgedeckt. Wer 31 hat, deckt sofort auf.',
+  swimHelpLose:
+    'Die wenigsten Punkte kosten eine Münze. Jeder beginnt mit {coins}; ohne Münze schwimmst du, und verlierst du dann noch einmal, bist du raus. Wer als Letzter übrig ist, gewinnt.',
+  handOverCards:
+    'Schwimmen auf einem Gerät: Gib das Gerät weiter, wenn es danach fragt, und schau nur auf deine eigenen Karten, wenn du dran bist.',
+  hiddenCardsNotice:
+    'Deine Karten bleiben verborgen, bis du auf „Meine Karten zeigen“ tippst: Die anderen schauen dann weg.',
+  takeOverCards: 'Ich bin {name}: meine Karten zeigen',
   werwolf: 'Werwolf',
   roleWolf: 'Werwolf',
   roleSeer: 'Seherin',
@@ -1073,6 +1176,16 @@ const de: Texts = {
     'Drei in einer Reihe gewinnen dir ein kleines Brett. Ein gewonnenes oder volles Brett nimmt keine Zeichen mehr: Wer dorthin geschickt wird, setzt in ein beliebiges offenes Brett.',
   rulesUltimate4:
     'Drei gewonnene kleine Bretter in einer Reihe, waagrecht, senkrecht oder schräg, gewinnen das Spiel. Sind alle Bretter zu ohne so eine Reihe, ist es unentschieden.',
+  rulesSchwimmen1:
+    'Jeder bekommt drei Karten, die nur er sieht, und drei weitere liegen offen in der Mitte. Jeder beginnt mit drei Münzen.',
+  rulesSchwimmen2:
+    'Deine Hand zählt die Karten ihrer besten Farbe: ein Ass 11, König, Dame, Bube oder Zehn 10, die anderen ihre Zahl. Drei gleiche zählen 30½, und 31 sind das Höchste.',
+  rulesSchwimmen3:
+    'Wenn du dran bist, tauschst du eine Karte mit der Mitte, tauschst alle drei, oder schiebst. Haben alle geschoben, kommen drei neue Karten in die Mitte.',
+  rulesSchwimmen4:
+    'Klopfe, wenn deine Hand gut ist: Alle anderen sind noch einmal dran, dann wird aufgedeckt. Wer 31 hat, deckt sofort auf.',
+  rulesSchwimmen5:
+    'Die wenigsten Punkte kosten eine Münze. Ohne Münze schwimmst du, und verlierst du dann noch einmal, bist du raus. Wer als Letzter übrig ist, gewinnt.',
   rulesFourinarow1:
     'Werft abwechselnd eine Scheibe in eine Spalte des stehenden Bretts: Sie fällt bis ins unterste freie Loch.',
   rulesFourinarow2:

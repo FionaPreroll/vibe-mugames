@@ -78,15 +78,16 @@ About (`src/ui/about.ts`, `src/ui/privacy.ts`) reads `CHANGELOG.md` and the priv
 
 ```
 src/
-  core/       the rules: board.ts, tictactoe.ts, ultimate.ts, fourInARow.ts, muehle.ts, dame.ts, kaesekaestchen.ts,
-              reversi.ts, sternhalma.ts, ludo.ts, miaumiau.ts, seeschlacht.ts, maexchen.ts, werwolf.ts,
-              lichtrenner.ts, airhockey.ts, games.ts, table.ts
+  core/       the rules: board.ts, tictactoe.ts, ultimate.ts, fourInARow.ts, muehle.ts, dame.ts,
+              kaesekaestchen.ts, reversi.ts, sternhalma.ts, ludo.ts, miaumiau.ts, schwimmen.ts,
+              seeschlacht.ts, maexchen.ts, werwolf.ts, lichtrenner.ts, airhockey.ts, games.ts,
+              table.ts
   net/        protocol.ts: the messages and their parsers; session.ts: the host's and players' seats;
               clock.ts and smooth.ts: air hockey's drawing between states, with the Kalman filter;
               netlog.ts: the connections of the last table, for the connection view and the report
   ui/         the screens: home.ts, table.ts, local.ts (playing on one device), game.ts (what every
-              table shows), boards.ts, ludo.ts (Ludo's board and die), cards.ts, sea.ts (Sea
-              Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), live.ts, canvas.ts, race.ts
+              table shows), boards.ts, ludo.ts (Ludo's board and die), cards.ts, swim.ts
+              (Schwimmen), sea.ts (Sea Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), live.ts, canvas.ts, race.ts
               and rink.ts (the fields of the games in real time), codes.ts (QR codes and text
               codes), rules/ (each game's thumbnail and rules with drawings), hero.ts (the start
               screen's picture, made of those thumbnails), updates.ts and webUpdates.ts (the

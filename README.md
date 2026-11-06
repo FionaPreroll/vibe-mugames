@@ -69,6 +69,12 @@ On a laptop or a tablet, the game chooser, and games on one device, taking turns
     <td>Miau-Miau for four on a split screen</td>
     <td>Chinese Checkers for six</td>
   </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/schwimmen-split.png" alt="Schwimmen for three on a split screen: the cards in the middle, two hands hidden, and the third player picking a card to swap"></td>
+  </tr>
+  <tr>
+    <td colspan="2">Schwimmen for three on a split screen, each hand hidden until its player shows it</td>
+  </tr>
 </table>
 
 The games in real time, between phones:
@@ -103,8 +109,8 @@ In the app, phones can also connect **by Bluetooth**, without any Wi-Fi. On a la
 | Tactics                                                       | Luck and bluff                            | Skill                                           |
 | ------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------- |
 | [Tic Tac Toe](docs/GAMES.md#tic-tac-toe), 2                   | [Ludo](docs/GAMES.md#ludo), 2–4           | [Light Racers](docs/GAMES.md#light-racers), 2–6 |
-| [Ultimate Tic Tac Toe](docs/GAMES.md#ultimate-tic-tac-toe), 2 |                                           |                                                 |
-| [Four in a Row](docs/GAMES.md#four-in-a-row), 2               | [Miau-Miau](docs/GAMES.md#miau-miau), 2–6 | [Air Hockey](docs/GAMES.md#air-hockey), 2       |
+| [Ultimate Tic Tac Toe](docs/GAMES.md#ultimate-tic-tac-toe), 2 | [Miau-Miau](docs/GAMES.md#miau-miau), 2–6 | [Air Hockey](docs/GAMES.md#air-hockey), 2       |
+| [Four in a Row](docs/GAMES.md#four-in-a-row), 2               | [Schwimmen](docs/GAMES.md#schwimmen), 2–8 |                                                 |
 | [Nine Men's Morris](docs/GAMES.md#nine-mens-morris), 2        | [Sea Battle](docs/GAMES.md#sea-battle), 2 |                                                 |
 | [Draughts](docs/GAMES.md#draughts), 2                         | [Mäxchen](docs/GAMES.md#mäxchen), 2–8     |                                                 |
 | [Dots and Boxes](docs/GAMES.md#dots-and-boxes), 2             | [Werewolf](docs/GAMES.md#werewolf), 4–8   |                                                 |

@@ -81,3 +81,38 @@ test('four hand one device round for Werwolf, each seeing only their own role', 
   }
   await expect(page.locator('.news')).toContainText('Night 1')
 })
+
+test('two phones play Schwimmen: each sees only its own hand, and a knock shows them all', async ({
+  browser,
+}) => {
+  const ada = await phone(browser, 'Ada')
+  const bo = await phone(browser, 'Bo')
+  await ada.getByRole('button', { name: 'Open a table' }).click()
+  await seat(ada, bo)
+  await ada.getByRole('button', { name: 'Schwimmen' }).click()
+  const hand = (page: typeof ada) => page.getByRole('group', { name: 'Your cards' })
+  await expect(hand(ada).getByRole('button')).toHaveCount(3)
+  await expect(hand(bo).getByRole('button')).toHaveCount(3)
+  const adaCards = await hand(ada).getByRole('button').allTextContents()
+  const boCards = await hand(bo).getByRole('button').allTextContents()
+  expect(adaCards).not.toEqual(boCards)
+  // A hand dealt 31 ends the round at once: only then is it not Ada's turn first.
+  test.skip(
+    (await ada.locator('.status.turn').textContent()) !== 'Your turn',
+    'a hand of 31 was dealt',
+  )
+  await expect(bo.locator('.status.turn')).toHaveText('Ada’s turn')
+
+  // Ada swaps her first card for the middle's first, then Bo knocks, and Ada has one more turn.
+  await hand(ada).getByRole('button').first().click()
+  await ada.getByRole('group', { name: 'The middle' }).getByRole('button').first().click()
+  await expect(bo.locator('.hint').first()).toContainText('Ada gave')
+  await bo.getByRole('button', { name: 'Knock' }).click()
+  await expect(ada.locator('.hint')).toContainText([
+    'Bo knocked: this is your last turn before the hands are shown.',
+  ])
+  await ada.getByRole('button', { name: 'Pass' }).click()
+  // The hands are shown, and the next round begins.
+  await expect(bo.locator('.swim-reveal')).toBeVisible()
+  await expect(bo.locator('.swim-reveal li')).toHaveCount(2)
+})

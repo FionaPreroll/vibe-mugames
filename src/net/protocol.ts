@@ -19,6 +19,7 @@ import * as licht from '../core/lichtrenner'
 import * as ludo from '../core/ludo'
 import * as maex from '../core/maexchen'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
+import * as swim from '../core/schwimmen'
 import * as sea from '../core/seeschlacht'
 import type { Player, TableState } from '../core/table'
 import * as wolf from '../core/werwolf'
@@ -30,7 +31,7 @@ import * as wolf from '../core/werwolf'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 10
+export const PROTOCOL = 11
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of
@@ -71,7 +72,7 @@ export const parseEvent: Parse<Event> = (value) => {
 
 /**
  * A board game's move, a path of one or more cells of its board, no longer than its longest
- * move; a move of Ludo, Miau-Miau, Sea Battle or Mäxchen, in numbers as their `encode` makes
+ * move; a move of Ludo, Miau-Miau, Schwimmen, Sea Battle or Mäxchen, in numbers as their `encode` makes
  * them; or the seat a player of Werwolf chooses.
  */
 function parseMove(value: unknown, game: GameId): Move | undefined {
@@ -86,6 +87,11 @@ function parseMove(value: unknown, game: GameId): Move | undefined {
     const numbers = list(value, 1, (n) => (isWhole(n, 0, 66) ? n : undefined))
     const move = numbers && maex.decode(numbers)
     return move ? maex.encode(move) : undefined
+  }
+  if (game === 'schwimmen') {
+    const numbers = list(value, 2, (n) => (isWhole(n, 0, swim.KNOCK_CODE) ? n : undefined))
+    const move = numbers && swim.decode(numbers)
+    return move ? swim.encode(move) : undefined
   }
   if (game === 'werwolf') {
     const seat = list(value, 1, (n) => (isWhole(n, 0, wolf.MAX_VILLAGE - 1) ? n : undefined))
@@ -137,6 +143,13 @@ export const parseState: Parse<TableState> = (value) => {
         ? null
         : undefined
   if (cards === undefined) return undefined
+  const swimView =
+    game === 'schwimmen'
+      ? parseSwim(value.swim, seats.length)
+      : value.swim === null
+        ? null
+        : undefined
+  if (swimView === undefined) return undefined
   const seaView =
     game === 'seeschlacht' ? parseSea(value.sea) : value.sea === null ? null : undefined
   if (seaView === undefined) return undefined
@@ -187,6 +200,7 @@ export const parseState: Parse<TableState> = (value) => {
     position,
     ludo: ludoState,
     cards,
+    swim: swimView,
     sea: seaView,
     dice,
     village,
@@ -452,6 +466,66 @@ function parseCards(value: unknown, seats: number): MiauView | undefined {
   if (winner !== null && !isWhole(winner, 0, seats - 1)) return undefined
   if (typeof value.stuck !== 'boolean') return undefined
   return { hand, counts, top, stock, pile, turn, wish, penalty, drawn, winner, stuck: value.stuck }
+}
+
+/**
+ * Schwimmen as the host shows it to this phone: this seat's hand and the middle, cards of one
+ * Skat deck each once, everyone's coins, and the hands shown at the end of the last round.
+ */
+function parseSwim(value: unknown, seats: number): swim.SwimView | undefined {
+  if (!isObject(value)) return undefined
+  const cards = (v: unknown, max: number) => {
+    const found = list(v, max, (card) => (swim.isSwimCard(card) ? card : undefined))
+    return found && new Set(found).size === found.length ? found : undefined
+  }
+  const isSeat = (n: unknown): n is number => isWhole(n, 0, seats - 1)
+  const hand = cards(value.hand, swim.HAND)
+  const middle = cards(value.middle, swim.HAND)
+  if (!hand || middle?.length !== swim.HAND) return undefined
+  if (hand.length !== 0 && hand.length !== swim.HAND) return undefined
+  if (hand.some((card) => middle.includes(card))) return undefined
+  const coins = list(value.coins, seats, (n) => (isWhole(n, 0, swim.COINS) ? n : undefined))
+  const out = list(value.out, seats, (b) => (typeof b === 'boolean' ? b : undefined))
+  if (coins?.length !== seats || out?.length !== seats) return undefined
+  const { stock, dealer, turn, knocker, passes, winner } = value
+  if (!isWhole(stock, 0, DECK) || !isSeat(dealer) || !isSeat(turn)) return undefined
+  if (knocker !== null && !isSeat(knocker)) return undefined
+  if (!isWhole(passes, 0, seats) || (winner !== null && !isSeat(winner))) return undefined
+  if (!isWhole(value.turns, 0, MAX_MOVES)) return undefined
+  const reveal = value.reveal === null ? null : parseSwimReveal(value.reveal, seats)
+  if (reveal === undefined) return undefined
+  return {
+    hand,
+    middle,
+    coins,
+    out,
+    stock,
+    dealer,
+    turn,
+    knocker: knocker as number | null,
+    passes,
+    turns: value.turns,
+    reveal,
+    winner: winner as number | null,
+  }
+}
+
+function parseSwimReveal(value: unknown, seats: number): swim.SwimReveal | undefined {
+  if (!isObject(value)) return undefined
+  const hands = list(value.hands, seats, (hand) => {
+    const found = list(hand, swim.HAND, (card) => (swim.isSwimCard(card) ? card : undefined))
+    return found && (found.length === 0 || found.length === swim.HAND) ? found : undefined
+  })
+  if (hands?.length !== seats) return undefined
+  const all = hands.flat()
+  if (new Set(all).size !== all.length) return undefined
+  const why = (['knock', 'schnauz', 'passes'] as const).find((w) => w === value.why)
+  if (!why) return undefined
+  const by = value.by
+  if (by !== null && !isWhole(by, 0, seats - 1)) return undefined
+  const losers = list(value.losers, seats, (n) => (isWhole(n, 0, seats - 1) ? n : undefined))
+  if (!losers || new Set(losers).size !== losers.length) return undefined
+  return { hands, why, by: by as number | null, losers }
 }
 
 /**

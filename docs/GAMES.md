@@ -11,6 +11,7 @@ The Spielekiste's games and their rules, in short. In the Spielekiste, each game
 | Draughts (_Dame_)                     | 2       |
 | Ludo (dice)                           | 2–4     |
 | Miau-Miau (Mau-Mau, cards)            | 2–6     |
+| Schwimmen (31, cards)                 | 2–8     |
 | Sea Battle (_Schiffe versenken_)      | 2       |
 | Mäxchen (dice)                        | 2–8     |
 | Werewolf (_Werwolf_)                  | 4–8     |
@@ -47,6 +48,10 @@ Four pieces each, in a corner of the board, and a track of 40 squares round it. 
 ## Miau-Miau
 
 Five cards each, from 32 cards (seven to ace) for up to four players, or 52 for five and six. A card goes on the pile if it has the suit or the rank of the top card; otherwise, or by choice, the player draws one, and may play it at once if it fits. A seven makes the next player draw two, unless they answer with a seven, which passes four on, and so on. An eight makes the next player miss their turn. A jack goes on any card and wishes for a suit. The first to play their last card wins. Each phone sees only its own hand; a card help on the screen explains the cards.
+
+## Schwimmen
+
+Also called 31. The 32 cards of a Skat deck (seven to ace), and three coins each. Every player gets three cards only they see, and three more lie open in the middle. A hand counts the cards of its best suit: an ace 11, a king, queen, jack or ten 10, the others their number; three of a rank count 30½, and 31 is the most. In turn, a player swaps one card with the middle, swaps all three, passes or knocks. When everyone has passed in a row, three new cards are laid out; once the stock runs out, the hands are shown. After a knock, everyone else has one more turn, then the hands are shown; a swap that makes 31 shows them at once. The fewest points lose a coin, all of them if several hold as few, nobody if everyone holds the same. A player without a coin swims, and is out when they lose again; the last one still in wins. The deal moves on each round. Each phone sees only its own hand; on one device, the device is handed over, or on a split screen each hand stays hidden until its player shows it.
 
 ## Sea Battle
 

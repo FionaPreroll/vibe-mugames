@@ -13,6 +13,7 @@ import * as licht from './lichtrenner'
 import * as ludo from './ludo'
 import * as maex from './maexchen'
 import * as miau from './miaumiau'
+import * as swim from './schwimmen'
 import * as sea from './seeschlacht'
 import * as wolf from './werwolf'
 
@@ -28,7 +29,7 @@ import * as wolf from './werwolf'
  * Ludo's die is rolled by the host too, with the same randomness as the cards: a player only
  * asks for a roll.
  *
- * In Miau-Miau, the host alone knows every hand, in Sea Battle every fleet, in Mäxchen the dice
+ * In Miau-Miau and Schwimmen, the host alone knows every hand, in Sea Battle every fleet, in Mäxchen the dice
  * under the cup and in Werwolf every role: `state(id)` shows each player only their own.
  *
  * Games in real time (Lichtrenner, air hockey) have no moves in turn: each player at the board
@@ -55,6 +56,8 @@ export interface TableState {
   readonly ludo: ludo.LudoState | null
   /** Miau-Miau as the player this state is for sees it; null in every other game. */
   readonly cards: miau.MiauView | null
+  /** Schwimmen as the player this state is for sees it; null in every other game. */
+  readonly swim: swim.SwimView | null
   /** Sea Battle as the player this state is for sees it; null in every other game. */
   readonly sea: sea.SeaView | null
   /** Mäxchen as the player this state is for sees it; null in every other game. */
@@ -90,6 +93,7 @@ export function playerToMove(state: TableState): number | null {
     state.position?.turn ??
     state.ludo?.turn ??
     state.cards?.turn ??
+    state.swim?.turn ??
     state.dice?.turn ??
     (state.village && (wolf.waiting(state.village)[0] ?? null)) ??
     (state.sea && (sea.nextToPlace(state.sea) ?? state.sea.turn))
@@ -108,6 +112,7 @@ export class Table {
   private position: Position | null = null
   private ludo: ludo.LudoState | null = null
   private cards: miau.MiauState | null = null
+  private swim: swim.SwimState | null = null
   private sea: sea.SeaState | null = null
   private dice: maex.MaexState | null = null
   private village: wolf.WolfState | null = null
@@ -248,6 +253,7 @@ export class Table {
     this.position = null
     this.ludo = null
     this.cards = null
+    this.swim = null
     this.sea = null
     this.dice = null
     this.village = null
@@ -269,6 +275,7 @@ export class Table {
       position: this.position,
       ludo: this.ludo,
       cards: this.cards && miau.view(this.cards, this.seats.indexOf(viewer)),
+      swim: this.swim && swim.view(this.swim, this.seats.indexOf(viewer)),
       sea: this.sea && sea.view(this.sea, this.seats.indexOf(viewer)),
       dice: this.dice && maex.view(this.dice, this.seats.indexOf(viewer)),
       village: this.village && wolf.view(this.village, this.seats.indexOf(viewer)),
@@ -288,6 +295,7 @@ export class Table {
       this.position?.turn ??
       this.ludo?.turn ??
       this.cards?.turn ??
+      this.swim?.turn ??
       this.dice?.turn ??
       this.sea?.turn ??
       -1
@@ -318,6 +326,15 @@ export class Table {
       if (dice === null || !decoded || !maex.legal(dice, seat, decoded)) return false
       this.dice = maex.play(dice, seat, decoded, this.random)
       const winner = maex.outcome(this.dice)
+      this.outcome = winner === null ? null : { winner, line: [] }
+      return true
+    }
+    if (game === 'schwimmen') {
+      const game = this.swim
+      const decoded = swim.decode(move)
+      if (game === null || !decoded || !swim.legal(game, seat, decoded)) return false
+      this.swim = swim.play(game, seat, decoded, this.random)
+      const winner = swim.outcome(this.swim)
       this.outcome = winner === null ? null : { winner, line: [] }
       return true
     }
@@ -379,6 +396,7 @@ export class Table {
     this.position = isBoardGame(game) ? GAMES[game].start(this.seats.length) : null
     this.ludo = game === 'ludo' ? ludo.start(this.seats.length) : null
     this.cards = game === 'miaumiau' ? miau.deal(this.seats.length, this.random) : null
+    this.swim = game === 'schwimmen' ? swim.start(this.seats.length, this.random) : null
     this.sea = game === 'seeschlacht' ? sea.start() : null
     this.dice = game === 'maexchen' ? maex.start(this.seats.length) : null
     this.village = game === 'werwolf' ? wolf.deal(this.seats.length, this.random) : null

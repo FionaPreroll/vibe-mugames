@@ -43,6 +43,8 @@
   --card-blue-deep: #24508f;
   --card-edge: #a9c1e6;
   --cup: var(--wood);
+  /* Schwimmen's coins. */
+  --coin: #e0b040;
   /* Sea Battle. */
   --sea: #2a6a94;
   --sea-deep: #16405e;
@@ -2837,4 +2839,80 @@ a.button.primary {
 .board.ultimate .small.won .cell:not(.win),
 .board.ultimate .small.full .cell:not(.win) {
   opacity: 0.45;
+}
+
+/* Schwimmen: the coins, the middle, the hand, and the hands of the last round. */
+.main .lives.coins .hearts {
+  color: var(--coin);
+}
+
+.cards.swim .swim-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+}
+
+.cards.swim .swim-label {
+  margin: 0;
+}
+
+.cards.swim .swim-middle {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.cards.swim .swim-middle .card:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.cards.swim .swim-middle .card.playable {
+  border: 2px solid var(--accent);
+  transform: translateY(-0.3rem);
+}
+
+.cards.swim .hand .card.picked {
+  outline: 3px solid var(--accent);
+  transform: translateY(-0.6rem);
+}
+
+.cards.swim .card.face-down {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--card-blue) 0 4px,
+    var(--card-blue-deep) 4px 8px
+  );
+  border-color: var(--card-edge);
+}
+
+.cards.swim .swim-reveal li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cards.swim .swim-reveal li.lost .points {
+  color: var(--card-red);
+  font-weight: 700;
+}
+
+.cards.swim .mini-hand {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.cards.swim .card.mini {
+  width: 1.9rem;
+  height: 2.6rem;
+}
+
+.cards.swim .card.mini .rank {
+  font-size: 0.8rem;
+}
+
+.cards.swim .card.mini .suit {
+  font-size: 0.95rem;
 }
