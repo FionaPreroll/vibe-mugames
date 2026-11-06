@@ -18,6 +18,9 @@ The Spielekiste's games and their rules, in short. In the Spielekiste, each game
 | City, Country, River (_Stadt, Land, Fluss_) | 2–8     |
 | Light Racers (_Lichtrenner_), live          | 2–6     |
 | Air Hockey (_Airhockey_), live              | 2       |
+| Snakes (_Schlangen_), live                  | 2–6     |
+| Reaction (_Reaktion_), live                 | 2–6     |
+| Colour Echo (_Farbecho_), live              | 2–6     |
 | Dots and Boxes (_Käsekästchen_)             | 2       |
 | Reversi                                     | 2       |
 | Chinese Checkers (_Sternhalma_)             | 2–6     |
@@ -82,6 +85,18 @@ A game in real time. Every rider races across a grid of 40 by 40, ten squares a 
 
 A game in real time, for two. Each phone shows the whole rink from its player's end, with their goal at the bottom. Under _Settings_, _Show the whole rink_ can be switched off: then each screen is its player's half alone, and with both phones laid on the table, top edge to top edge, the puck slides from one screen to the other. _Smooth out the network_, on unless switched off, draws the puck and the other mallet at an even pace, however unevenly the host's states arrive. The small graph of the ping shows beside the score, as the rink covers the top line. A finger moves the mallet, which follows it quickly but not at once; your phone draws it so straight away, without waiting for the host's answer. A puck in a goal is a point for the other player, who gets the puck back on their side; the first to seven goals wins. Anyone watching sees the whole rink. _Pong_ is a trademark, so the Spielekiste plays air hockey, a game anyone may make.
 
+## Snakes
+
+A game in real time, for two to six on a grid of 24 by 24, seven squares a second after a countdown. Every snake starts three squares long and crawls on by itself; steer it as a rider in Light Racers, by swiping on the field, with **⟲** and **⟳**, or the arrow keys, never straight back. There is always one apple more than snakes on the grid: a snake that eats one grows by one, and a new apple appears on a free square. A snake that crawls into the edge, into itself or into another snake is out, and its squares are free again; a head may follow a tail that moves on in the same step. Two heads into the same square are both out. The first snake 15 squares long wins (the longest, if several get there at once), and so does the last one still crawling; snakes going out at the same moment as the last others make a draw. Above the field, how long each snake is; a ring shows each phone its snake during the countdown. The game of snakes is old, made in many ways by many; the Spielekiste's is its own.
+
+## Reaction
+
+A game in real time, for two to six. Everyone waits while the field is dark; after a while, from one and a half to five seconds as chance has it, it lights up, and everyone taps as fast as they can. Whoever was fastest scores a point, and as fast shares it; whoever tapped before the signal was too early and scores nothing this time. Each phone measures its own player's time, from the moment it showed the signal to the tap, so the network's delay counts for nobody: the host only compares the times, and alone knows when the signal comes. The first to five points wins, as long as nobody else has as many; otherwise the game goes on until one leads. On one screen, each player has a button of their own, and their keys.
+
+## Colour Echo
+
+A memory game in real time, for two to six, on a pad of four colours: top, right, bottom and left. The pad lights up a row of colours, one after another, two to start with; then everyone taps the same row back on their own pad, all at once, or with the arrow keys (up, right, down, left). A wrong colour puts a player out, and so do five seconds without a tap. Everyone still in gets the same row again, one colour longer and a little faster. The last one in wins, once they have tapped their row back; if the last ones go out in the same row, whoever got further in it wins, and as far is a draw. Each phone sees only its own taps, and the row only while it lights up. _Simon_ is a trademark, so the Spielekiste plays Colour Echo, a game of its own.
+
 ## Dots and Boxes
 
 6 by 6 dots, which make 5 by 5 boxes. In turn, each player draws a line between two neighbouring dots, across or down. Whoever draws the fourth side of a box wins it and draws again; a line that closes no box passes the turn. Once every line is drawn, whoever holds more boxes wins.
@@ -96,6 +111,6 @@ A star of 121 holes, for two to six, each with ten pieces in a triangle of the s
 
 ## Choosing a game
 
-The chooser sorts the games by kind: _Tactics_ (the board games, with nothing left to chance), _Luck and bluff_ (dice, cards and something hidden) and _Skill_ (the games in real time); each game shows how many play it. Each game in the chooser shows a picture of its board, and its **?** opens its rules, a step at a time with drawings; in a game, **Rules** beside its name does the same. Players can read them while the host chooses.
+The chooser sorts the games by kind: _Tactics_ (the board games, with nothing left to chance), _Luck and bluff_ (dice, cards and something hidden) and _Skill_ (the games in real time: racing, steering, tapping fast and remembering colours); each game shows how many play it. Each game in the chooser shows a picture of its board, and its **?** opens its rules, a step at a time with drawings; in a game, **Rules** beside its name does the same. Players can read them while the host chooses.
 
 To make a move of several steps, tap the piece, then where it goes, and every square a jump lands on.

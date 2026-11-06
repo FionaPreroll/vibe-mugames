@@ -34,11 +34,13 @@ The screens draw everything anew whenever the table changes, which would take a 
 
 ## Games in real time
 
-Games in real time (Lichtrenner, `src/core/lichtrenner.ts`, and air hockey, `src/core/airhockey.ts`) have no turns. Each player's phone sends what they want now as the room's input, 30 times a second, of which only the newest counts: a heading, or where the mallet should go in their own half as they see it, after the number of the game it is meant for (`round`), so last game's input never steers the next. The host runs the game by the time that passed, 30 times a second (`Table.tick`), and sends the table that often while one is on, and every third tick otherwise. Lichtrenner moves a cell a step on a grid and sends each rider's wall as the cells where it turns, never more than fits in one message; air hockey runs its puck in steps of 1/240 s, so that nothing slides through a mallet, and phones draw the puck gliding on between two states.
+Games in real time (Lichtrenner, `src/core/lichtrenner.ts`, air hockey, `src/core/airhockey.ts`, Snakes, `src/core/snakes.ts`, Reaction, `src/core/reaction.ts`, and Colour Echo, `src/core/echo.ts`) have no turns. Each player's phone sends what they want now as the room's input, 30 times a second, of which only the newest counts: a heading, or where the mallet should go in their own half as they see it, after the number of the game it is meant for (`round`), so last game's input never steers the next. The host runs the game by the time that passed, 30 times a second (`Table.tick`), and sends the table that often while one is on, and every third tick otherwise. Lichtrenner moves a cell a step on a grid and sends each rider's wall as the cells where it turns, never more than fits in one message; Snakes steps the same way, with Lichtrenner's turns, and sends each snake's cells; air hockey runs its puck in steps of 1/240 s, so that nothing slides through a mallet, and phones draw the puck gliding on between two states.
 
 Each state carries the host's game time (`HockeyState.clock`). With _Smooth out the network_, on unless switched off, a phone draws by that clock as a Kalman filter reads it (`HostClock`, `src/net/clock.ts`): it estimates one number, the offset from the phone's clock to the host's as states arrive here, which holds the clocks' difference and the mean delay; each state measures it, their scatter is the jitter, which the filter learns as it goes, and the offset may drift slowly, as a connection's delay does. Positions are not filtered, as each state has them exactly: only when a state arrives is noisy. The puck and the other mallet glide on from the newest state to the filtered time, and a correction from a new state fades in within a tenth of a second (`Eased`). Without it, phones draw each state from when it arrived. Either way, a mallet steered on a phone of its own moves to the finger at once, by the host's own rule (`slide`, through `OwnMallet` in `src/net/smooth.ts`), instead of a round trip later, when the host's state comes back.
 
-Both ways of drawing are in `src/net/smooth.ts`, which the benchmark runs too: see [docs/NETWORKING.md](NETWORKING.md#smoothing-air-hockey). The fields are canvases (`src/ui/race.ts`, `src/ui/rink.ts`) that stay while the screen around them is drawn anew, through `LiveSlot` (`src/ui/live.ts`).
+Both ways of drawing are in `src/net/smooth.ts`, which the benchmark runs too: see [docs/NETWORKING.md](NETWORKING.md#smoothing-air-hockey). The fields are canvases (`src/ui/race.ts`, `src/ui/rink.ts`) that stay while the screen around them is drawn anew, through `LiveSlot` (`src/ui/live.ts`). Snakes' field (`src/ui/snakes.ts`) is steered as Lichtrenner's is, by `SteeredField` (`src/ui/race.ts`).
+
+Reaction and Colour Echo are played by tapping: their fields (`src/ui/reaction.ts`, `src/ui/echo.ts`) are a `ZoneField` (`src/ui/zones.ts`), with a part of their own for each seat a screen plays for, side by side on one screen for everyone. In Reaction, the host alone knows when the signal comes, and sends nothing of it before; each phone measures its player's time itself, from the frame that first showed the signal to the tap, and sends it with the signal's number, so that the network's delay counts for nobody. In Colour Echo, each phone's view (`EchoView`) holds the row only while it lights up, and its own taps; a phone sends every tap of the row each time, packed 16 to a number, so a lost input loses nothing.
 
 ## One device keeps its own table
 
@@ -87,17 +89,19 @@ src/
   core/       the rules: board.ts, tictactoe.ts, ultimate.ts, fourInARow.ts, muehle.ts, dame.ts,
               kaesekaestchen.ts, reversi.ts, sternhalma.ts, ludo.ts, miaumiau.ts, schwimmen.ts,
               seeschlacht.ts, maexchen.ts, werwolf.ts, stadtlandfluss.ts, text.ts (words players
-              write), lichtrenner.ts, airhockey.ts, games.ts, table.ts
+              write), lichtrenner.ts, airhockey.ts, snakes.ts, reaction.ts, echo.ts, games.ts,
+              table.ts
   net/        protocol.ts: the messages and their parsers; session.ts: the host's and players' seats;
               clock.ts and smooth.ts: air hockey's drawing between states, with the Kalman filter;
               netlog.ts: the connections of the last table, for the connection view and the report
   ui/         the screens: home.ts, table.ts, local.ts (playing on one device), game.ts (what every
               table shows), boards.ts, ludo.ts (Ludo's board and die), cards.ts, swim.ts
-              (Schwimmen), sea.ts (Sea Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf), words.ts (Stadt, Land,
-              Fluss), keep.ts (fields that stay while the screen is drawn anew), live.ts, canvas.ts, race.ts
-              and rink.ts (the fields of the games in real time), codes.ts (QR codes and text
-              codes), rules/ (each game's thumbnail and rules with drawings), hero.ts (the start
-              screen's picture, made of those thumbnails), updates.ts and webUpdates.ts (the
+              (Schwimmen), sea.ts (Sea Battle's seas), dice.ts (Mäxchen), village.ts (Werwolf),
+              words.ts (Stadt, Land, Fluss), keep.ts (fields that stay while the screen is drawn
+              anew), live.ts, canvas.ts, race.ts, rink.ts, snakes.ts, zones.ts, reaction.ts and
+              echo.ts (the fields of the games in real time), codes.ts (QR codes and text codes),
+              rules/ (each game's thumbnail and rules with drawings), hero.ts (the start screen's
+              picture, made of those thumbnails), updates.ts and webUpdates.ts (the
               update dialogs and notes), settings.ts, about.ts, privacy.ts and markdownView.ts
               (About and the privacy policy), connection.ts and report.ts (the connection
               details and the debug report)

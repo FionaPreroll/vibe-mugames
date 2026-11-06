@@ -9,7 +9,7 @@ Play in the browser at **[fionapreroll.github.io/vibe-mugames](https://fionaprer
 1. **Open a table** on the first phone, then **Add player**: it shows a QR code. In the app, both phones can connect by Bluetooth instead ([below](#by-bluetooth-in-the-app)).
 2. On the new player's phone, **Join a table** and scan that code. The phone then shows a code of its own, which the first phone scans.
    Without a camera, both codes can be copied and pasted as text. If the camera will not focus on the screen, tap the picture to focus, zoom out and hold the phone further away, switch cameras, or take a photo of the code instead. Sending a code over may take its time: the joining phone waits up to 10 minutes for the host to take its code. If a connection fails, both phones say so and offer **Try again**.
-3. The host chooses a game. Up to eight phones sit at a table: two play the board games, Sea Battle and Air Hockey, up to four Ludo, up to six Miau-Miau, Light Racers and Chinese Checkers, up to eight Mäxchen and City, Country, River, four to eight Werewolf, and the others watch and take turns. After a game, the winner stays and the others who played go to the back of the queue; when nobody waits, the next player in turn starts.
+3. The host chooses a game. Up to eight phones sit at a table: two play the board games, Sea Battle and Air Hockey, up to four Ludo, up to six Miau-Miau, Light Racers, Snakes, Reaction, Colour Echo and Chinese Checkers, up to eight Mäxchen and City, Country, River, four to eight Werewolf, and the others watch and take turns. After a game, the winner stays and the others who played go to the back of the queue; when nobody waits, the next player in turn starts.
 
 ## By Bluetooth, in the app
 
@@ -21,7 +21,7 @@ On a laptop or a tablet, **Play on this device** on the start screen seats two t
 
 Games with hidden cards, such as Miau-Miau, are played with open cards there: everyone can see every hand, and the lobby and the game say so. Sea Battle keeps its fleets hidden instead, Mäxchen the dice under the cup and Werewolf the roles: taking turns, the device asks to be handed over after each player's turn and shows nothing until the next player says they hold it; on a split screen, a player's own fleet, dice or role shows only while they ask to see it. In City, Country, River, everyone writes in turn, while the others look away, and the answers are then checked together.
 
-In the games in real time, everyone steers at once: on one screen, each player has their own keys and buttons (W A S D, the arrow keys, I J K L and the number pad's 8 4 5 6), and in Air Hockey a finger on either half of the rink moves that half's mallet; on a split screen, each part has its own field, and Air Hockey shows each player the rink from their end, with their goal at the bottom (or only their half, as the settings say). The device remembers who played and how.
+In the games in real time, everyone steers at once: on one screen, each player has their own keys and buttons (W A S D, the arrow keys, I J K L and the number pad's 8 4 5 6), in Reaction and Colour Echo each player has a button or a pad of their own, side by side on a wide screen and one above the other on a tall one, and in Air Hockey a finger on either half of the rink moves that half's mallet; on a split screen, each part has its own field, and Air Hockey shows each player the rink from their end, with their goal at the bottom (or only their half, as the settings say). The device remembers who played and how.
 
 ## Screens
 
