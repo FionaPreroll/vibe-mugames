@@ -17,6 +17,7 @@ The Spielekiste's games and their rules, in short. In the Spielekiste, each game
 | Werewolf (_Werwolf_)                        | 4–8     |
 | City, Country, River (_Stadt, Land, Fluss_) | 2–8     |
 | Draw and Guess (_Montagsmaler_)             | 2–8     |
+| Who Am I? (_Wer bin ich?_)                  | 2–8     |
 | Light Racers (_Lichtrenner_), live          | 2–6     |
 | Air Hockey (_Airhockey_), live              | 2       |
 | Snakes (_Schlangen_), live                  | 2–6     |
@@ -85,6 +86,16 @@ _Montagsmaler_, for two to eight. In turn, each player draws: they choose one of
 The others type their guesses, which everyone sees. A guess that names the word, in German or English and without minding capitals or accents, gets it; one that is a letter off is _nearly_ right, which only whoever wrote it learns. The first to get the word scores 3, the second 2, everyone after 1, and the one drawing 1 for each who got it. A word said aloud counts too: the one drawing taps who said it. Once everyone has it, or the time is up, the word is shown, and the next player draws. Everyone draws twice with up to three players, once with more; the most points win, and with the same, it is a draw.
 
 On one device, the device asks to be handed to the one drawing, who chooses their word alone; their word stays hidden while the others watch, until they tap **Show my word**. The others call their guesses out, and the one drawing taps who got it.
+
+## Who Am I?
+
+_Wer bin ich?_, for two to eight. Everyone is dealt a word: an animal, a job, a figure from a fairy tale or a legend, or a thing. Every phone shows the others' words, but not its own, only what kind of thing it is.
+
+In turn, a player types a question that can be answered with yes or no, such as "Can I fly?", and taps **Ask**. The others tap **Yes**, **No** or **Not sure** within 45 seconds, and the most answers decide; whoever has not answered by then counts for nothing. After a yes, or as many yeses as noes, the same player asks again; after a no, the next player's turn comes. Each phone shows what the one asking has learnt so far.
+
+A player who thinks they know types it and taps **That's me!**. The right word, in German or English and without minding capitals, accents or a leading "Am I a…", gets it at once; anything else the others judge, **Right** or **Wrong**. A right guess shows the player their word, a wrong one ends their turn. A player may also **Pass**, or **Give up**, with a second tap, which shows them their word and puts them out. Once all but one know their words, or gave up, the game is over: the first to know theirs wins, and if nobody did, it is a draw.
+
+On one device, everyone asks and answers aloud. The screen shows only the word of the one asking, and only once they look away and it is asked for; they tap what the others said: **Yes: ask again**, **No: next player** or **Guessed it!**.
 
 ## Light Racers
 

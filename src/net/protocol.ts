@@ -28,6 +28,7 @@ import * as snakes from '../core/snakes'
 import * as words from '../core/stadtlandfluss'
 import type { Player, TableState } from '../core/table'
 import { cleanText } from '../core/text'
+import * as who from '../core/werbinich'
 import * as wolf from '../core/werwolf'
 
 /**
@@ -37,7 +38,7 @@ import * as wolf from '../core/werwolf'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 14
+export const PROTOCOL = 15
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of
@@ -105,6 +106,14 @@ function parseMove(value: unknown, game: GameId): Move | undefined {
   if (game === 'werwolf') {
     const seat = list(value, 1, (n) => (isWhole(n, 0, wolf.MAX_VILLAGE - 1) ? n : undefined))
     return seat?.length === 1 ? seat : undefined
+  }
+  if (game === 'werbinich') {
+    // A question's or a guess's characters, or an answer, after the kind of move.
+    const numbers = list(value, who.MAX_QUESTION + 1, (n) =>
+      isWhole(n, 0, 0x10ffff) ? n : undefined,
+    )
+    const move = numbers && who.decode(numbers)
+    return move ? who.encode(move) : undefined
   }
   if (game === 'montagsmaler') {
     // A drawing's points, or a guess's characters, after the kind of move.
@@ -206,6 +215,9 @@ export const parseState: Parse<TableState> = (value) => {
         ? null
         : undefined
   if (sketchView === undefined) return undefined
+  const whoView =
+    game === 'werbinich' ? parseWho(value.who, seats.length) : value.who === null ? null : undefined
+  if (whoView === undefined) return undefined
   const race =
     game === 'lichtrenner'
       ? parseRace(value.race, seats.length)
@@ -239,7 +251,10 @@ export const parseState: Parse<TableState> = (value) => {
   const last =
     value.last === null || !game
       ? null
-      : game === 'werwolf' || game === 'stadtlandfluss' || game === 'montagsmaler'
+      : game === 'werwolf' ||
+          game === 'stadtlandfluss' ||
+          game === 'montagsmaler' ||
+          game === 'werbinich'
         ? undefined
         : parseMove(value.last, game)
   if (last === undefined) return undefined
@@ -263,6 +278,7 @@ export const parseState: Parse<TableState> = (value) => {
     village,
     words: wordsView,
     sketch: sketchView,
+    who: whoView,
     race,
     rink,
     snakes: snakeView,
@@ -502,6 +518,76 @@ function parseWords(value: unknown, seats: number): words.WordsView | undefined 
     ready,
     totals,
     winner,
+  }
+}
+
+/**
+ * Wer bin ich?: every term this seat may see, and what kind each is, whose turn it is, the
+ * question and its answers, who solved theirs or gave up, and the questions so far.
+ */
+function parseWho(value: unknown, seats: number): who.WhoView | undefined {
+  if (!isObject(value) || typeof value.together !== 'boolean') return undefined
+  const isSeat = (n: unknown): n is number => isWhole(n, 0, seats - 1)
+  const { turn, asker, phase, left, winner } = value
+  if (!isSeat(asker) || !isWhole(turn, 0, MAX_MOVES)) return undefined
+  if (phase !== 'ask' && phase !== 'vote') return undefined
+  if (!isWhole(left, 0, who.VOTE_SECONDS)) return undefined
+  if (winner !== null && winner !== 'draw' && !isSeat(winner)) return undefined
+  const terms = list(value.terms, seats, (n) =>
+    n === null ? null : isWhole(n, 0, who.TERM_COUNT - 1) ? n : undefined,
+  )
+  const kinds = list(value.kinds, seats, (k) =>
+    k === 'animal' || k === 'job' || k === 'figure' || k === 'thing' ? k : undefined,
+  )
+  const isVote = (n: unknown): n is who.Vote => n === who.YES || n === who.NO || n === who.MAYBE
+  const votes = list(value.votes, seats, (n) => (n === null ? null : isVote(n) ? n : undefined))
+  const seatList = (v: unknown) => list(v, seats, (n) => (isSeat(n) ? n : undefined))
+  const solved = seatList(value.solved)
+  const gaveUp = seatList(value.gaveUp)
+  if (!terms || !kinds || !votes || !solved || !gaveUp) return undefined
+  if (terms.length !== seats || kinds.length !== seats || votes.length !== seats) return undefined
+  const done = [...solved, ...gaveUp]
+  if (new Set(done).size !== done.length) return undefined
+  const answers = ['yes', 'no', 'maybe', 'right', 'wrong', 'pass', 'out']
+  const log = list(value.log, who.MAX_LOG, (e) => {
+    if (!isObject(e) || !isSeat(e.seat) || typeof e.guess !== 'boolean') return undefined
+    if (typeof e.answer !== 'string' || !answers.includes(e.answer)) return undefined
+    const text = e.text === null ? null : parseText(e.text, who.MAX_QUESTION)
+    const counts = list(e.counts, 3, (n) => (isWhole(n, 0, seats) ? n : undefined))
+    if (text === undefined || text === '' || counts?.length !== 3) return undefined
+    const [yes = 0, no = 0, maybe = 0] = counts
+    return {
+      seat: e.seat,
+      text,
+      guess: e.guess,
+      answer: e.answer as who.Answer,
+      counts: [yes, no, maybe] as const,
+    }
+  })
+  if (!log) return undefined
+  let question: who.WhoView['question'] = null
+  if (value.question !== null) {
+    const q = value.question
+    if (!isObject(q) || typeof q.guess !== 'boolean') return undefined
+    const text = parseText(q.text, who.MAX_QUESTION)
+    if (!text) return undefined
+    question = { text, guess: q.guess }
+  }
+  if ((phase === 'vote') !== (question !== null)) return undefined
+  return {
+    together: value.together,
+    terms,
+    kinds,
+    turn,
+    asker,
+    phase,
+    question,
+    votes,
+    left,
+    solved,
+    gaveUp,
+    log,
+    winner: winner as number | 'draw' | null,
   }
 }
 

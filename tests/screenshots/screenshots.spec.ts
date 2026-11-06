@@ -421,6 +421,43 @@ test('Draw and Guess, as the one guessing and the one drawing see it', async ({ 
   await phones(browser, 'montagsmaler', [{ src: await screen(bo) }, { src: await screen(ada) }])
 })
 
+/** Lets every phone at a table take in what the others sent, their clocks running together. */
+async function settle(pages: Page[]): Promise<void> {
+  for (let step = 0; step < 5; step++) {
+    for (const page of pages) await page.clock.runFor(100)
+    await pages[0]?.waitForTimeout(100)
+  }
+}
+
+test('Who Am I?, as the one asking and one answering see it', async ({ browser }) => {
+  const pages = await Promise.all(
+    ['Ada', 'Bo', 'Cy'].map((name, i) => device(browser, PHONE, name, i + 1)),
+  )
+  await liveTable('Who Am I?', pages)
+  const [ada, bo, cy] = pages
+  if (!ada || !bo || !cy) throw new Error('no phones')
+  await settle(pages)
+  // Ada is Puss in Boots.
+  const field = ada.getByRole('textbox', { name: 'Your question or guess' })
+  for (const [question, answers] of [
+    ['Am I an animal?', ['Yes', 'Yes']],
+    ['Can I talk?', ['Yes', 'Not sure']],
+    ['Do I wear boots?', null],
+  ] as const) {
+    await field.fill(question)
+    await field.press('Enter')
+    await settle(pages)
+    if (!answers) break
+    for (const [i, page] of [bo, cy].entries()) {
+      await page.getByRole('button', { name: answers[i], exact: true }).click({ force: true })
+      await settle(pages)
+    }
+  }
+  await cy.getByRole('button', { name: 'Yes', exact: true }).click({ force: true })
+  await settle(pages)
+  await phones(browser, 'werbinich', [{ src: await screen(bo) }, { src: await screen(ada) }])
+})
+
 /**
  * Over the network, the host may hear from the other phone a moment earlier or later, which can
  * move the puck by a few pixels: only a larger change takes a new picture of Air Hockey.

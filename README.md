@@ -51,11 +51,13 @@ Games for everyone at one table: board games, card and dice games, party games a
     <td><img src="docs/screenshots/ultimate.png" alt="Ultimate Tic Tac Toe on a phone: nine small boards, two of them won, and the board to play in marked"></td>
     <td><img src="docs/screenshots/stadtlandfluss.png" alt="City, Country, River: the letter O, and every player's answers with their points, one of them struck"></td>
     <td><img src="docs/screenshots/montagsmaler.png" alt="Draw and Guess on two phones: a house drawn on one, the other guessing it with one letter shown, and the guesses so far"></td>
+    <td><img src="docs/screenshots/werbinich.png" alt="Who Am I? on two phones: the others' words, the question Ada asks, the buttons to answer it, and what Ada knows so far"></td>
   </tr>
   <tr>
     <td>Ultimate Tic Tac Toe</td>
     <td>City, Country, River: checking the answers</td>
     <td>Draw and Guess: guessing, and drawing</td>
+    <td>Who Am I?: answering, and asking</td>
   </tr>
 </table>
 
@@ -129,7 +131,7 @@ In the app, phones can also connect **by Bluetooth**, without any Wi-Fi. On a la
 | ------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------- |
 | [Tic Tac Toe](docs/GAMES.md#tic-tac-toe), 2                   | [Ludo](docs/GAMES.md#ludo), 2–4           | [City, Country, River](docs/GAMES.md#city-country-river), 2–8 | [Light Racers](docs/GAMES.md#light-racers), 2–6 |
 | [Ultimate Tic Tac Toe](docs/GAMES.md#ultimate-tic-tac-toe), 2 | [Miau-Miau](docs/GAMES.md#miau-miau), 2–6 | [Draw and Guess](docs/GAMES.md#draw-and-guess), 2–8           | [Air Hockey](docs/GAMES.md#air-hockey), 2       |
-| [Four in a Row](docs/GAMES.md#four-in-a-row), 2               | [Schwimmen](docs/GAMES.md#schwimmen), 2–8 |                                                               | [Snakes](docs/GAMES.md#snakes), 2–6             |
+| [Four in a Row](docs/GAMES.md#four-in-a-row), 2               | [Schwimmen](docs/GAMES.md#schwimmen), 2–8 | [Who Am I?](docs/GAMES.md#who-am-i), 2–8                      | [Snakes](docs/GAMES.md#snakes), 2–6             |
 | [Nine Men's Morris](docs/GAMES.md#nine-mens-morris), 2        | [Sea Battle](docs/GAMES.md#sea-battle), 2 |                                                               | [Reaction](docs/GAMES.md#reaction), 2–6         |
 | [Draughts](docs/GAMES.md#draughts), 2                         | [Mäxchen](docs/GAMES.md#mäxchen), 2–8     |                                                               | [Colour Echo](docs/GAMES.md#colour-echo), 2–6   |
 | [Dots and Boxes](docs/GAMES.md#dots-and-boxes), 2             | [Werewolf](docs/GAMES.md#werewolf), 4–8   |                                                               |                                                 |

@@ -25,6 +25,7 @@ import { MAX_WRITERS, MIN_WRITERS } from './stadtlandfluss'
 import { sternhalma } from './sternhalma'
 import { ticTacToe } from './tictactoe'
 import { ultimate } from './ultimate'
+import { MAX_GUESSERS, MIN_GUESSERS } from './werbinich'
 import { MAX_VILLAGE, MIN_VILLAGE } from './werwolf'
 
 /** Every board game in the Spielekiste. */
@@ -54,7 +55,7 @@ export const GAME_GROUPS: readonly {
 }[] = [
   { group: 'tactics', games: BOARD_GAME_IDS },
   { group: 'luck', games: ['ludo', 'miaumiau', 'schwimmen', 'seeschlacht', 'maexchen', 'werwolf'] },
-  { group: 'party', games: ['stadtlandfluss', 'montagsmaler'] },
+  { group: 'party', games: ['stadtlandfluss', 'montagsmaler', 'werbinich'] },
   { group: 'skill', games: LIVE_GAME_IDS },
 ]
 
@@ -76,6 +77,7 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (game === 'werwolf') return { min: MIN_VILLAGE, max: MAX_VILLAGE }
   if (game === 'stadtlandfluss') return { min: MIN_WRITERS, max: MAX_WRITERS }
   if (game === 'montagsmaler') return { min: MIN_SKETCHERS, max: MAX_SKETCHERS }
+  if (game === 'werbinich') return { min: MIN_GUESSERS, max: MAX_GUESSERS }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
 

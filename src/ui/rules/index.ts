@@ -23,6 +23,7 @@ import { stadtLandFlussGuide } from './stadtlandfluss'
 import { sternhalmaGuide } from './sternhalma'
 import { ticTacToeGuide } from './tictactoe'
 import { ultimateGuide } from './ultimate'
+import { werbinichGuide } from './werbinich'
 import { werwolfGuide } from './werwolf'
 
 /**
@@ -51,6 +52,7 @@ export const GUIDES: Record<GameId, GameGuide> = {
   werwolf: werwolfGuide,
   stadtlandfluss: stadtLandFlussGuide,
   montagsmaler: montagsmalerGuide,
+  werbinich: werbinichGuide,
 }
 
 /** The small picture of a game, for the game chooser. */

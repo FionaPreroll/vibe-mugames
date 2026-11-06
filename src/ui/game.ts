@@ -18,6 +18,7 @@ import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
 import { sketchStatus, sketchToMove, sketchView } from './sketch'
 import { swimHints, swimStatus, swimView } from './swim'
 import { villageStatus, villageToMove, villageView } from './village'
+import { whoStatus, whoToMove, whoView } from './who'
 import { wordsStatus, wordsToMove, wordsView } from './words'
 
 /**
@@ -216,6 +217,20 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
       }),
     ]
   }
+  if (state.who) {
+    const who = state.who
+    const seated = state.seats.includes(viewer)
+    return [
+      statusLine(whoStatus(state, who, viewer, shared), whoToMove(state, who, viewer)),
+      ...whoView(state, who, {
+        viewer,
+        picker,
+        move: seated ? (move) => options.move(game, state.moveNo, move) : null,
+        shared,
+        hideOwn: options.hideOwn ?? false,
+      }),
+    ]
+  }
   if (state.sketch) {
     const sketch = state.sketch
     const seated = state.seats.includes(viewer)
@@ -397,7 +412,10 @@ export function nextButtons(host: TableHost): HTMLElement[] {
   ]
 }
 
-/** How each game handed over on one device says so: taking turns, and on a split screen. */
+/**
+ * How each game that hides something on one device says so, taking turns and on a split screen:
+ * those handed over, and Wer bin ich?, where only the one asking's word shows.
+ */
 const HAND_OVER_NOTICES: Partial<Record<GameId, readonly [TextKey, TextKey]>> = {
   seeschlacht: ['handOverNotice', 'hiddenFleetNotice'],
   maexchen: ['handOverDice', 'hiddenDiceNotice'],
@@ -405,6 +423,7 @@ const HAND_OVER_NOTICES: Partial<Record<GameId, readonly [TextKey, TextKey]>> = 
   schwimmen: ['handOverCards', 'hiddenCardsNotice'],
   stadtlandfluss: ['handOverWords', 'hiddenWordsNotice'],
   montagsmaler: ['handOverSketch', 'hiddenSketchNotice'],
+  werbinich: ['handOverWho', 'hiddenWhoNotice'],
 }
 
 /** What a player taps once they hold the device, in a game handed over on one device. */
@@ -432,11 +451,7 @@ export function takeOverText(game: GameId, name: string): string {
 export function openCardsNotice(game: GameId | null, split = false): HTMLElement | null {
   if (game === null) return null
   const notices = HAND_OVER_NOTICES[game]
-  const text = hasHiddenCards(game)
-    ? t('openCards')
-    : handsOver(game) && notices
-      ? t(notices[split ? 1 : 0])
-      : ''
+  const text = hasHiddenCards(game) ? t('openCards') : notices ? t(notices[split ? 1 : 0]) : ''
   return text
     ? h('p', { class: 'notice', role: 'note' } as Partial<HTMLParagraphElement>, text)
     : null

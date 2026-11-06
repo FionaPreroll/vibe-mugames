@@ -20,6 +20,7 @@ import * as swim from './schwimmen'
 import * as sea from './seeschlacht'
 import * as snakes from './snakes'
 import * as words from './stadtlandfluss'
+import * as who from './werbinich'
 import * as wolf from './werwolf'
 
 /**
@@ -77,6 +78,8 @@ export interface TableState {
   readonly words: words.WordsView | null
   /** Montagsmaler as the player this state is for sees it; null in every other game. */
   readonly sketch: sketch.SketchView | null
+  /** Wer bin ich? as the player this state is for sees it; null in every other game. */
+  readonly who: who.WhoView | null
   /** Lichtrenner as it stands; null in every other game. */
   readonly race: licht.LichtView | null
   /** Air hockey as it stands; null in every other game. */
@@ -117,6 +120,7 @@ export function playerToMove(state: TableState): number | null {
     (state.village && (wolf.waiting(state.village)[0] ?? null)) ??
     (state.words && (words.waitingFor(state.words)[0] ?? null)) ??
     (state.sketch && (sketch.waitingFor(state.sketch)[0] ?? null)) ??
+    (state.who && (who.waitingFor(state.who)[0] ?? null)) ??
     (state.sea && (sea.nextToPlace(state.sea) ?? state.sea.turn))
   return turn === undefined || turn === null ? null : (state.seats[turn] ?? null)
 }
@@ -149,6 +153,7 @@ export class Table {
   private village: wolf.WolfState | null = null
   private words: words.WordsState | null = null
   private sketch: sketch.SketchState | null = null
+  private who: who.WhoState | null = null
   /**
    * The move number Werwolf's night or day, or a round's writing or checking in Stadt, Land,
    * Fluss, began with: older moves were meant for another.
@@ -212,15 +217,18 @@ export class Table {
             ? this.wordsMove(seat, moveNo, move)
             : game === 'montagsmaler'
               ? this.sketchMove(seat, moveNo, move)
-              : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
+              : game === 'werbinich'
+                ? this.whoMove(seat, moveNo, move)
+                : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
     if (!taken) return false
     this.moveNo++
     // A fleet placed stays hidden, and so does whom a player of Werwolf chose, and what anyone
     // wrote: only shots, and the moves of other games, show as the last move.
     if (game === 'werwolf') {
       if (this.village?.choices.every((choice) => choice === null)) this.phaseFrom = this.moveNo
-    } else if (game === 'stadtlandfluss' || game === 'montagsmaler') this.newPhase()
-    else if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
+    } else if (game === 'stadtlandfluss' || game === 'montagsmaler' || game === 'werbinich') {
+      this.newPhase()
+    } else if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
     this.score()
     return true
   }
@@ -268,6 +276,17 @@ export class Table {
         before.phase !== this.sketch.phase ||
         before.turn !== this.sketch.turn ||
         before.shown !== this.sketch.shown ||
+        this.outcome !== null
+      )
+    }
+    if (this.who) {
+      const before = this.who
+      this.who = who.advance(before, seconds)
+      this.newPhase()
+      if (this.whoEnd()) this.score()
+      return (
+        Math.ceil(before.left) !== Math.ceil(this.who.left) ||
+        before.phase !== this.who.phase ||
         this.outcome !== null
       )
     }
@@ -344,6 +363,7 @@ export class Table {
     this.village = null
     this.words = null
     this.sketch = null
+    this.who = null
     this.race = null
     this.rink = null
     this.snakes = null
@@ -371,6 +391,7 @@ export class Table {
       village: this.village && wolf.view(this.village, this.seats.indexOf(viewer)),
       words: this.words && words.view(this.words, this.seats.indexOf(viewer)),
       sketch: this.sketch && sketch.view(this.sketch, this.seats.indexOf(viewer)),
+      who: this.who && who.view(this.who, this.seats.indexOf(viewer)),
       race: this.race && licht.view(this.race),
       rink: this.rink && hockey.view(this.rink),
       snakes: this.snakes && snakes.view(this.snakes),
@@ -513,8 +534,35 @@ export class Table {
     this.score()
   }
 
+  /**
+   * A move in Wer bin ich?: the others answer at once, so an answer may come with an older move
+   * number than the table's, but none from before this question was asked.
+   */
+  private whoMove(seat: number, moveNo: number, move: Move): boolean {
+    const game = this.who
+    const decoded = who.decode(move)
+    if (game === null || decoded === null) return false
+    if (moveNo < this.phaseFrom || moveNo > this.moveNo) return false
+    if (!who.legal(game, seat, decoded)) return false
+    this.who = who.play(game, seat, decoded)
+    this.whoEnd()
+    return true
+  }
+
+  /**
+   * The end of Wer bin ich?, once all but one know their terms: the first to know wins. Returns
+   * whether it has just ended, for the score to count it.
+   */
+  private whoEnd(): boolean {
+    const winner = this.who?.winner ?? null
+    if (winner === null || this.outcome !== null) return false
+    this.outcome = winner === 'draw' ? 'draw' : { winner, line: [] }
+    return true
+  }
+
   /** What part of a party game this is: moves meant for another part are not taken. */
   private phaseKey(): string {
+    if (this.who) return `${this.who.asked}:${this.who.phase}`
     if (this.sketch) return `${this.sketch.turn}:${this.sketch.phase}`
     return this.words ? `${this.words.letters.length}:${this.words.phase}` : ''
   }
@@ -559,6 +607,8 @@ export class Table {
       game === 'montagsmaler'
         ? sketch.start(this.seats.length, this.random, this.options.together)
         : null
+    this.who =
+      game === 'werbinich' ? who.start(this.seats.length, this.random, this.options.together) : null
     this.phaseFrom = 0
     this.phaseWas = this.phaseKey()
     this.race = game === 'lichtrenner' ? licht.start(this.seats.length) : null

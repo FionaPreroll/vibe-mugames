@@ -95,6 +95,7 @@ export const GAME_IDS = [
   'werwolf',
   'stadtlandfluss',
   'montagsmaler',
+  'werbinich',
   ...LIVE_GAME_IDS,
 ] as const
 export type GameId = (typeof GAME_IDS)[number]

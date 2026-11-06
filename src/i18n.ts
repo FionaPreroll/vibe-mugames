@@ -478,6 +478,66 @@ const en = {
   hiddenSketchNotice:
     'The word stays hidden until the one drawing taps “Show my word”: the others look away while they do.',
   takeOverSketch: 'I am {name}: show my words',
+  werbinich: 'Who Am I?',
+  whoKindAnimal: 'an animal',
+  whoKindJob: 'a job',
+  whoKindFigure: 'a figure from a tale',
+  whoKindThing: 'a thing',
+  whoAloud: '{name} asks aloud, or guesses. Then {name} taps what the others said.',
+  whoAsk: 'Ask a question the others can answer with yes or no, or guess who you are.',
+  whoAsks: '{name} is asking.',
+  whoWait: 'The others answer. {n} seconds left.',
+  whoAnswered: 'Answered. The others still have {n} seconds.',
+  whoAnswer: 'Answer {name}’s question. {n} seconds left.',
+  whoJudge: 'Is {name} right? {n} seconds left.',
+  whoQuestionLabel: 'Your question or guess',
+  whoQuestionHint: 'Am I an animal?',
+  whoAskButton: 'Ask',
+  whoGuessButton: 'That’s me!',
+  whoTermOf: '{name} is {kind}:',
+  whoTermHidden: '{name} looks away while the others see it.',
+  whoShowTerm: 'Show it: {name} looks away',
+  whoHideTerm: 'Hide it again',
+  whoSaidPrompt: 'What did the others say?',
+  whoSaidYes: 'Yes: ask again',
+  whoSaidNo: 'No: next player',
+  whoSaidRight: 'Guessed it!',
+  whoPass: 'Pass',
+  whoGiveUp: 'Give up',
+  whoGiveUpSure: 'Tap again to give up',
+  whoAsked: '{name} asks:',
+  whoGuesses: '{name} guesses:',
+  whoYouAsk: 'You ask:',
+  whoYouGuess: 'You guess:',
+  whoVoteYes: 'Yes',
+  whoVoteNo: 'No',
+  whoVoteRight: 'Right',
+  whoVoteWrong: 'Wrong',
+  whoVoteMaybe: 'Not sure',
+  whoAnswerYes: 'yes',
+  whoAnswerNo: 'no',
+  whoAnswerMaybe: 'not sure',
+  whoAnswerRight: 'right!',
+  whoAnswerWrong: 'wrong',
+  whoAnswerPass: 'passed',
+  whoAnswerOut: 'gave up',
+  whoAskedAloud: 'A question aloud:',
+  whoGuessedAloud: 'Guessed aloud:',
+  whoYouKnow: 'What you know so far:',
+  whoKnows: 'What {name} knows so far:',
+  whoHelp: 'How Who Am I? works',
+  whoHelpAsk:
+    'Everyone sees the others’ words, but not their own, only what kind of thing it is. In turn, ask what the others can answer with yes or no.',
+  whoHelpAnswer:
+    'The others answer within {n} seconds, and the most answers decide. After a yes or a not sure, ask again; after a no, the next player asks.',
+  whoHelpGuess:
+    'Think you know? Type it and tap “That’s me!”: the right word gets it at once, anything else the others judge. A wrong guess ends your turn.',
+  whoHelpEnd:
+    'Once all but one know their words, the first to know wins. Stuck? Pass, or give up to see your word.',
+  handOverWho:
+    'Who Am I? on one device: everyone asks and answers aloud. Only the word of the one asking shows, once they look away.',
+  hiddenWhoNotice:
+    'Each part shows the word of the one asking, but not in their own part, until they look away and show it.',
   lichtrenner: 'Light Racers',
   airhockey: 'Air Hockey',
   snakes: 'Snakes',
@@ -639,6 +699,14 @@ const en = {
     'The first to get it scores 3, the second 2, everyone after 1; the one drawing scores 1 for each who got it. Said aloud, the one drawing taps who got it.',
   rulesMontagsmaler4:
     'Once everyone has it, or the time is up, the word is shown and the next player draws. Everyone draws twice with up to three players, once with more; the most points win.',
+  rulesWerbinich1:
+    'Everyone gets a word: an animal, a job, a figure from a fairy tale or a thing. All the others see it on their phones; you see only theirs, and what kind of thing yours is.',
+  rulesWerbinich2:
+    'In turn, ask a question the others can answer with yes or no, such as “Can I fly?”. They tap Yes, No or Not sure, and the most answers decide. After a yes or a not sure, ask again; after a no, the next player asks.',
+  rulesWerbinich3:
+    'Think you know? Guess it. The right word gets it at once, in German or English; anything else the others judge. A wrong guess ends your turn.',
+  rulesWerbinich4:
+    'Once all but one know their words, the game is over, and the first to know theirs wins. On one device, everyone asks and answers aloud, and the one asking taps what was said.',
   lichtHint:
     'Turn before you hit a wall: swipe on the field, or tap ⟲ and ⟳. The last one riding wins.',
   lichtHintLocal:
@@ -1399,6 +1467,67 @@ const de: Texts = {
   hiddenSketchNotice:
     'Das Wort bleibt verdeckt, bis wer malt auf „Mein Wort zeigen“ tippt: Die anderen schauen weg, solange es zu sehen ist.',
   takeOverSketch: 'Ich bin {name}: meine Wörter zeigen',
+  werbinich: 'Wer bin ich?',
+  whoKindAnimal: 'ein Tier',
+  whoKindJob: 'ein Beruf',
+  whoKindFigure: 'eine Märchenfigur',
+  whoKindThing: 'ein Ding',
+  whoAloud: '{name} fragt laut oder rät. Dann tippt {name} an, was die anderen gesagt haben.',
+  whoAsk:
+    'Stell eine Frage, die die anderen mit Ja oder Nein beantworten können, oder rate, wer du bist.',
+  whoAsks: '{name} fragt.',
+  whoWait: 'Die anderen antworten. Noch {n} Sekunden.',
+  whoAnswered: 'Beantwortet. Die anderen haben noch {n} Sekunden.',
+  whoAnswer: 'Beantworte die Frage von {name}. Noch {n} Sekunden.',
+  whoJudge: 'Hat {name} recht? Noch {n} Sekunden.',
+  whoQuestionLabel: 'Deine Frage oder dein Tipp',
+  whoQuestionHint: 'Bin ich ein Tier?',
+  whoAskButton: 'Fragen',
+  whoGuessButton: 'Das bin ich!',
+  whoTermOf: '{name} ist {kind}:',
+  whoTermHidden: '{name} schaut weg, während die anderen es sehen.',
+  whoShowTerm: 'Zeigen: {name} schaut weg',
+  whoHideTerm: 'Wieder verdecken',
+  whoSaidPrompt: 'Was haben die anderen gesagt?',
+  whoSaidYes: 'Ja: weiter fragen',
+  whoSaidNo: 'Nein: der Nächste',
+  whoSaidRight: 'Erraten!',
+  whoPass: 'Passen',
+  whoGiveUp: 'Aufgeben',
+  whoGiveUpSure: 'Noch mal tippen zum Aufgeben',
+  whoAsked: '{name} fragt:',
+  whoGuesses: '{name} rät:',
+  whoYouAsk: 'Du fragst:',
+  whoYouGuess: 'Du rätst:',
+  whoVoteYes: 'Ja',
+  whoVoteNo: 'Nein',
+  whoVoteRight: 'Richtig',
+  whoVoteWrong: 'Falsch',
+  whoVoteMaybe: 'Weiß nicht',
+  whoAnswerYes: 'ja',
+  whoAnswerNo: 'nein',
+  whoAnswerMaybe: 'weiß nicht',
+  whoAnswerRight: 'richtig!',
+  whoAnswerWrong: 'falsch',
+  whoAnswerPass: 'gepasst',
+  whoAnswerOut: 'aufgegeben',
+  whoAskedAloud: 'Eine Frage, laut:',
+  whoGuessedAloud: 'Laut geraten:',
+  whoYouKnow: 'Was du bisher weißt:',
+  whoKnows: 'Was {name} bisher weiß:',
+  whoHelp: 'So geht Wer bin ich?',
+  whoHelpAsk:
+    'Alle sehen die Wörter der anderen, aber nicht ihr eigenes, nur was für eine Art es ist. Reihum fragst du, was die anderen mit Ja oder Nein beantworten können.',
+  whoHelpAnswer:
+    'Die anderen antworten in {n} Sekunden, und die meisten Antworten entscheiden. Nach Ja oder Weiß nicht fragst du weiter, nach Nein ist der Nächste dran.',
+  whoHelpGuess:
+    'Du weißt es? Schreib es hin und tippe „Das bin ich!“: Das richtige Wort hat es sofort, alles andere beurteilen die anderen. Falsch geraten beendet deinen Zug.',
+  whoHelpEnd:
+    'Wenn alle bis auf einen ihr Wort wissen, gewinnt, wer es zuerst wusste. Du kommst nicht weiter? Passen, oder aufgeben, dann siehst du dein Wort.',
+  handOverWho:
+    'Wer bin ich? auf einem Gerät: Alle fragen und antworten laut. Nur das Wort von dem, der fragt, ist zu sehen, wenn er wegschaut.',
+  hiddenWhoNotice:
+    'Jeder Teil zeigt das Wort von dem, der fragt, nur nicht in seinem eigenen Teil, bis er wegschaut und es zeigt.',
   lichtrenner: 'Lichtrenner',
   airhockey: 'Airhockey',
   snakes: 'Schlangen',
@@ -1565,6 +1694,14 @@ const de: Texts = {
     'Wer es als Erster hat, bekommt 3 Punkte, der Zweite 2, jeder danach 1; wer malt, bekommt 1 für jeden, der es hatte. Laut geraten, tippt wer malt an, wer es hatte.',
   rulesMontagsmaler4:
     'Haben es alle, oder ist die Zeit um, wird das Wort gezeigt, und der Nächste malt. Bis drei Spieler malt jeder zweimal, mit mehr einmal; die meisten Punkte gewinnen.',
+  rulesWerbinich1:
+    'Alle bekommen ein Wort: ein Tier, einen Beruf, eine Märchenfigur oder ein Ding. Alle anderen sehen es auf ihren Handys; du siehst nur ihre, und was für eine Art deins ist.',
+  rulesWerbinich2:
+    'Reihum stellst du eine Frage, die die anderen mit Ja oder Nein beantworten können, etwa „Kann ich fliegen?“. Sie tippen Ja, Nein oder Weiß nicht, und die meisten Antworten entscheiden. Nach Ja oder Weiß nicht fragst du weiter, nach Nein ist der Nächste dran.',
+  rulesWerbinich3:
+    'Du weißt es? Rate. Das richtige Wort hat es sofort, auf Deutsch oder Englisch; alles andere beurteilen die anderen. Falsch geraten beendet deinen Zug.',
+  rulesWerbinich4:
+    'Wenn alle bis auf einen ihr Wort wissen, ist das Spiel aus, und wer seins zuerst wusste, gewinnt. Auf einem Gerät fragen und antworten alle laut, und wer fragt, tippt an, was gesagt wurde.',
   lichtHint:
     'Biege ab, bevor du gegen eine Wand fährst: wische über das Feld, oder tippe auf ⟲ und ⟳. Wer als Letzter fährt, gewinnt.',
   lichtHintLocal:
