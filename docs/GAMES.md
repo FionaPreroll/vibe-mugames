@@ -16,6 +16,7 @@ The Spielekiste's games and their rules, in short. In the Spielekiste, each game
 | Mäxchen (dice)                              | 2–8     |
 | Werewolf (_Werwolf_)                        | 4–8     |
 | City, Country, River (_Stadt, Land, Fluss_) | 2–8     |
+| Draw and Guess (_Montagsmaler_)             | 2–8     |
 | Light Racers (_Lichtrenner_), live          | 2–6     |
 | Air Hockey (_Airhockey_), live              | 2       |
 | Snakes (_Schlangen_), live                  | 2–6     |
@@ -76,6 +77,14 @@ _Stadt, Land, Fluss_, for two to eight. Each round has a letter, drawn by chance
 Then everyone sees every answer, and taps those of the others that do not count, such as a river that does not exist: an answer that more than half of the others object to counts nothing, and so does one that does not start with the letter. An answer counts 20 if nobody else has one in its category, 10 if nobody else has the same word, and 5 if someone does. Once everyone has tapped **Next round**, the next letter comes. After five rounds, the most points win; with the same, it is a draw.
 
 On one device, everyone writes in turn, as long as they like, while the others look away, and taps **Done**; then the answers are checked together, and one tap strikes an answer.
+
+## Draw and Guess
+
+_Montagsmaler_, for two to eight. In turn, each player draws: they choose one of three words, which only they see, in 20 seconds (or the first is chosen for them), and draw it in 80 seconds, with no letters or numbers. They draw with a finger or the mouse, in black, red, blue, green or yellow, rub out with the eraser, take back the last stroke with **Undo**, or start again with **Clear**. Everyone else sees the drawing grow on their own phone, and how many letters the word has; with half of the time gone, one letter shows, and with a quarter left another, but never more than a third of a word.
+
+The others type their guesses, which everyone sees. A guess that names the word, in German or English and without minding capitals or accents, gets it; one that is a letter off is _nearly_ right, which only whoever wrote it learns. The first to get the word scores 3, the second 2, everyone after 1, and the one drawing 1 for each who got it. A word said aloud counts too: the one drawing taps who said it. Once everyone has it, or the time is up, the word is shown, and the next player draws. Everyone draws twice with up to three players, once with more; the most points win, and with the same, it is a draw.
+
+On one device, the device asks to be handed to the one drawing, who chooses their word alone; their word stays hidden while the others watch, until they tap **Show my word**. The others call their guesses out, and the one drawing taps who got it.
 
 ## Light Racers
 

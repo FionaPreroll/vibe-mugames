@@ -14,6 +14,7 @@ import * as licht from './lichtrenner'
 import * as ludo from './ludo'
 import * as maex from './maexchen'
 import * as miau from './miaumiau'
+import * as sketch from './montagsmaler'
 import * as react from './reaction'
 import * as swim from './schwimmen'
 import * as sea from './seeschlacht'
@@ -74,6 +75,8 @@ export interface TableState {
   readonly village: wolf.WolfView | null
   /** Stadt, Land, Fluss as the player this state is for sees it; null in every other game. */
   readonly words: words.WordsView | null
+  /** Montagsmaler as the player this state is for sees it; null in every other game. */
+  readonly sketch: sketch.SketchView | null
   /** Lichtrenner as it stands; null in every other game. */
   readonly race: licht.LichtView | null
   /** Air hockey as it stands; null in every other game. */
@@ -113,6 +116,7 @@ export function playerToMove(state: TableState): number | null {
     state.dice?.turn ??
     (state.village && (wolf.waiting(state.village)[0] ?? null)) ??
     (state.words && (words.waitingFor(state.words)[0] ?? null)) ??
+    (state.sketch && (sketch.waitingFor(state.sketch)[0] ?? null)) ??
     (state.sea && (sea.nextToPlace(state.sea) ?? state.sea.turn))
   return turn === undefined || turn === null ? null : (state.seats[turn] ?? null)
 }
@@ -144,6 +148,7 @@ export class Table {
   private dice: maex.MaexState | null = null
   private village: wolf.WolfState | null = null
   private words: words.WordsState | null = null
+  private sketch: sketch.SketchState | null = null
   /**
    * The move number Werwolf's night or day, or a round's writing or checking in Stadt, Land,
    * Fluss, began with: older moves were meant for another.
@@ -205,14 +210,16 @@ export class Table {
           ? this.wolfMove(seat, moveNo, move)
           : game === 'stadtlandfluss'
             ? this.wordsMove(seat, moveNo, move)
-            : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
+            : game === 'montagsmaler'
+              ? this.sketchMove(seat, moveNo, move)
+              : moveNo === this.moveNo && seat === this.turn() && this.turnMove(game, seat, move)
     if (!taken) return false
     this.moveNo++
     // A fleet placed stays hidden, and so does whom a player of Werwolf chose, and what anyone
     // wrote: only shots, and the moves of other games, show as the last move.
     if (game === 'werwolf') {
       if (this.village?.choices.every((choice) => choice === null)) this.phaseFrom = this.moveNo
-    } else if (game === 'stadtlandfluss') this.newPhase()
+    } else if (game === 'stadtlandfluss' || game === 'montagsmaler') this.newPhase()
     else if (game !== 'seeschlacht' || move.length === 1) this.last = [...move]
     this.score()
     return true
@@ -249,6 +256,19 @@ export class Table {
       this.newPhase()
       return (
         Math.ceil(before.left) !== Math.ceil(this.words.left) || before.phase !== this.words.phase
+      )
+    }
+    if (this.sketch) {
+      const before = this.sketch
+      this.sketch = sketch.advance(before, seconds, this.random)
+      this.newPhase()
+      this.sketchEnd()
+      return (
+        Math.ceil(before.left) !== Math.ceil(this.sketch.left) ||
+        before.phase !== this.sketch.phase ||
+        before.turn !== this.sketch.turn ||
+        before.shown !== this.sketch.shown ||
+        this.outcome !== null
       )
     }
     if (this.race) {
@@ -323,6 +343,7 @@ export class Table {
     this.dice = null
     this.village = null
     this.words = null
+    this.sketch = null
     this.race = null
     this.rink = null
     this.snakes = null
@@ -349,6 +370,7 @@ export class Table {
       dice: this.dice && maex.view(this.dice, this.seats.indexOf(viewer)),
       village: this.village && wolf.view(this.village, this.seats.indexOf(viewer)),
       words: this.words && words.view(this.words, this.seats.indexOf(viewer)),
+      sketch: this.sketch && sketch.view(this.sketch, this.seats.indexOf(viewer)),
       race: this.race && licht.view(this.race),
       rink: this.rink && hockey.view(this.rink),
       snakes: this.snakes && snakes.view(this.snakes),
@@ -469,8 +491,31 @@ export class Table {
     return true
   }
 
+  /**
+   * A move in Montagsmaler: the one drawing draws while the others guess, so a move may come
+   * with an older move number than the table's, but none from before this turn's part began.
+   */
+  private sketchMove(seat: number, moveNo: number, move: Move): boolean {
+    const game = this.sketch
+    const decoded = sketch.decode(move)
+    if (game === null || decoded === null) return false
+    if (moveNo < this.phaseFrom || moveNo > this.moveNo) return false
+    if (!sketch.legal(game, seat, decoded)) return false
+    this.sketch = sketch.play(game, seat, decoded)
+    return true
+  }
+
+  /** Montagsmaler's end, once the last word was shown; the score counts it. */
+  private sketchEnd(): void {
+    const winner = this.sketch?.winner ?? null
+    if (winner === null || this.outcome !== null) return
+    this.outcome = winner === 'draw' ? 'draw' : { winner, line: [] }
+    this.score()
+  }
+
   /** What part of a party game this is: moves meant for another part are not taken. */
   private phaseKey(): string {
+    if (this.sketch) return `${this.sketch.turn}:${this.sketch.phase}`
     return this.words ? `${this.words.letters.length}:${this.words.phase}` : ''
   }
 
@@ -509,6 +554,10 @@ export class Table {
     this.words =
       game === 'stadtlandfluss'
         ? words.start(this.seats.length, this.random, this.options.together)
+        : null
+    this.sketch =
+      game === 'montagsmaler'
+        ? sketch.start(this.seats.length, this.random, this.options.together)
         : null
     this.phaseFrom = 0
     this.phaseWas = this.phaseKey()

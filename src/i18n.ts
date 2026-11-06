@@ -434,6 +434,50 @@ const en = {
   hiddenWordsNotice:
     'Everyone writes in turn on their own part: the others look away while they do.',
   takeOverWords: 'I am {name}: show my letter',
+  montagsmaler: 'Draw and Guess',
+  inkBlack: 'Black',
+  inkRed: 'Red',
+  inkBlue: 'Blue',
+  inkGreen: 'Green',
+  inkYellow: 'Yellow',
+  inkEraser: 'Eraser',
+  sketchTurn: 'Turn {n} of {of}: {name} draws',
+  sketchChoose: 'Choose a word to draw.',
+  sketchChooseName: '{name}, choose a word to draw. The others look away.',
+  sketchChooses: '{name} chooses a word.',
+  sketchDraw: 'Draw your word! {n} seconds left.',
+  sketchGuess: '{name} draws. What is it? {n} seconds left.',
+  sketchWatching: '{name} draws. {n} seconds left.',
+  sketchYouGot: 'You got it! {n} seconds left for the others.',
+  sketchAloud: '{name} draws: say what it is! {n} seconds left.',
+  sketchWas: 'The word was: {word}.',
+  sketchYourWord: 'Your word: {word}',
+  sketchWordHidden: 'Your word is hidden.',
+  sketchShowWord: 'Show my word',
+  sketchHideWord: 'Hide my word',
+  sketchLetters: '{n} letters',
+  sketchGuessLabel: 'Your guess',
+  sketchSend: 'Guess',
+  sketchUndo: 'Undo',
+  sketchClear: 'Clear',
+  sketchWhoGot: 'Said aloud? Tap who got it:',
+  sketchWhoGotTogether: 'Tap who said the word:',
+  sketchGotIt: 'got it!',
+  sketchClose: 'nearly!',
+  sketchHelp: 'How Draw and Guess works',
+  sketchHelpDraw:
+    'In turn, everyone draws: choose one of three words, which only you see, and draw it in {n} seconds, without letters or numbers.',
+  sketchHelpGuess:
+    'The others guess on their own phones. Capitals and accents do not matter; a guess that is nearly right says so, to the one who made it alone. With half the time gone, a letter shows, and another with a quarter left.',
+  sketchHelpPoints:
+    'The first to get the word scores 3, the second 2, everyone after 1, and the one drawing 1 for each who got it. The most points win.',
+  sketchHelpAloud:
+    'Said aloud instead? The one drawing taps who got it. On one device, that is how everyone guesses.',
+  handOverSketch:
+    'Draw and Guess on one device: the one drawing takes the device and chooses a word alone, then everyone watches and says what it is.',
+  hiddenSketchNotice:
+    'The word stays hidden until the one drawing taps “Show my word”: the others look away while they do.',
+  takeOverSketch: 'I am {name}: show my words',
   lichtrenner: 'Light Racers',
   airhockey: 'Air Hockey',
   snakes: 'Snakes',
@@ -587,6 +631,14 @@ const en = {
     'Then everyone sees every answer, and may object to one that does not count: struck by more than half of the others, it counts nothing.',
   rulesStadtlandfluss4:
     'An answer counts 20 if nobody else has one in its category, 10 if nobody else has the same word, and 5 if someone does. After five rounds, the most points win.',
+  rulesMontagsmaler1:
+    'In turn, everyone draws. Choose one of three words, which only you see, and draw it on your phone in 80 seconds, without letters or numbers.',
+  rulesMontagsmaler2:
+    'The others watch the drawing grow on their phones and guess. With half the time gone, a letter of the word shows, and another with a quarter left.',
+  rulesMontagsmaler3:
+    'The first to get it scores 3, the second 2, everyone after 1; the one drawing scores 1 for each who got it. Said aloud, the one drawing taps who got it.',
+  rulesMontagsmaler4:
+    'Once everyone has it, or the time is up, the word is shown and the next player draws. Everyone draws twice with up to three players, once with more; the most points win.',
   lichtHint:
     'Turn before you hit a wall: swipe on the field, or tap ⟲ and ⟳. The last one riding wins.',
   lichtHintLocal:
@@ -1304,6 +1356,49 @@ const de: Texts = {
   hiddenWordsNotice:
     'Jeder schreibt der Reihe nach in seinem Teil: Die anderen schauen weg, solange er schreibt.',
   takeOverWords: 'Ich bin {name}: meinen Buchstaben zeigen',
+  montagsmaler: 'Montagsmaler',
+  inkBlack: 'Schwarz',
+  inkRed: 'Rot',
+  inkBlue: 'Blau',
+  inkGreen: 'Grün',
+  inkYellow: 'Gelb',
+  inkEraser: 'Radiergummi',
+  sketchTurn: 'Zug {n} von {of}: {name} malt',
+  sketchChoose: 'Wähle ein Wort zum Malen.',
+  sketchChooseName: '{name}, wähle ein Wort zum Malen. Die anderen schauen weg.',
+  sketchChooses: '{name} wählt ein Wort.',
+  sketchDraw: 'Mal dein Wort! Noch {n} Sekunden.',
+  sketchGuess: '{name} malt. Was ist es? Noch {n} Sekunden.',
+  sketchWatching: '{name} malt. Noch {n} Sekunden.',
+  sketchYouGot: 'Du hast es! Noch {n} Sekunden für die anderen.',
+  sketchAloud: '{name} malt: Sagt, was es ist! Noch {n} Sekunden.',
+  sketchWas: 'Das Wort war: {word}.',
+  sketchYourWord: 'Dein Wort: {word}',
+  sketchWordHidden: 'Dein Wort ist verdeckt.',
+  sketchShowWord: 'Mein Wort zeigen',
+  sketchHideWord: 'Mein Wort verdecken',
+  sketchLetters: '{n} Buchstaben',
+  sketchGuessLabel: 'Dein Tipp',
+  sketchSend: 'Raten',
+  sketchUndo: 'Zurück',
+  sketchClear: 'Alles weg',
+  sketchWhoGot: 'Laut gesagt? Tippe, wer es erraten hat:',
+  sketchWhoGotTogether: 'Tippe, wer das Wort gesagt hat:',
+  sketchGotIt: 'hat es!',
+  sketchClose: 'knapp daneben!',
+  sketchHelp: 'So geht Montagsmaler',
+  sketchHelpDraw:
+    'Der Reihe nach malt jeder: Wähle eines von drei Wörtern, das nur du siehst, und mal es in {n} Sekunden, ohne Buchstaben oder Zahlen.',
+  sketchHelpGuess:
+    'Die anderen raten auf ihren eigenen Handys. Groß- und Kleinschreibung und Akzente zählen nicht; ein Tipp, der fast stimmt, sagt es nur dem, der ihn abgab. Ist die Hälfte der Zeit um, erscheint ein Buchstabe, bei einem Viertel noch einer.',
+  sketchHelpPoints:
+    'Wer das Wort als Erster hat, bekommt 3 Punkte, der Zweite 2, jeder danach 1, und wer malt, 1 für jeden, der es erraten hat. Die meisten Punkte gewinnen.',
+  sketchHelpAloud: 'Laut geraten? Wer malt, tippt an, wer es hatte. Auf einem Gerät raten so alle.',
+  handOverSketch:
+    'Montagsmaler auf einem Gerät: Wer malt, nimmt das Gerät und wählt allein ein Wort, dann schauen alle zu und sagen, was es ist.',
+  hiddenSketchNotice:
+    'Das Wort bleibt verdeckt, bis wer malt auf „Mein Wort zeigen“ tippt: Die anderen schauen weg, solange es zu sehen ist.',
+  takeOverSketch: 'Ich bin {name}: meine Wörter zeigen',
   lichtrenner: 'Lichtrenner',
   airhockey: 'Airhockey',
   snakes: 'Schlangen',
@@ -1462,6 +1557,14 @@ const de: Texts = {
     'Dann sehen alle alle Antworten und dürfen einer widersprechen, die nicht gilt: Widerspricht mehr als die Hälfte der anderen, zählt sie nichts.',
   rulesStadtlandfluss4:
     'Eine Antwort zählt 20, wenn sonst niemand eine in ihrer Kategorie hat, 10, wenn niemand dasselbe Wort hat, und 5, wenn jemand es hat. Nach fünf Runden gewinnen die meisten Punkte.',
+  rulesMontagsmaler1:
+    'Der Reihe nach malt jeder. Wähle eines von drei Wörtern, das nur du siehst, und mal es in 80 Sekunden auf deinem Handy, ohne Buchstaben oder Zahlen.',
+  rulesMontagsmaler2:
+    'Die anderen sehen das Bild auf ihren Handys wachsen und raten. Ist die Hälfte der Zeit um, erscheint ein Buchstabe des Worts, bei einem Viertel noch einer.',
+  rulesMontagsmaler3:
+    'Wer es als Erster hat, bekommt 3 Punkte, der Zweite 2, jeder danach 1; wer malt, bekommt 1 für jeden, der es hatte. Laut geraten, tippt wer malt an, wer es hatte.',
+  rulesMontagsmaler4:
+    'Haben es alle, oder ist die Zeit um, wird das Wort gezeigt, und der Nächste malt. Bis drei Spieler malt jeder zweimal, mit mehr einmal; die meisten Punkte gewinnen.',
   lichtHint:
     'Biege ab, bevor du gegen eine Wand fährst: wische über das Feld, oder tippe auf ⟲ und ⟳. Wer als Letzter fährt, gewinnt.',
   lichtHintLocal:

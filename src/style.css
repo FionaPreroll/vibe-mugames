@@ -3127,3 +3127,150 @@ button.answer-check.objected {
 .kept-place {
   display: contents;
 }
+
+/* Montagsmaler: the paper, the inks, the word or its letters, and the guesses. */
+
+.paper {
+  width: min(100%, 30rem);
+  margin: 0.5rem auto;
+}
+
+.paper-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--paper-edge);
+  border-radius: 0.6rem;
+  background: var(--paper);
+  touch-action: none;
+}
+
+.paper-canvas.drawing {
+  cursor: crosshair;
+}
+
+.sketch-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.sketch-tools .ink {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+}
+
+.sketch-tools .ink.chosen {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sketch-tools .ink-0 {
+  background: var(--ink);
+}
+
+.sketch-tools .ink-1 {
+  background: var(--card-red);
+}
+
+.sketch-tools .ink-2 {
+  background: var(--card-blue);
+}
+
+.sketch-tools .ink-3 {
+  background: var(--seat-2);
+}
+
+.sketch-tools .ink-4 {
+  background: var(--seat-1);
+}
+
+.sketch-tools .ink-5 {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.sketch-turn .time.short {
+  color: var(--seat-0);
+  font-weight: 700;
+}
+
+.sketch-word {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.4rem 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.sketch-word .blanks {
+  letter-spacing: 0.3em;
+  font-family: ui-monospace, monospace;
+}
+
+.sketch-word.shown {
+  color: var(--accent);
+  font-size: 1.5rem;
+}
+
+.word-choices {
+  max-width: 24rem;
+  margin-inline: auto;
+}
+
+.guess-field {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 30rem;
+  margin: 0.5rem auto;
+}
+
+.guess-field input {
+  flex: 1;
+  min-width: 0;
+}
+
+.got .buttons {
+  margin: 0.25rem 0 0.75rem;
+}
+
+.main .got p {
+  margin: 0.25rem 0;
+  text-align: center;
+}
+
+.feed {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem auto;
+  max-width: 30rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.main .feed li {
+  padding: 0.2rem 0.6rem;
+  border-left: 3px solid var(--line);
+}
+
+.main .feed li .name {
+  color: var(--muted);
+}
+
+.main .feed li.got-it {
+  border-color: var(--seat-2);
+  font-weight: 600;
+}
+
+.main .feed li.close {
+  border-color: var(--seat-1);
+}

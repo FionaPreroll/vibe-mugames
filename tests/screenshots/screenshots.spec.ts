@@ -333,6 +333,94 @@ test('City, Country, River', async ({ browser }) => {
   await shot(page, 'stadtlandfluss')
 })
 
+/** A house under the sun, as by a hand on the paper: lines of points from 0 to 1 across and down. */
+const HOUSE: [number, number][][] = [
+  [
+    [0.2, 0.85],
+    [0.2, 0.5],
+    [0.45, 0.28],
+    [0.7, 0.5],
+    [0.7, 0.85],
+    [0.2, 0.85],
+  ],
+  [
+    [0.2, 0.5],
+    [0.7, 0.5],
+  ],
+  [
+    [0.38, 0.85],
+    [0.38, 0.66],
+    [0.5, 0.66],
+    [0.5, 0.85],
+  ],
+  [
+    [0.56, 0.56],
+    [0.65, 0.56],
+    [0.65, 0.64],
+    [0.56, 0.64],
+    [0.56, 0.56],
+  ],
+  [
+    [0.6, 0.34],
+    [0.6, 0.22],
+    [0.66, 0.22],
+    [0.66, 0.4],
+  ],
+  // The sun.
+  Array.from({ length: 17 }, (_, i): [number, number] => [
+    0.83 + 0.07 * Math.cos((i * Math.PI) / 8),
+    0.2 + 0.07 * Math.sin((i * Math.PI) / 8),
+  ]),
+]
+
+/** Draws lines on the paper with the mouse, point by point. */
+async function sketch(page: Page, lines: [number, number][][]): Promise<void> {
+  const box = await page.locator('.paper-canvas').boundingBox()
+  if (!box) throw new Error('no paper')
+  for (const points of lines) {
+    for (const [i, [x, y]] of points.entries()) {
+      await page.mouse.move(box.x + x * box.width, box.y + y * box.height, { steps: 4 })
+      if (i === 0) await page.mouse.down()
+    }
+    await page.mouse.up()
+  }
+}
+
+test('Draw and Guess, as the one guessing and the one drawing see it', async ({ browser }) => {
+  const pages = await Promise.all(
+    ['Ada', 'Bo', 'Cy'].map((name, i) => device(browser, PHONE, name, i + 1)),
+  )
+  await liveTable('Draw and Guess', pages)
+  const [ada, bo, cy] = pages
+  if (!ada || !bo || !cy) throw new Error('no phones')
+  await ada.clock.runFor(100)
+  await ada.getByRole('button', { name: 'house', exact: true }).click({ force: true })
+  await sketch(ada, HOUSE.slice(0, 5))
+  await ada.locator('.sketch-tools .ink-4').click({ force: true })
+  await sketch(ada, HOUSE.slice(5))
+  // Half the time goes by, on every phone alike, so that none gives the others up: a letter
+  // of the word shows.
+  for (let second = 0; second < 41; second++) {
+    for (const page of pages) await page.clock.runFor(1000)
+    await ada.waitForTimeout(30)
+  }
+  for (const [page, guess] of [
+    [bo, 'tent'],
+    [cy, 'Haus'],
+    [bo, 'housse'],
+  ] as const) {
+    await page.getByRole('textbox', { name: 'Your guess' }).fill(guess)
+    await page.getByRole('textbox', { name: 'Your guess' }).press('Enter')
+    await page.waitForTimeout(100)
+  }
+  // The host sends the guesses on to the others.
+  for (let step = 0; step < 5; step++) {
+    for (const page of pages) await page.clock.runFor(100)
+    await ada.waitForTimeout(100)
+  }
+  await phones(browser, 'montagsmaler', [{ src: await screen(bo) }, { src: await screen(ada) }])
+})
+
 /**
  * Over the network, the host may hear from the other phone a moment earlier or later, which can
  * move the puck by a few pixels: only a larger change takes a new picture of Air Hockey.

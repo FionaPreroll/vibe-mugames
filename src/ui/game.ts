@@ -15,6 +15,7 @@ import type { LiveSlot } from './live'
 import { ludoHints, ludoView } from './ludo'
 import { playersText, rulesButton, thumbnail } from './rules'
 import { seaHint, seaStatus, seaToMove, seaView, shotText } from './sea'
+import { sketchStatus, sketchToMove, sketchView } from './sketch'
 import { swimHints, swimStatus, swimView } from './swim'
 import { villageStatus, villageToMove, villageView } from './village'
 import { wordsStatus, wordsToMove, wordsView } from './words'
@@ -215,6 +216,20 @@ export function gameView(state: TableState, options: GameViewOptions): HTMLEleme
       }),
     ]
   }
+  if (state.sketch) {
+    const sketch = state.sketch
+    const seated = state.seats.includes(viewer)
+    return [
+      statusLine(sketchStatus(state, sketch, viewer, shared), sketchToMove(state, sketch, viewer)),
+      ...sketchView(state, sketch, {
+        viewer,
+        picker,
+        move: seated ? (move) => options.move(game, state.moveNo, move) : null,
+        shared,
+        hideOwn: options.hideOwn ?? false,
+      }),
+    ]
+  }
   if (state.words) {
     const words = state.words
     const seated = state.seats.includes(viewer)
@@ -389,6 +404,7 @@ const HAND_OVER_NOTICES: Partial<Record<GameId, readonly [TextKey, TextKey]>> = 
   werwolf: ['handOverRoles', 'hiddenRoleNotice'],
   schwimmen: ['handOverCards', 'hiddenCardsNotice'],
   stadtlandfluss: ['handOverWords', 'hiddenWordsNotice'],
+  montagsmaler: ['handOverSketch', 'hiddenSketchNotice'],
 }
 
 /** What a player taps once they hold the device, in a game handed over on one device. */
@@ -402,7 +418,9 @@ export function takeOverText(game: GameId, name: string): string {
           ? 'takeOverCards'
           : game === 'stadtlandfluss'
             ? 'takeOverWords'
-            : 'takeOver'
+            : game === 'montagsmaler'
+              ? 'takeOverSketch'
+              : 'takeOver'
   return t(key, { name })
 }
 

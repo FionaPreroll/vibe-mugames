@@ -20,6 +20,7 @@ import * as licht from '../core/lichtrenner'
 import * as ludo from '../core/ludo'
 import * as maex from '../core/maexchen'
 import { DECK, decode, encode, isCard, isSuit, type MiauView } from '../core/miaumiau'
+import * as sketch from '../core/montagsmaler'
 import * as react from '../core/reaction'
 import * as swim from '../core/schwimmen'
 import * as sea from '../core/seeschlacht'
@@ -36,7 +37,7 @@ import * as wolf from '../core/werwolf'
  * times a second. Raise PROTOCOL whenever any of it changes, so phones of different versions
  * refuse to play together instead of misreading each other.
  */
-export const PROTOCOL = 13
+export const PROTOCOL = 14
 
 /**
  * What a player at the board of a game in real time wants now, sent many times a second, of
@@ -104,6 +105,14 @@ function parseMove(value: unknown, game: GameId): Move | undefined {
   if (game === 'werwolf') {
     const seat = list(value, 1, (n) => (isWhole(n, 0, wolf.MAX_VILLAGE - 1) ? n : undefined))
     return seat?.length === 1 ? seat : undefined
+  }
+  if (game === 'montagsmaler') {
+    // A drawing's points, or a guess's characters, after the kind of move.
+    const numbers = list(value, sketch.MAX_STROKE + 1, (n) =>
+      isWhole(n, -sketch.INKS, 0x10ffff) ? n : undefined,
+    )
+    const move = numbers && sketch.decode(numbers)
+    return move ? sketch.encode(move) : undefined
   }
   if (game === 'stadtlandfluss') {
     // An answer is its category and its characters, after the kind of move.
@@ -190,6 +199,13 @@ export const parseState: Parse<TableState> = (value) => {
         ? null
         : undefined
   if (wordsView === undefined) return undefined
+  const sketchView =
+    game === 'montagsmaler'
+      ? parseSketch(value.sketch, seats.length)
+      : value.sketch === null
+        ? null
+        : undefined
+  if (sketchView === undefined) return undefined
   const race =
     game === 'lichtrenner'
       ? parseRace(value.race, seats.length)
@@ -223,7 +239,7 @@ export const parseState: Parse<TableState> = (value) => {
   const last =
     value.last === null || !game
       ? null
-      : game === 'werwolf' || game === 'stadtlandfluss'
+      : game === 'werwolf' || game === 'stadtlandfluss' || game === 'montagsmaler'
         ? undefined
         : parseMove(value.last, game)
   if (last === undefined) return undefined
@@ -246,6 +262,7 @@ export const parseState: Parse<TableState> = (value) => {
     dice,
     village,
     words: wordsView,
+    sketch: sketchView,
     race,
     rink,
     snakes: snakeView,
@@ -485,6 +502,63 @@ function parseWords(value: unknown, seats: number): words.WordsView | undefined 
     ready,
     totals,
     winner,
+  }
+}
+
+/**
+ * Montagsmaler: whose turn it is, the word only if this seat may see it, the drawing, the
+ * guesses and the points.
+ */
+function parseSketch(value: unknown, seats: number): sketch.SketchView | undefined {
+  if (!isObject(value) || typeof value.together !== 'boolean') return undefined
+  const isSeat = (n: unknown): n is number => isWhole(n, 0, seats - 1)
+  const words = sketch.SKETCH_WORD_COUNT
+  const { turn, turns, drawer, phase, left, word, winner } = value
+  if (!isWhole(turns, 1, 2 * sketch.MAX_SKETCHERS) || !isWhole(turn, 0, (turns as number) - 1)) {
+    return undefined
+  }
+  if (!isSeat(drawer) || drawer !== (turn as number) % seats) return undefined
+  if (phase !== 'choose' && phase !== 'draw' && phase !== 'show') return undefined
+  if (!isWhole(left, 0, sketch.DRAW_SECONDS)) return undefined
+  if (word !== null && !isWhole(word, 0, words - 1)) return undefined
+  if (winner !== null && winner !== 'draw' && !isSeat(winner)) return undefined
+  const options = list(value.options, sketch.OPTIONS, (n) =>
+    isWhole(n, 0, words - 1) ? n : undefined,
+  )
+  const ink = list(value.ink, sketch.MAX_INK, (n) => (sketch.isInk(n) ? n : undefined))
+  const guessed = list(value.guessed, seats, (n) => (isSeat(n) ? n : undefined))
+  const scores = (v: unknown) => list(v, seats, (n) => (isWhole(n, 0, 1_000_000) ? n : undefined))
+  const points = scores(value.points)
+  const gained = scores(value.gained)
+  const feed = list(value.feed, sketch.MAX_FEED, (g) => {
+    if (!isObject(g) || !isSeat(g.seat) || typeof g.close !== 'boolean') return undefined
+    const text = g.text === null ? null : parseText(g.text, sketch.MAX_GUESS)
+    return text === undefined || text === '' ? undefined : { seat: g.seat, text, close: g.close }
+  })
+  if (!options || !ink || !guessed || !feed || new Set(guessed).size !== guessed.length) {
+    return undefined
+  }
+  if (points?.length !== seats || gained?.length !== seats) return undefined
+  if (!isObject(value.hint)) return undefined
+  const de = parseText(value.hint.de, 40)
+  const en = parseText(value.hint.en, 40)
+  if (de === undefined || en === undefined) return undefined
+  return {
+    together: value.together,
+    turn: turn as number,
+    turns: turns as number,
+    drawer,
+    phase,
+    left,
+    options,
+    word: word as number | null,
+    hint: { de, en },
+    ink,
+    guessed,
+    feed,
+    points,
+    gained,
+    winner: winner as number | 'draw' | null,
   }
 }
 

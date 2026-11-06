@@ -12,6 +12,7 @@ import { lichtrennerGuide } from './lichtrenner'
 import { ludoGuide } from './ludo'
 import { maexchenGuide } from './maexchen'
 import { miauMiauGuide } from './miaumiau'
+import { montagsmalerGuide } from './montagsmaler'
 import { muehleGuide } from './muehle'
 import { reactionGuide } from './reaction'
 import { reversiGuide } from './reversi'
@@ -49,6 +50,7 @@ export const GUIDES: Record<GameId, GameGuide> = {
   maexchen: maexchenGuide,
   werwolf: werwolfGuide,
   stadtlandfluss: stadtLandFlussGuide,
+  montagsmaler: montagsmalerGuide,
 }
 
 /** The small picture of a game, for the game chooser. */

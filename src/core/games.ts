@@ -14,6 +14,7 @@ import { MAX_RIDERS, MIN_RIDERS } from './lichtrenner'
 import { MAX_LUDO, MIN_LUDO } from './ludo'
 import { MAX_DICE_SEATS, MIN_DICE_SEATS } from './maexchen'
 import { MAX_SEATS, MIN_SEATS } from './miaumiau'
+import { MAX_SKETCHERS, MIN_SKETCHERS } from './montagsmaler'
 import { muehle } from './muehle'
 import * as reaction from './reaction'
 import { reversi } from './reversi'
@@ -53,7 +54,7 @@ export const GAME_GROUPS: readonly {
 }[] = [
   { group: 'tactics', games: BOARD_GAME_IDS },
   { group: 'luck', games: ['ludo', 'miaumiau', 'schwimmen', 'seeschlacht', 'maexchen', 'werwolf'] },
-  { group: 'party', games: ['stadtlandfluss'] },
+  { group: 'party', games: ['stadtlandfluss', 'montagsmaler'] },
   { group: 'skill', games: LIVE_GAME_IDS },
 ]
 
@@ -74,6 +75,7 @@ export function seatRange(game: GameId): { readonly min: number; readonly max: n
   if (game === 'schwimmen') return { min: MIN_SWIM, max: MAX_SWIM }
   if (game === 'werwolf') return { min: MIN_VILLAGE, max: MAX_VILLAGE }
   if (game === 'stadtlandfluss') return { min: MIN_WRITERS, max: MAX_WRITERS }
+  if (game === 'montagsmaler') return { min: MIN_SKETCHERS, max: MAX_SKETCHERS }
   return { min: MIN_SEATS, max: MAX_SEATS }
 }
 
@@ -95,6 +97,7 @@ const HANDED_OVER: ReadonlySet<GameId> = new Set<GameId>([
   'werwolf',
   'schwimmen',
   'stadtlandfluss',
+  'montagsmaler',
 ])
 
 /**
